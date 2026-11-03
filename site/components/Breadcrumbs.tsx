@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { client } from "@/client.config";
+import { site } from "@/site.config";
 import { trailFor } from "@/lib/routes";
 
 /**
@@ -7,13 +7,7 @@ import { trailFor } from "@/lib/routes";
  * nav. Emits BreadcrumbList structured data alongside it — the same
  * trail, stated twice, once for people and once for crawlers.
  */
-export function Breadcrumbs({
-  path,
-  leafLabel,
-}: {
-  path: string;
-  leafLabel?: string;
-}) {
+export function Breadcrumbs({ path, leafLabel }: { path: string; leafLabel?: string }) {
   const trail = trailFor(path, leafLabel);
   if (trail.length < 2) return null;
 
@@ -24,32 +18,32 @@ export function Breadcrumbs({
       "@type": "ListItem",
       position: i + 1,
       name: t.label,
-      item: `${client.siteUrl}${t.href}`,
+      item: `${site.url}${t.href}`,
     })),
   };
 
   return (
     <>
       <nav aria-label="Breadcrumb">
-        <ol className="flex flex-wrap items-center gap-x-2 gap-y-1 p-0 font-mono text-[12px] uppercase tracking-[0.09em] text-ink-invert-soft/70">
+        <ol className="flex flex-wrap items-center gap-x-2 gap-y-1 p-0 font-mono text-label uppercase tracking-label text-steel">
           {trail.map((t, i) => {
             const last = i === trail.length - 1;
             return (
               <li key={t.href} className="flex items-center gap-2">
                 {last ? (
-                  <span aria-current="page" className="text-accent">
+                  <span aria-current="page" className="text-ink">
                     {t.label}
                   </span>
                 ) : (
                   <Link
                     href={t.href}
-                    className="no-underline transition-colors duration-150 hover:text-ink-invert active:text-accent"
+                    className="no-underline underline-offset-4 hover:text-ink hover:underline"
                   >
                     {t.label}
                   </Link>
                 )}
                 {!last && (
-                  <span aria-hidden className="text-ink-invert-soft/40">
+                  <span aria-hidden className="text-steel">
                     /
                   </span>
                 )}

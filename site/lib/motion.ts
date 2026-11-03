@@ -5,12 +5,11 @@
  * reaches for a name here. That is what keeps thirty animated bands
  * reading as one system instead of thirty improvisations.
  *
- * The registers, in the order you meet them scrolling:
- *
- *   entrance  content arriving in the viewport, once, on the way down
- *   scrub     progress tied to scroll position — reversible, with no
- *             duration of its own, because the finger sets the clock
- *   state     a control answering a pointer: hover, press, nav condense
+ * PLAN §4.6 allows exactly four kinds of motion: a fade/rise of 8–16px
+ * as content enters, the flare glow pulse, the lead-flow rows
+ * sequencing in, and the button arrow nudge. No scroll-jacking, no
+ * parallax on content, nothing that delays reading. All of it stops
+ * under prefers-reduced-motion (useStillness + app/globals.css).
  *
  * Every value below is a decision with a reason attached. If you change
  * one, change the reason with it.
@@ -18,13 +17,11 @@
  */
 
 /**
- * The site curve. Not a new choice — Hero and Reveal have both been
- * running [0.21, 0.65, 0.36, 1] since the first build, and this file
- * records it rather than replacing it with something a hair different.
+ * The site curve.
  *
- * It leaves fast and lands slow, with no overshoot. Overshoot reads as
- * playful, and nothing about a roof replacement is playful; the job of
- * this motion is to make the page feel considered, not lively.
+ * It leaves fast and lands slow, with no overshoot. The job of this
+ * motion is to make the page feel considered, not lively. Mirrored as
+ * `ease-brand` in tailwind.config.ts; change both together.
  *
  * Deliberately not the Material default curve, which scripts/check.mjs
  * flags by name as the motion equivalent of reaching for indigo-500.
@@ -36,10 +33,7 @@ export const ease = {
   /** Entrances and state changes. Strong ease-out: the speed is spent up front. */
   out: [0.21, 0.65, 0.36, 1] as const,
   /**
-   * Symmetric, for anything that has to run backwards as convincingly
-   * as forwards — scrubbed sequences, band crossfades. An ease-out
-   * curve played in reverse becomes its opposite, stalling exactly
-   * when the eye is following most closely.
+   * Symmetric, for loops that run both ways: the flare glow pulse.
    */
   inOut: [0.65, 0, 0.35, 1] as const,
 };
@@ -49,34 +43,30 @@ export const ease = {
  * with six steps 100ms apart is a scale nobody can hold in their head,
  * and every value in it ends up chosen by coin flip.
  *
- * The rule of thumb underneath: bigger masses move for longer. A button
- * answering a click is quick; a 102px headline is slow.
+ * Bigger masses move for longer. The hero headline is the LCP element
+ * and is never animated.
  */
 export const dur = {
   /** 250ms — a control answering the pointer. Fast enough to feel causal. */
   quick: 0.25,
   /** 700ms — the standard band entrance. Long enough to read as motion rather than a jump-cut. */
   base: 0.7,
-  /** 1100ms — display type and full-band crossfades. */
+  /** 1100ms — the lead-flow sequence step. */
   slow: 1.1,
 } as const;
 
 /**
- * Travel distances in px. Short travel over a long duration reads as
- * expensive; long travel over a short duration reads as a glitch. These
- * are paired with `dur` above — sm/md with base, lg with slow.
+ * Travel distances in px, within PLAN §4.6's 8–16px.
  *
  * All travel is on the Y axis, and all of it rises: content comes up
  * into place. Nothing on this site slides in from the side, which would
  * imply the page has somewhere off-screen it keeps things.
  */
 export const travel = {
-  /** 14px — list items, table rows, anything appearing in a cascade. */
-  sm: 14,
-  /** 28px — the standard block: a card, a paragraph, a figure. */
-  md: 28,
-  /** 48px — a headline line rising out of its mask. */
-  lg: 48,
+  /** 8px — list items, table rows, anything appearing in a cascade. */
+  sm: 8,
+  /** 16px — the standard block: a card, a paragraph, a figure. */
+  md: 16,
 } as const;
 
 /**
@@ -87,8 +77,6 @@ export const travel = {
 export const stagger = {
   /** 60ms — grid cards and list items. The step Reveal has always used. */
   tight: 0.06,
-  /** 80ms — lines within one headline. Slower, because the eye tracks each one. */
-  line: 0.08,
   /** 120ms — the few big elements of a band opening: mark, heading, lede, CTA. */
   loose: 0.12,
 } as const;
@@ -122,48 +110,3 @@ export const viewport = {
 export function cascade(index: number, step: number = stagger.tight): number {
   return Math.min(index, 9) * step;
 }
-
-/**
- * Minimum viewport width for pinned and parallax effects, matching
- * Tailwind's `lg`.
- *
- * Below this, scroll-linked motion is not a nicety that degrades — it
- * actively breaks. Mobile browsers resize the viewport as their URL bar
- * hides, which re-runs every scroll calculation mid-gesture; momentum
- * scrolling makes a pinned section feel stuck rather than held; and the
- * point of the phone visit is reaching the call button fast. Small
- * screens get entrances only, and lose nothing they would notice.
- */
-export const PIN_MIN_WIDTH = 1024;
-
-/**
- * Ground tones for BandTransition, as Tailwind background utilities.
- *
- * These live here, in a plain module, rather than beside the component
- * that consumes them — and that placement is load-bearing, not tidiness.
- * BandTransition is a "use client" module, and Next turns EVERY export
- * of a client module into a client reference. A server component like
- * Services or OtherServices importing the constant from there does not
- * receive an object at all; it receives a proxy that cannot be
- * serialized, and the build fails at prerender with "Could not find the
- * module … #TONES#light in the React Client Manifest".
- *
- * Values, types and pure functions shared across the boundary belong in
- * a module with no "use client" at the top. Only components need to be
- * over there.
- *
- * Keep both tones of a pair in the same family: the shift has to hold
- * its contrast against the copy at every point of the interpolation.
- * See the note in components/BandTransition.tsx.
- */
-export type TonePair = {
-  /** The ground the band starts on. Applied to the container. */
-  from: string;
-  /** The ground it arrives at. Applied to the overlay that fades in. */
-  to: string;
-};
-
-export const TONES = {
-  light: { from: "bg-surface", to: "bg-surface-alt" },
-  deep: { from: "bg-surface-deep", to: "bg-surface-deep-alt" },
-} satisfies Record<string, TonePair>;

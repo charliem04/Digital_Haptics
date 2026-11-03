@@ -1,6 +1,10 @@
 "use client";
 
 import Script from "next/script";
+import { site } from "@/site.config";
+
+/** Widened: site.config.ts is `as const`. */
+const siteKey: string = site.intake.turnstileSiteKey;
 
 /**
  * The Cloudflare Turnstile widget, such as it is.
@@ -12,24 +16,19 @@ import Script from "next/script";
  * is why there is no onChange, no ref and no token prop here: the form
  * reads it the same way it reads every other field.
  *
- * Renders nothing without a site key. Both forms fall back to their
- * unverified path in that case rather than blocking on a widget that
- * cannot appear, and the Worker is what actually enforces the check.
+ * Renders nothing without a site key. The intake endpoint is what
+ * actually enforces the check (Phase 4).
  *
  * The script is loaded per-form rather than in the layout on purpose:
  * most visitors never reach a form, and this is a third-party script on
  * a site that otherwise loads none.
  */
 export function Turnstile({ className }: { className?: string }) {
-  const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
   if (!siteKey) return null;
 
   return (
     <>
-      <Script
-        src="https://challenges.cloudflare.com/turnstile/v0/api.js"
-        strategy="lazyOnload"
-      />
+      <Script src="https://challenges.cloudflare.com/turnstile/v0/api.js" strategy="lazyOnload" />
       <div
         className={`cf-turnstile ${className ?? ""}`}
         data-sitekey={siteKey}
@@ -41,5 +40,5 @@ export function Turnstile({ className }: { className?: string }) {
 
 /** Whether a token is expected at all. */
 export function turnstileConfigured(): boolean {
-  return (process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "").length > 0;
+  return siteKey.length > 0;
 }

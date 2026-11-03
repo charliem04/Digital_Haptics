@@ -54,5 +54,4 @@ export function dialable(value: string): boolean {
  * actual miss in nearly every case; "must be between 10 and 15 digits"
  * is true, useless, and reads like a form yelling at you.
  */
-export const PHONE_NUDGE =
-  "That doesn’t look like a full phone number — include the area code.";
+export const PHONE_NUDGE = "That doesn’t look like a full phone number — include the area code.";

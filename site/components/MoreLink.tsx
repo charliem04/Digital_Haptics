@@ -31,28 +31,25 @@ export function MoreLink({
   // Same-page anchors and the home page are always reachable; anything
   // else has to be a live route in the registry.
   const path = href.split("#")[0];
-  const reachable =
-    external || path === "" || path === "/" || isLive(path);
+  const reachable = external || path === "" || path === "/" || isLive(path);
   if (!reachable) return null;
 
-  const colors =
-    tone === "deep"
-      ? "text-accent hover:text-ink-invert active:text-accent-press"
-      : "text-brand hover:text-ink active:text-brand-strong";
+  // Signal is never text on a light ground (PLAN §4.1).
+  const colors = tone === "deep" ? "text-ice" : "text-ink";
 
   return (
     <Link
       href={href}
-      className={`group inline-flex items-center gap-2 font-semibold no-underline transition-colors duration-150 ${colors} ${
+      className={`group inline-flex min-h-touch items-center gap-2 font-mono text-label uppercase tracking-label no-underline ${colors} ${
         className ?? ""
       }`}
     >
       {children}
       <span
         aria-hidden
-        className="transition-transform duration-150 group-hover:translate-x-1"
+        className="transition-transform duration-150 group-hover:translate-x-0.5 group-hover:translate-y-0.5"
       >
-        →
+        ↘
       </span>
     </Link>
   );

@@ -10,13 +10,15 @@
  * what a <meta> tag cannot: the PDFs, images and any non-HTML file
  * Google will happily index on its own.
  *
- * Called by scripts/preview-build.mjs, and runnable on its own after a
- * manual preview build. A production build never calls it, so
- * out/_headers is exactly public/_headers there.
+ * Called by scripts/preview-build.mjs. `npm run build` runs it with
+ * --if-preview, which does nothing unless scripts/is-preview.mjs says
+ * this is a preview, so a production build's out/_headers is exactly
+ * public/_headers.
  */
 import { appendFileSync, existsSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { resolve } from "node:path";
+import { isPreviewBuild } from "./is-preview.mjs";
 
 const FILE = "out/_headers";
 const MARKER = "# ── preview build ──";
@@ -24,10 +26,9 @@ const MARKER = "# ── preview build ──";
 const BLOCK = `
 
 ${MARKER}
-# This deploy is a replica of a real company's site on a temporary URL.
-# Keep every crawler off it, including from files that cannot carry a
-# meta tag. Removing this block is how the preview starts competing
-# with example.com in search.
+# This deploy is a preview on a temporary URL. Keep every crawler off
+# it, including from files that cannot carry a meta tag. Removing this
+# block is how a preview starts competing with digitalhaptics.dev.
 /*
   X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
 `;
@@ -53,5 +54,9 @@ export function applyPreviewHeaders() {
 
 // Run when invoked directly, stay quiet when imported.
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  if (process.argv.includes("--if-preview") && !isPreviewBuild()) {
+    console.log("[preview] production build, headers unchanged");
+    process.exit(0);
+  }
   process.exit(applyPreviewHeaders() ? 0 : 1);
 }

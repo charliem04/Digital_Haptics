@@ -4,15 +4,9 @@
  *
  *  Next loads .env.local by itself, so NEXT_PUBLIC_ values reach the
  *  pages without anyone thinking about it. The scripts either side of
- *  it — gallery, csp, harden — are plain Node and saw only the real
- *  environment, which produced two failures that look like nothing at
- *  all:
+ *  it — csp, harden — are plain Node and saw only the real environment,
+ *  so (for example):
  *
- *  · SANITY_PROJECT_ID in .env.local did nothing. The gallery step fell
- *    back to the committed snapshot, logged one line saying so, and
- *    shipped. The documented workaround was to export it in the shell,
- *    which is POSIX syntax that fails on PowerShell — where this project
- *    is actually developed.
  *  · csp.mjs builds connect-src from the endpoint variables, so a local
  *    build wrote a policy that forbade the very endpoints the JavaScript
  *    in the same build was compiled to call.
@@ -61,7 +55,10 @@ function parse(text) {
     const eq = line.indexOf("=");
     if (eq === -1) continue;
 
-    const name = line.slice(0, eq).replace(/^export\s+/, "").trim();
+    const name = line
+      .slice(0, eq)
+      .replace(/^export\s+/, "")
+      .trim();
     if (!name) continue;
 
     let value = line.slice(eq + 1).trim();
@@ -115,10 +112,9 @@ export function loadEnvFile() {
        *
        * .env.example ships one per variable and exists to be copied to
        * .env.local, so a half-filled file is the normal state of this
-       * project rather than a mistake. Without this, `SANITY_PROJECT_ID=`
-       * near the top of that file beats the real value further down and
-       * the build falls back to the committed gallery — silently, which
-       * is the exact failure this module was written to end.
+       * project rather than a mistake. Without this, an empty `FOO=` near
+       * the top of that file would beat the real value further down,
+       * silently.
        *
        * Treating "" as unset on both sides also matches how every
        * consumer here already reads these: `(env.X ?? "").trim()` cannot

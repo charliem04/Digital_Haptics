@@ -3,11 +3,8 @@
  *  CONTENT-SECURITY-POLICY, generated at build time.
  *
  *  public/_headers carries the headers that never change. This one has
- *  to be generated, because some of the origins it allows are only
- *  known from the environment the build ran in: the careers Worker, the
- *  CRM webhook, and any override of the form endpoint. A hand-written
- *  policy would either omit them (breaking the feature in production
- *  and nowhere else) or allow them unconditionally (pointless).
+ *  to be generated so the drift check below can run against the actual
+ *  output of every build.
  *
  *  The drift check at the bottom is the part that keeps this honest:
  *  every https origin that appears anywhere in out/ has to be covered
@@ -15,7 +12,7 @@
  *  browser never fetches. Adding an embed, or a CDN for the gallery
  *  photographs, fails the build until somebody decides which it is.
  *
- *  PER CLIENT you edit INTEGRATIONS and nothing else in this file.
+ *  To add or remove a third party, edit INTEGRATIONS and nothing else.
  *
  *  ── WHY script-src CARRIES 'unsafe-inline', WHICH IS NOT IDEAL ──────
  *
@@ -41,7 +38,7 @@
  *  That is acceptable here because nothing renders user-supplied HTML —
  *  React escapes every string, and both uses of dangerouslySetInnerHTML
  *  are our own content with nothing interpolated from outside: the
- *  JSON-LD built from client.config, and the <noscript> stylesheet in
+ *  JSON-LD built from site.config, and the <noscript> stylesheet in
  *  app/layout.tsx that un-hides scroll-reveal content when JavaScript
  *  never arrives. If that ever stops being true — if either one starts
  *  taking a value from a URL, a form or an API — this comment is the
@@ -71,7 +68,7 @@ function origin(u) {
 
 /**
  * ════════════════════════════════════════════════════════════════════
- *  THE ONE BLOCK TO EDIT PER CLIENT.
+ *  THE ONE BLOCK TO EDIT.
  *
  *  Every third-party origin this site touches, sorted by WHAT THE
  *  BROWSER ACTUALLY DOES WITH IT. That distinction is the whole design:
@@ -85,50 +82,35 @@ function origin(u) {
  */
 export const INTEGRATIONS = {
   /**
-   * Origins the browser FETCHES from with XHR/fetch. These go in
-   * connect-src. Each one is a place visitor data can be sent, so add
-   * with intent.
+   * Origins the browser FETCHES from with XHR/fetch (connect-src). Each
+   * one is a place visitor data can be sent, so add with intent. The
+   * intake endpoint is same-origin (/api/intake, decision D1) and is
+   * covered by 'self'.
    */
   connect: [
-    "https://api.web3forms.com", // contact form (lib/submitContact.ts)
-    "https://plausible.io", // analytics events, after consent
+    // Cloudflare Web Analytics beacon reports here (PLAN §8). Allowed
+    // ahead of Phase 4 so turning it on in the Pages dashboard (which
+    // injects the script at the edge, invisible to the drift check)
+    // isn't silently blocked.
+    "https://cloudflareinsights.com",
   ],
 
   /** Origins that serve <script>. Kept short on purpose. */
   script: [
-    "https://plausible.io", // components/Analytics.tsx, after consent
+    "https://static.cloudflareinsights.com", // Web Analytics beacon
     "https://challenges.cloudflare.com", // Turnstile, components/Turnstile.tsx
   ],
 
-  /**
-   * Origins that serve images. A CMS image CDN goes here — and only
-   * here, if nothing else loads from it.
-   */
-  img: [
-    // Every gallery photograph, at a width and crop chosen by
-    // scripts/gallery.mjs. A fetch origin, not a link target: nothing
-    // else on the site loads from it — no script, no font, no
-    // stylesheet — which is why it is here and in no other directive.
-    "https://cdn.sanity.io",
-  ],
+  /** Origins that serve images. */
+  img: [],
 
-  /** Origins allowed to be embedded in an <iframe>. */
+  /** Origins allowed in an <iframe>. */
   frame: [
-    // TODO(client): the scheduler in client.bookingUrl — keep the one
-    // this client uses and delete the other. An allowed frame origin
-    // nothing embeds is a door left open for no reason. Swapping
-    // schedulers without editing this list is blocked by the browser,
-    // which is why the drift check exists. lib/booking.ts knows both.
-    "https://calendly.com",
+    // Cal.com booking embed on /start/ (lib/booking.ts). Booking pages
+    // can hand off to app.cal.com inside the frame.
     "https://cal.com",
+    "https://app.cal.com",
     "https://challenges.cloudflare.com", // Turnstile renders in an iframe
-    // TODO(client): the Google Maps embed in client.mapEmbedSrc
-    // (components/Contact.tsx). Its src is
-    // https://www.google.com/maps/embed?…, so the frame origin is
-    // www.google.com; the tiles and scripts load inside that iframe
-    // under Google's own policy, not this one. Delete this line if the
-    // client has no map.
-    "https://www.google.com",
   ],
 
   /** Origins serving <video>/<audio>. "'self'" is already allowed. */
@@ -137,20 +119,16 @@ export const INTEGRATIONS = {
   /**
    * Origins that appear in the built output as LINK TARGETS ONLY — an
    * href a person clicks, or a string inside JSON-LD. The browser never
-   * fetches these as a subresource, so CSP has no say over them and
-   * they must NOT be added to a fetch directive just to quiet the drift
-   * check. Declaring one here is a claim you are making; if it turns
-   * out the page does fetch it, the browser blocks it and the policy
-   * was lying.
+   * fetches these as a subresource, so they must NOT be added to a
+   * fetch directive just to quiet the drift check.
    */
   linkOnly: [
     "https://schema.org", // JSON-LD @context, a string, never fetched
+    "https://digitalhaptics.dev", // canonicals, JSON-LD, OG tags
     "https://www.facebook.com",
     "https://www.instagram.com",
+    "https://www.linkedin.com",
     "https://g.page",
-    // TODO(client): this site's own canonical origin, as it appears in
-    // canonicals, JSON-LD and the OG tags.
-    "https://www.example.com",
     // Framework strings baked into React/Next dev warnings.
     "https://nextjs.org",
     "https://react.dev",
@@ -160,14 +138,11 @@ export const INTEGRATIONS = {
 
   /**
    * Origins that appear only as constants inside framework code this
-   * site does not exercise, or inside a CSS comment. Next ships a table
-   * of font-provider URLs in its runtime chunk whether or not you use
-   * next/font; nothing here is ever fetched, and adding them to the
-   * policy would allow origins the site has no business talking to.
+   * site does not exercise. Next ships a table of font-provider URLs in
+   * its runtime whether or not anything fetches from them; next/font
+   * self-hosts at build, so nothing is ever fetched from Google.
    *
-   * Verify by grep before adding to this list rather than to a real
-   * directive — that is the difference between a declaration and a
-   * shrug.
+   * Verify by grep before adding here rather than to a real directive.
    */
   inert: [
     "https://fonts.googleapis.com",
@@ -178,26 +153,10 @@ export const INTEGRATIONS = {
 
   /**
    * Origins this site opens a TCP+TLS connection to and then never asks
-   * for anything.
-   *
-   * A <link rel="preconnect"> performs the handshake and stops. No
-   * request is issued, so no fetch directive governs it — connect-src
-   * does not apply, and adding one of these there would be a false
-   * statement in the policy: it would permit fetches this document must
-   * never make.
-   *
-   * They still belong somewhere visible, because a preconnect is a real
-   * disclosure of the visitor's IP to a third party. Warm one only
-   * behind cookie consent, and only when an embed genuinely fetches
-   * from it once it loads — a preconnect to anywhere else is a
-   * connection opened for nothing.
+   * for anything (<link rel="preconnect">). None today: BookingEmbed
+   * preconnects to cal.com, which is already in `frame`.
    */
-  preconnectOnly: [
-    // The booking embed's JS and CSS. Our document never fetches it;
-    // the iframe does, under the scheduler's own policy rather than
-    // this one. See SCHEDULERS in lib/booking.ts.
-    "https://assets.calendly.com",
-  ],
+  preconnectOnly: [],
 };
 
 const LINK_ONLY = new Set(INTEGRATIONS.linkOnly);
@@ -205,26 +164,14 @@ const INERT = new Set(INTEGRATIONS.inert);
 const PRECONNECT_ONLY = new Set(INTEGRATIONS.preconnectOnly);
 
 /** `directive 'self' a b c`, with the empties dropped. */
-const list = (name, ...parts) =>
-  [name, ...parts.flat().filter(Boolean)].join(" ");
+const list = (name, ...parts) => [name, ...parts.flat().filter(Boolean)].join(" ");
 
 export function buildCsp(env = process.env) {
-  // Only the endpoints this build actually points at. Reading them
-  // from the environment is what keeps a policy generated on a laptop
-  // from forbidding the Worker a production build talks to.
-  const extra = [
-    env.NEXT_PUBLIC_CAREERS_ENDPOINT, // the résumé upload Worker
-    env.NEXT_PUBLIC_LEAD_WEBHOOK_URL, // optional CRM copy
-    env.NEXT_PUBLIC_FORM_ENDPOINT, // only when overriding the form host
-  ]
-    .map((u) => origin(u ?? ""))
-    .filter(Boolean);
-
-  const connect = [
-    "'self'",
-    ...INTEGRATIONS.connect,
-    ...new Set(extra),
-  ];
+  // The intake endpoint is same-origin, so no build-time origins are
+  // added here. If an endpoint ever moves off-origin, read its URL from
+  // `env` and append the origin, as the template did.
+  void env;
+  const connect = ["'self'", ...INTEGRATIONS.connect];
 
   return [
     "default-src 'self'",
@@ -234,12 +181,10 @@ export function buildCsp(env = process.env) {
     "style-src 'self' 'unsafe-inline'",
     // data: for the inlined SVG icons.
     list("img-src", "'self'", "data:", INTEGRATIONS.img),
-    "font-src 'self'", // Fontsource bundles them, nothing external
+    "font-src 'self'", // next/font self-hosts at build, nothing external
     list("media-src", "'self'", INTEGRATIONS.media),
     connect.join(" ").replace(/^/, "connect-src "),
-    ...(INTEGRATIONS.frame.length
-      ? [list("frame-src", INTEGRATIONS.frame)]
-      : ["frame-src 'none'"]),
+    ...(INTEGRATIONS.frame.length ? [list("frame-src", INTEGRATIONS.frame)] : ["frame-src 'none'"]),
     "frame-ancestors 'none'",
     "base-uri 'self'",
     "form-action 'self'",
@@ -270,9 +215,7 @@ function originsInBuild(dir = "out") {
         continue;
       }
       if (!/\.(html|js|css|json|txt|xml)$/.test(name)) continue;
-      for (const m of readFileSync(p, "utf8").matchAll(
-        /https:\/\/[a-zA-Z0-9.-]+[a-zA-Z0-9]/g
-      )) {
+      for (const m of readFileSync(p, "utf8").matchAll(/https:\/\/[a-zA-Z0-9.-]+[a-zA-Z0-9]/g)) {
         const o = origin(m[0]);
         if (o) found.add(o);
       }
@@ -292,9 +235,7 @@ function originsInBuild(dir = "out") {
  * link-only above. Adding an embed now forces a decision here.
  */
 function checkDrift(csp) {
-  const allowed = new Set(
-    [...csp.matchAll(/https:\/\/[a-zA-Z0-9.*-]+/g)].map((m) => m[0])
-  );
+  const allowed = new Set([...csp.matchAll(/https:\/\/[a-zA-Z0-9.*-]+/g)].map((m) => m[0]));
   const unaccounted = [...originsInBuild()].filter((o) => {
     if (LINK_ONLY.has(o) || INERT.has(o) || PRECONNECT_ONLY.has(o)) return false;
     if (allowed.has(o)) return false;

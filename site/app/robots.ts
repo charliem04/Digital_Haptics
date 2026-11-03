@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { client } from "@/client.config";
+import { site } from "@/site.config";
 import { IS_PREVIEW } from "@/lib/preview";
 
 export const dynamic = "force-static";
@@ -13,11 +13,10 @@ export default function robots(): MetadataRoute.Robots {
   }
 
   return {
-    // Everything published here is content. The gallery editor used to
-    // live at /admin/ and was disallowed from here; it is a hosted
-    // studio on Sanity's own domain now, so there is nothing on this
-    // origin to keep a crawler out of.
+    // Flagged and not-yet-live pages aren't emitted at all, and the
+    // pages that exist but shouldn't be indexed carry noindex, so there
+    // is nothing to disallow here.
     rules: { userAgent: "*", allow: "/" },
-    sitemap: `${client.siteUrl}/sitemap.xml`,
+    sitemap: `${site.url}/sitemap.xml`,
   };
 }

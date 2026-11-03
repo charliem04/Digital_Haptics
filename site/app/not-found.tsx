@@ -1,58 +1,35 @@
 import Link from "next/link";
-import { client } from "@/client.config";
-import { getServices } from "@/lib/content";
-import { btn } from "@/components/Button";
+import type { Metadata } from "next";
+import { robotsFor } from "@/lib/meta";
 
-export const metadata = {
-  title: `Page not found | ${client.businessName}`,
+export const metadata: Metadata = {
+  title: "Page not found",
+  robots: robotsFor(false),
 };
 
 /**
- * A 404 that does the one useful thing a 404 can: hand back the routes
- * that do exist, and the phone number, since a fair share of the people
- * who land here were trying to reach someone.
+ * PHASE 0 PLACEHOLDER. The on-brand 404 (terminal-style NOT_FOUND label
+ * in a cut-corner frame, links to Home / Work / Start) is built in
+ * Phase 5 (PLAN §5). Work and Start are added here as they go live;
+ * scripts/routes.mjs fails the build on a link to a page that doesn't
+ * exist yet.
+ *
+ * Cloudflare Pages serves out/404.html with a real 404 status, which is
+ * also what a flagged route returns while its flag is off.
  */
 export default function NotFound() {
-  // A <section>, not a <main>: app/layout.tsx already provides the main
-  // landmark, and a document with two of them is invalid — assistive
-  // tech loses the "skip to main" target it relies on.
   return (
-    <section className="on-deep flex min-h-[70vh] items-center bg-surface-deep text-ink-invert-soft">
-      <div className="section py-20">
-        <p className="u-label text-accent">Error 404</p>
-        <h1 className="mt-4 max-w-[18ch] text-display-2 text-ink-invert">
-          That page isn’t here
-        </h1>
-        <p className="mt-4 max-w-[52ch] text-lg">
-          It may have moved, or the link may be wrong. If you were trying to
-          reach us, the fastest route is the phone.
-        </p>
-
-        <div className="mt-8 flex flex-wrap gap-2.5">
-          <Link href="/" className={btn("gold")}>
-            Back to the home page
-          </Link>
-          <a href={`tel:${client.phoneHref}`} className={btn("lineDeep")}>
-            Call {client.phone}
-          </a>
-        </div>
-
-        <nav aria-label="Where to go instead" className="mt-12 border-t border-line-dark/20 pt-6">
-          <p className="u-label">What we do</p>
-          <ul className="mt-4 flex flex-wrap gap-x-8 gap-y-2 p-0">
-            {getServices().map((s) => (
-              <li key={s.slug} className="list-none">
-                <Link
-                  href={s.meta.path}
-                  className="text-ink-invert-soft no-underline transition-colors duration-150 hover:text-accent active:text-accent-press"
-                >
-                  {s.navLabel}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      </div>
+    <section className="page-x section-y">
+      <p className="font-mono text-label uppercase tracking-label-lg text-steel">NOT_FOUND</p>
+      <h1 className="mt-4 font-display text-display-sm font-semibold uppercase">
+        That page isn&rsquo;t here.
+      </h1>
+      <Link
+        href="/"
+        className="mt-8 inline-flex min-h-button items-center gap-3 bg-signal px-6 font-mono text-label-lg font-medium uppercase tracking-label-sm text-ink"
+      >
+        Back to home <span aria-hidden>↘</span>
+      </Link>
     </section>
   );
 }

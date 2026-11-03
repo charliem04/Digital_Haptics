@@ -2,7 +2,7 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "white-label-dev",
+      "name": "site-dev",
       "runtimeExecutable": "npm",
       "runtimeArgs": [
         "--prefix",

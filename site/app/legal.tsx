@@ -1,23 +1,20 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { client } from "@/client.config";
+import { site } from "@/site.config";
 
-/** Shared shell for legal pages. */
-export function LegalPage({
-  title,
-  children,
-}: {
-  title: string;
-  children: ReactNode;
-}) {
+/** Shared shell for legal pages. Restyled in Phase 5. */
+export function LegalPage({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <div className="mx-auto max-w-3xl px-5 py-16 sm:px-8">
-      <Link href="/" className="text-sm font-medium text-brand">
-        ← Back to {client.businessName}
-      </Link>
-      <h1 className="mt-6 text-3xl font-bold tracking-tight">{title}</h1>
-      <div className="prose-legal mt-8 space-y-5 leading-relaxed [&_h2]:mt-8 [&_h2]:text-2xl [&_h2]:font-bold">
-        {children}
+    <div className="page-x section-y">
+      <div className="max-w-3xl">
+        <Link
+          href="/"
+          className="inline-flex min-h-touch items-center font-mono text-label uppercase tracking-label text-ink"
+        >
+          ← Back to {site.name}
+        </Link>
+        <h1 className="mt-6 font-display text-heading font-semibold">{title}</h1>
+        <div className="mt-8 space-y-5">{children}</div>
       </div>
     </div>
   );

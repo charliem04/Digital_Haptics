@@ -1,60 +1,33 @@
-import { Hero } from "@/components/Hero";
-import { Services } from "@/components/Services";
-import { About } from "@/components/About";
-import { Testimonials } from "@/components/Testimonials";
-import { Gallery } from "@/components/Gallery";
-import { Contact } from "@/components/Contact";
-import { ScrollProgress } from "@/components/ScrollProgress";
-import { CtaBand } from "@/components/CtaBand";
-import { client } from "@/client.config";
+import { flags } from "@/lib/flags";
 
 /**
- * ════════════════════════════════════════════════════════════════════
- *  HOME. The one page you are expected to rework per client. It ships
- *  the template's own bands — Hero, Services, About, Testimonials —
- *  over the gallery, the request sheet and the closing ask. Bands with
- *  nothing to show (no testimonials, no featured photos) render
- *  nothing, so the page is honest before the client's content lands.
+ * PHASE 0 PLACEHOLDER. The real home page (PLAN §5) is built in
+ * Phase 3. This exists so the build has a page, and doubles as a check
+ * that the fonts, tokens and flag wiring work.
  *
- *  ── HOW TO ORDER THE BANDS ──────────────────────────────────────────
- *
- *  Band order is the sales conversation in order: what the business
- *  does, the product that needs the longest explanation, how a job
- *  runs, what it's built from, who's doing it, proof, and only then the
- *  ask. The site this template was extracted from ran nine bands in
- *  that order and converted on it.
- *
- *  Every band should carry its own way onward — a service card goes to
- *  that service — so a visitor never has to go back up to the nav to
- *  follow the thread they are already on.
- *
- *  The CTAs go to /contact/ rather than out to a calendar: that page
- *  carries the phone, the request form and the booking embed, so it
- *  answers whichever way in the visitor actually wanted rather than
- *  assuming they had already decided. See CTA_HREF in lib/routes.ts.
- *
- *  Wrap each band's contents in <Reveal> / <RevealText> so it inherits
- *  the motion system in lib/motion.ts rather than inventing timings.
- * ════════════════════════════════════════════════════════════════════
+ * Copy is verbatim from PLAN §5 (hero, both flag states). Nothing here
+ * is invented.
  */
+const hero = flags.automations
+  ? {
+      label: "( 01 ) — WEB DESIGN · LOCAL SEO · AUTOMATIONS — ACADIANA, LA",
+      subline:
+        "Design, local SEO and lead automations for trades businesses. Built to load fast, rank locally and follow up with every lead automatically.",
+    }
+  : {
+      label: "( 01 ) — WEB DESIGN · LOCAL SEO — ACADIANA, LA",
+      subline:
+        "Design and local SEO for trades businesses. Built to load fast, rank locally and turn visitors into calls.",
+    };
+
 export default function Home() {
   return (
-    <>
-      <ScrollProgress />
-      <Hero />
-      <Services />
-      <About />
-      <Testimonials />
-      {/* TODO(client): the bands that make this client's argument —
-          process, materials, proof — go between Services and the ask. */}
-      <Gallery />
-      <Contact />
-      <CtaBand
-        cta={{
-          heading: client.copy.closingHeading,
-          body: client.copy.closingBody,
-        }}
-      />
-    </>
+    <section className="page-x section-y flex flex-col gap-[26px]">
+      <p className="font-mono text-label uppercase tracking-label-lg text-steel">{hero.label}</p>
+      <h1 className="font-display text-display font-semibold uppercase">
+        Websites that book the job.
+      </h1>
+      <p className="max-w-lede text-body-lg text-steel-deep">{hero.subline}</p>
+    </section>
   );
 }
