@@ -78,7 +78,7 @@ const SECRET_PATTERNS = [
   [/\bey[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}/, "a JWT"],
   [/\bAIza[0-9A-Za-z_-]{35}\b/, "a Google API key"],
   // A Resend API key: the intake endpoint's email credential (Phase 4).
-  // It belongs to the Pages Function and must never reach out/.
+  // It belongs to the Worker and must never reach out/.
   [/re_[A-Za-z0-9]{8,}_[A-Za-z0-9]{16,}/, "a Resend API key"],
 ];
 
@@ -94,10 +94,24 @@ const SECRET_PATTERNS = [
  * their values are "true"/"false", which the length floor already
  * skips, so they need no entry.
  */
-const PUBLIC_BUILD_VARS = new Set([]);
+const PUBLIC_BUILD_VARS = new Set([
+  // Build metadata that Cloudflare sets on every build. The Worker's
+  // name is "digitalhaptics", which is also in every canonical URL
+  // (https://digitalhaptics.dev), so without these the check fails on
+  // the site's own domain. Listed by exact name rather than by prefix:
+  // Workers Builds also injects CLOUDFLARE_API_TOKEN, which must stay
+  // checked.
+  "WRANGLER_CI_OVERRIDE_NAME",
+  "WORKERS_CI_BRANCH",
+  "WORKERS_CI_COMMIT_SHA",
+  "WORKERS_CI_BUILD_UUID",
+  "CF_PAGES_BRANCH",
+  "CF_PAGES_COMMIT_SHA",
+]);
 
 /** Secrets of this stack. Adding one to PUBLIC_BUILD_VARS fails loudly. */
 const MUST_STAY_SECRET = [
+  "CLOUDFLARE_API_TOKEN",
   "RESEND_API_KEY",
   "TURNSTILE_SECRET_KEY",
   "AUTOMATIONS_WEBHOOK_URL",

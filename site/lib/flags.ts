@@ -14,10 +14,10 @@
  *  "TRUE" or anything else is off, so a misconfigured environment never
  *  exposes unfinished features.
  *
- *  Turning a flag on in Cloudflare Pages: set it under Settings →
- *  Environment variables (Preview first, then Production) and redeploy.
- *  With intake as a Pages Function (decision D1), the same variable
- *  also reaches the endpoint, so there is one switch per environment.
+ *  Turning a flag on: Cloudflare → the digitalhaptics Worker →
+ *  Settings → Build → Variables and secrets, then rebuild. Phase 4
+ *  inlines the same value into the intake endpoint, so there is one
+ *  switch (REFACTOR_AUDIT C17).
  * ════════════════════════════════════════════════════════════════════
  */
 

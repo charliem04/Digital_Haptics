@@ -351,7 +351,7 @@ The border technique matches the mockup: an outer layer filled `ink` with `paddi
 | C14 | Motion: the template ships Lenis, pinning, parallax, a page-wipe and masked headline reveals. PLAN §4.6 forbids scroll-jacking, content parallax and anything that delays reading. | Delete those. Keep `Reveal` (8–16px), `useStillness`, the easing token, and add flare pulse, lead-flow sequence and arrow nudge, all off under reduced motion. |
 | C15 | Sticky CTA: the template's is Call/Text/Book. PLAN's is a single "Start a Project ↘", hidden on `/start`. | Follow PLAN. |
 | C16 | PLAN §8 says Cloudflare Web Analytics **plus custom conversion events**. Cloudflare Web Analytics has no custom-event API. | Needs a decision: **D2**. |
-| C17 | Feature flags live in two runtimes: the Pages build (UI) and the endpoint (webhook forward, SMS consent handling). | With **D1 = Pages Functions** this is one setting per Pages environment. With a standalone Worker, `FEATURE_AUTOMATIONS` has to be set in **both** places, and the Phase 7 checklist must say so. |
+| C17 | Feature flags live in two runtimes: the build (UI) and the endpoint (webhook forward, SMS consent handling). | **Revised with D1:** Workers Builds has build variables separate from runtime variables, so Phase 4 inlines the flags into the Worker at build time to keep one switch. Originally: with Pages Functions this is one setting per Pages environment. With a standalone Worker, `FEATURE_AUTOMATIONS` has to be set in **both** places, and the Phase 7 checklist must say so. |
 | C18 | Git remote `origin` is `github.com/charliem04/Digital_Haptics`. Your brief says never push to the **template's** remote. | This looks like the new site's own repo, not the template. Please confirm. I won't push in any phase unless you ask. |
 
 ---
@@ -387,7 +387,7 @@ Each has a default. Reply "approved" to take all defaults, or name the ones to c
 
 | # | Decision | Default |
 |---|---|---|
-| D1 | Intake endpoint: **Pages Functions** (same-origin, per-environment D1 and flags, no cron) or the **standalone Worker** the template uses (has cron retries; needs CORS allow-list and flags set in two places)? | **Pages Functions**, port the relay's code and tests, retries via a later cron Worker if needed |
+| D1 | **Revised 2026-11-03 → Worker with static assets** (see below). Original: intake endpoint: **Pages Functions** (same-origin, per-environment D1 and flags, no cron) or the **standalone Worker** the template uses (has cron retries; needs CORS allow-list and flags set in two places)? | **Pages Functions**, port the relay's code and tests, retries via a later cron Worker if needed |
 | D2 | Custom conversion events, since Cloudflare Web Analytics can't record them: (a) post them to our own endpoint into Workers Analytics Engine; (b) add a cookieless tool such as Plausible; (c) pageviews only. | **(a)** own endpoint → Analytics Engine, with an `// OPEN:` comment |
 | D3 | Cookie banner: drop it (CF Web Analytics is cookieless; Cal.com sits behind a click-to-load facade) or keep it? | **Drop it**, keep the facade |
 | D4 | Flare node shape: circle (mockup) or square (zero-radius rule)? | **Circle**, documented exception |
@@ -403,7 +403,24 @@ Also please confirm C18: `origin` is your new repo, not the template's.
 - **C1 resolved by you:** the reference is unzipped at `docs/design-reference/digital-haptics-design-system/`. I diffed it against the copy this audit was written from and it is identical. CLAUDE.md now points there.
 - **Nav, Footer and StickyCTA were deleted, not adapted in place.** Moving to `site.config.ts` removed most of what they read (logo image, phone CTA, urgent line, dropdowns), so keeping them compiling meant rewriting them twice. Phase 2 rebuilds them; the registry-driven link logic and Escape/outside-click handling are worth porting back from commit `838aaa8`.
 - **Contact.tsx, Button.tsx, Icon.tsx, the services pages and `content/services.ts` were deleted early** for the same reason. Their replacements land in Phases 1 and 3. `Contact.tsx`'s honeypot, `dialable()` check and failure copy are in `838aaa8` for Phase 3–4 reference.
-- **`workers/lead-relay` was left intact** rather than trimmed. With D1 = Pages Functions, Phase 4 ports its logic and tests into `site/functions/` and retires the standalone Worker, so cutting the careers routes now was churn on code about to be replaced. `workers/careers-upload` was deleted as planned; its `verifyTurnstile()` is in `838aaa8` for the Phase 4 port.
+- **`workers/lead-relay` was left intact** rather than trimmed. With D1 = one Worker (revised, below), Phase 4 ports its logic and tests into that Worker's entry point and retires the standalone relay, so cutting the careers routes now was churn on code about to be replaced. `workers/careers-upload` was deleted as planned; its `verifyTurnstile()` is in `838aaa8` for the Phase 4 port.
 - **`scripts/check.mjs` was kept but not tuned yet** (R11); that happens in Phase 1.
 - **Prettier was applied repo-wide in its own commit** (R10), so `format:check` runs in CI from Phase 0 on and the substantive commit stays readable.
 - **Fonts moved to `next/font/local` after Phase 0 (your call, 2026-11-02).** This supersedes C3 and R5. Next 14's Google loader crashed 2 of 5 builds on an unexpected Google Fonts response, so the four WOFF2 files (Google's latin subsets: Chakra Petch 600 and 700, Manrope variable, JetBrains Mono variable) and their OFL licenses are committed in `site/app/fonts/`. Builds no longer need network access for fonts, and the runtime result is unchanged.
+
+## 9. D1 revised: Cloudflare Workers instead of Pages (2026-11-03)
+
+Approved in chat after Phase 0 merged. One Worker (`digitalhaptics`) serves the static export as assets and, from Phase 4, the intake endpoint.
+
+**Why:** Cloudflare puts new platform work into Workers and recommends it for new projects. This site needs cron triggers (retries, digests), and the automations webhook is best on Queues. Pages Functions lack the first and make the second awkward. One Worker also hosts D1, Analytics Engine (D2) and the relay port without a second project.
+
+**What changed in the repo (branch `refactor/workers`):**
+- `site/wrangler.jsonc`: assets from `out/`, `not_found_handling: "404-page"` (flagged routes stay real 404s, R2), `html_handling: "auto-trailing-slash"`. `wrangler` is pinned as a devDependency.
+- `scripts/is-preview.mjs` reads `WORKERS_CI_BRANCH` (keeps `CF_PAGES_BRANCH` as a fallback).
+- `scripts/harden.mjs`: Cloudflare's build metadata (`WRANGLER_CI_OVERRIDE_NAME` and friends) is declared public. The Worker's name, "digitalhaptics", is in every canonical URL, so the leak check fired on the site's own domain. `CLOUDFLARE_API_TOKEN` was added to the must-stay-secret list.
+- `_headers`: **Workers applies only the last of several rules with the same pattern; Pages merged them.** The CSP and preview blocks used to be separate `/*` rules appended to the file, which would have silently dropped HSTS, nosniff and the rest. `scripts/headers-file.mjs` now adds generated headers inside the single `/*` rule. Verified with `wrangler dev`.
+
+**Phase 4 must handle:**
+- **Preview versions share production's runtime bindings.** On Pages, Preview had its own D1 and variables; a Worker preview version uses the same D1 database and secrets as production. The intake endpoint has to keep preview submissions out of the production table (separate D1 binding selected at build, or refuse writes when the build is a preview).
+- Flags reach the endpoint by build-time inlining (C17).
+
