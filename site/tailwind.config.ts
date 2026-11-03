@@ -133,12 +133,18 @@ const config: Config = {
       // compositor. Curve = ease.inOut in lib/motion.ts. Use it as
       // `motion-safe:animate-flare-pulse` so reduced motion never runs it.
       keyframes: {
+        // Mobile menu opening: a quick fade (dur.quick, ease.out).
+        "menu-in": {
+          from: { opacity: "0" },
+          to: { opacity: "1" },
+        },
         "flare-pulse": {
           "0%, 100%": { opacity: "1" },
           "50%": { opacity: "0.7" },
         },
       },
       animation: {
+        "menu-in": "menu-in 250ms cubic-bezier(0.21, 0.65, 0.36, 1)",
         "flare-pulse": "flare-pulse 4.8s cubic-bezier(0.65, 0, 0.35, 1) infinite",
       },
       transitionTimingFunction: {

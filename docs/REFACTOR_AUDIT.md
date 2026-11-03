@@ -444,3 +444,27 @@ Approved in chat after Phase 0 merged. One Worker (`digitalhaptics`) serves the 
 - **Utility conflicts:** a component's default position or padding class can't be overridden by a caller's class, because Tailwind order decides, not class order. HeroSidebar no longer sets its own position. Overrides use `!` where needed.
 - **Sidebar blurbs and lead-flow rows** are the mockup's copy verbatim (`data/acts.ts`, `data/leadFlow.ts`). Logged in CONTENT_TODO.md for your sign-off.
 
+## 11. Phase 2 record (layout shell, branch `refactor/phase-2`)
+
+**Built:**
+- `components/layout/`:
+  - SkipLink.
+  - Header: server; HeaderView renders whatever it's given; NavLinks is the client part.
+  - MobileMenu: native modal `<dialog>`.
+  - Footer and FooterView: ink slab.
+  - StickyCta.
+  - Container and Section.
+- `lib/nav.ts`: plain, flag-filtered link data built from the route registry.
+- All of it is mounted in `app/layout.tsx`: skip link → header → `<main id="main">` → footer → sticky CTA.
+
+**Decisions:**
+- **Live links only.** Header, menu, footer and sticky CTA read `lib/nav.ts`, which includes a page only when its registry entry is `live` (and its flag is on), so no phase ships a dead link. Today that means the header is the logo plus the menu button, the footer has cities (as text), contact and legal links, and the sticky CTA waits for `/start`. Everything fills in as Phase 3 flips pages live, with no edits here.
+- **No flagged copy in client JavaScript.** Client parts (NavLinks, MobileMenu, StickyCta) receive links as props and never import the registry, which names flagged pages.
+- **Styleguide shows the full nav.** HeaderView and FooterView are rendered with every registry item, flag-filtered, hrefs pointed at `/`, so the shell can be reviewed before the pages exist.
+- **Mobile menu = `<dialog>.showModal()`** gives the focus move, Tab containment, inert page and Escape from the browser, and returns focus to the trigger on close. It also closes on navigation, on a link to the current page, and when widening to lg. Page scroll is locked while open. Verified with real key presses.
+- **Header is not sticky.** On mobile the sticky CTA covers PLAN §1's "one click from Start a Project". On desktop the header is at the top. Revisit in Phase 3 if wanted.
+- **Home-page header inset is Phase 3.** The mockup's sidebar starts at the top of the page, so on `/` at xl the header needs a 384px right inset and drops its CTA (the rail has one). It's left for the home page build.
+- **Footer contrast:** ice on ink 16.5:1; secondary text is ice/70 (about 9:1). Link hover goes signal, allowed on ink (6.24:1). Links are 44px tall; the cities are plain text until their pages are live.
+- **Sticky CTA** is 56px plus a 1px rule, padded for the iPhone home indicator. A same-height ink spacer after the footer keeps it from covering the last links. Verified at 375.
+- **Copyright** reads `© {year} {legalName}` (currently Charles Meyers) and switches automatically when the LLC name goes into `site.config.ts`.
+

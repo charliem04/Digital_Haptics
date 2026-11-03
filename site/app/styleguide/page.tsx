@@ -22,6 +22,12 @@ import { CaseCard } from "@/components/CaseCard";
 import { HeroSidebar } from "@/components/HeroSidebar";
 import { LeadFlowPanel } from "@/components/LeadFlowPanel";
 import { ChipDemo } from "@/components/styleguide/ChipDemo";
+import { HeaderView } from "@/components/layout/Header";
+import { FooterView } from "@/components/layout/Footer";
+import { contactLinks, footerData, type NavLink } from "@/lib/nav";
+import { isOn } from "@/lib/flags";
+import { nav } from "@/lib/routes";
+import { site } from "@/site.config";
 
 /**
  * ════════════════════════════════════════════════════════════════════
@@ -45,6 +51,23 @@ export const metadata = pageMetadata(
 );
 
 const TRADES = ["Roofing", "Plumbing", "HVAC", "Contractors", "Dirt work"];
+
+/**
+ * The full header nav as it will look once every page is live, with
+ * flagged items still filtered by this build's flags. Every href is "/"
+ * because the real pages don't exist yet (the build fails on dead
+ * links). Styleguide only.
+ */
+const DEMO_LINKS: NavLink[] = nav
+  .filter((n) => isOn(n.flag))
+  .map((n) => ({
+    href: "/",
+    label: n.label,
+    children: (n.children ?? [])
+      .filter((c) => isOn(c.flag))
+      .map((c) => ({ href: "/", label: c.label })),
+  }));
+const DEMO_CTA = { href: "/", label: site.cta.label };
 
 const COLORS: { token: string; hex: string; use: string; note: string; dark?: boolean }[] = [
   { token: "ice", hex: "#E4EEF4", use: "Page ground, dot grid", note: "ink 16.5:1" },
@@ -513,9 +536,34 @@ export default function StyleguidePage() {
         </Specimen>
       </div>
 
+      <section aria-labelledby="sg-shell" className="flex flex-col gap-8">
+        <div className="page-x flex flex-col gap-3 border-t border-ink pt-10">
+          <SectionLabel index={13}>Layout shell</SectionLabel>
+          <h2 id="sg-shell" className="font-display text-heading font-semibold">
+            Header, menu and footer
+          </h2>
+          <p className="max-w-[680px] text-body-sm text-steel">
+            With every nav item, as it will look once the pages exist (these demo links all go
+            home). The real header and footer on this page show only live pages. Below 1024px the
+            demo header&rsquo;s menu button opens the full-screen menu: Escape closes it.
+          </p>
+        </div>
+        <div className="border-y border-ink">
+          <HeaderView links={DEMO_LINKS} cta={DEMO_CTA} contact={contactLinks()} />
+        </div>
+        <FooterView
+          data={{
+            ...footerData(),
+            site: [...DEMO_LINKS.map(({ label }) => ({ href: "/", label })), DEMO_CTA],
+            services: DEMO_LINKS.flatMap((l) => l.children ?? []),
+          }}
+          cta={DEMO_CTA}
+        />
+      </section>
+
       <section aria-labelledby="sg-hero" className="flex flex-col gap-8">
         <div className="page-x flex flex-col gap-3 border-t border-ink pt-10">
-          <SectionLabel index={13}>Assembly</SectionLabel>
+          <SectionLabel index={14}>Assembly</SectionLabel>
           <h2 id="sg-hero" className="font-display text-heading font-semibold">
             Hero assembly
           </h2>
