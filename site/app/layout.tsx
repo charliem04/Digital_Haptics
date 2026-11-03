@@ -4,6 +4,11 @@ import "./globals.css";
 import { site } from "@/site.config";
 import { IS_PREVIEW } from "@/lib/preview";
 import { JsonLd } from "@/components/JsonLd";
+import { SkipLink } from "@/components/layout/SkipLink";
+import { Header } from "@/components/layout/Header";
+import { Footer } from "@/components/layout/Footer";
+import { StickyCta } from "@/components/layout/StickyCta";
+import { ctaLink } from "@/lib/nav";
 
 /*
  * Fonts (PLAN §4.2), committed in app/fonts/ and loaded with
@@ -70,13 +75,14 @@ export const metadata: Metadata = {
 };
 
 /**
- * Root layout. The header, mobile menu, footer and mobile sticky CTA
- * mount here in Phase 2, so no page can ship without them.
+ * Root layout: the shell every page gets (PLAN §9 Phase 2). Skip link,
+ * header with mobile menu, <main>, footer, mobile sticky CTA. Mounted
+ * here so no page can ship without them.
  */
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${display.variable} ${body.variable} ${mono.variable}`}>
-      <body>
+      <body className="flex min-h-dvh flex-col">
         {/*
           Framer serialises each entrance's starting state into the HTML
           as style="opacity:0". With JavaScript off or failed, that would
@@ -92,7 +98,15 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             }}
           />
         </noscript>
-        <main>{children}</main>
+        <SkipLink />
+        <Header />
+        {/* tabIndex -1: the skip link's target must take focus. No ring: it's
+            the whole page, focused only by the skip link. deliberate-ignore outline-none */}
+        <main id="main" tabIndex={-1} className="flex-1 focus:shadow-none focus:outline-none">
+          {children}
+        </main>
+        <Footer />
+        <StickyCta cta={ctaLink()} />
         <JsonLd />
       </body>
     </html>
