@@ -165,9 +165,7 @@ function run({ write = true } = {}) {
   /* ── The document ───────────────────────────────────────────────── */
 
   const rows = (links) =>
-    links
-      .map((l) => `| ${l.text.replace(/\|/g, "\\|")} | \`${l.href}\` | ${l.kind} |`)
-      .join("\n");
+    links.map((l) => `| ${l.text.replace(/\|/g, "\\|")} | \`${l.href}\` | ${l.kind} |`).join("\n");
 
   const totals = [...perPage.values()].flat();
   const byKind = totals.reduce((acc, l) => ((acc[l.kind] = (acc[l.kind] ?? 0) + 1), acc), {});

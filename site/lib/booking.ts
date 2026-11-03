@@ -51,7 +51,9 @@ export function bookingOrigins(): string[] {
 export function schedulerName(): string {
   if (!bookingUrl) return "";
   const origin = originOf(bookingUrl);
-  return SCHEDULERS[origin]?.name ?? (origin ? new URL(origin).hostname : "a third-party scheduler");
+  return (
+    SCHEDULERS[origin]?.name ?? (origin ? new URL(origin).hostname : "a third-party scheduler")
+  );
 }
 
 /** The URL the iframe loads: the booking URL plus the provider's params. */

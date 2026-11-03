@@ -23,9 +23,7 @@ const hero = flags.automations
 export default function Home() {
   return (
     <section className="page-x section-y flex flex-col gap-[26px]">
-      <p className="font-mono text-label uppercase tracking-label-lg text-steel">
-        {hero.label}
-      </p>
+      <p className="font-mono text-label uppercase tracking-label-lg text-steel">{hero.label}</p>
       <h1 className="font-display text-display font-semibold uppercase">
         Websites that book the job.
       </h1>

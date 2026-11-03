@@ -63,9 +63,7 @@ export const metadata: Metadata = {
  * Root layout. The header, mobile menu, footer and mobile sticky CTA
  * mount here in Phase 2, so no page can ship without them.
  */
-export default function RootLayout({
-  children,
-}: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${display.variable} ${body.variable} ${mono.variable}`}>
       <body>

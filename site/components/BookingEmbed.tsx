@@ -111,7 +111,7 @@ export function BookingEmbed() {
           io.disconnect();
         }
       },
-      { rootMargin: MOUNT_MARGIN },
+      { rootMargin: MOUNT_MARGIN }
     );
     io.observe(el);
     return () => io.disconnect();
@@ -123,18 +123,17 @@ export function BookingEmbed() {
 
   if (!allowed) {
     return (
-      <div
-        ref={boxRef}
-        className="border border-dashed border-ink bg-frost p-8 text-center"
-      >
-        <p className="font-mono text-label uppercase tracking-label-lg text-steel">Booking calendar</p>
+      <div ref={boxRef} className="border border-dashed border-ink bg-frost p-8 text-center">
+        <p className="font-mono text-label uppercase tracking-label-lg text-steel">
+          Booking calendar
+        </p>
         {/* Named, not "a scheduling service": agreeing to a third party
             the visitor cannot identify is not agreement, and /privacy/
             names the same one — both read schedulerName() from
             lib/booking.ts, so swapping bookingUrl renames it in both. */}
         <p className="mx-auto mt-3 max-w-[46ch]">
-          The calendar is hosted by {schedulerName()}, which sets its own cookies.
-          Load it here, or open it in a new tab — your choice.
+          The calendar is hosted by {schedulerName()}, which sets its own cookies. Load it here, or
+          open it in a new tab — your choice.
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-2.5">
           <button

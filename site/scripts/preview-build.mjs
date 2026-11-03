@@ -36,9 +36,7 @@ try {
   // correct under npm, pnpm and yarn layouts alike.
   nextBin = require.resolve("next/dist/bin/next");
 } catch {
-  console.error(
-    "[preview] Cannot find Next. Run `npm install` in site/ first."
-  );
+  console.error("[preview] Cannot find Next. Run `npm install` in site/ first.");
   process.exit(1);
 }
 
@@ -77,6 +75,4 @@ if (build.status !== 0) {
  * env values against the output, and handing it this script's own
  * NEXT_PUBLIC_PREVIEW would be a variable production never sees.
  */
-process.exit(
-  applyCsp() && checkSeo() && applyPreviewHeaders() && harden() ? 0 : 1
-);
+process.exit(applyCsp() && checkSeo() && applyPreviewHeaders() && harden() ? 0 : 1);

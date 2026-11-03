@@ -43,7 +43,10 @@ type RevealAs = "div" | "li" | "figure";
  */
 type RevealVariant = "rise" | "riseSm" | "fade";
 
-const VARIANTS: Record<RevealVariant, { from: Record<string, number>; to: Record<string, number> }> = {
+const VARIANTS: Record<
+  RevealVariant,
+  { from: Record<string, number>; to: Record<string, number> }
+> = {
   rise: { from: { opacity: 0, y: travel.md }, to: { opacity: 1, y: 0 } },
   riseSm: { from: { opacity: 0, y: travel.sm }, to: { opacity: 1, y: 0 } },
   fade: { from: { opacity: 0 }, to: { opacity: 1 } },

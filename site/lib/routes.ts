@@ -158,10 +158,7 @@ export function livePaths(): { path: string; priority: number }[] {
  * blog post) that the registry can't name: they hang off the longest
  * registered path that prefixes them.
  */
-export function trailFor(
-  path: string,
-  leafLabel?: string
-): { href: string; label: string }[] {
+export function trailFor(path: string, leafLabel?: string): { href: string; label: string }[] {
   const trail = [{ href: "/", label: "Home" }];
 
   const exact = find(path);

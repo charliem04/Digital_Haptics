@@ -55,7 +55,10 @@ function parse(text) {
     const eq = line.indexOf("=");
     if (eq === -1) continue;
 
-    const name = line.slice(0, eq).replace(/^export\s+/, "").trim();
+    const name = line
+      .slice(0, eq)
+      .replace(/^export\s+/, "")
+      .trim();
     if (!name) continue;
 
     let value = line.slice(eq + 1).trim();

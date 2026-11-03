@@ -31,8 +31,7 @@ export function MoreLink({
   // Same-page anchors and the home page are always reachable; anything
   // else has to be a live route in the registry.
   const path = href.split("#")[0];
-  const reachable =
-    external || path === "" || path === "/" || isLive(path);
+  const reachable = external || path === "" || path === "/" || isLive(path);
   if (!reachable) return null;
 
   // Signal is never text on a light ground (PLAN §4.1).

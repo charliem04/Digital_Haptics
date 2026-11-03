@@ -164,8 +164,7 @@ const INERT = new Set(INTEGRATIONS.inert);
 const PRECONNECT_ONLY = new Set(INTEGRATIONS.preconnectOnly);
 
 /** `directive 'self' a b c`, with the empties dropped. */
-const list = (name, ...parts) =>
-  [name, ...parts.flat().filter(Boolean)].join(" ");
+const list = (name, ...parts) => [name, ...parts.flat().filter(Boolean)].join(" ");
 
 export function buildCsp(env = process.env) {
   // The intake endpoint is same-origin, so no build-time origins are
@@ -185,9 +184,7 @@ export function buildCsp(env = process.env) {
     "font-src 'self'", // next/font self-hosts at build, nothing external
     list("media-src", "'self'", INTEGRATIONS.media),
     connect.join(" ").replace(/^/, "connect-src "),
-    ...(INTEGRATIONS.frame.length
-      ? [list("frame-src", INTEGRATIONS.frame)]
-      : ["frame-src 'none'"]),
+    ...(INTEGRATIONS.frame.length ? [list("frame-src", INTEGRATIONS.frame)] : ["frame-src 'none'"]),
     "frame-ancestors 'none'",
     "base-uri 'self'",
     "form-action 'self'",
@@ -218,9 +215,7 @@ function originsInBuild(dir = "out") {
         continue;
       }
       if (!/\.(html|js|css|json|txt|xml)$/.test(name)) continue;
-      for (const m of readFileSync(p, "utf8").matchAll(
-        /https:\/\/[a-zA-Z0-9.-]+[a-zA-Z0-9]/g
-      )) {
+      for (const m of readFileSync(p, "utf8").matchAll(/https:\/\/[a-zA-Z0-9.-]+[a-zA-Z0-9]/g)) {
         const o = origin(m[0]);
         if (o) found.add(o);
       }
@@ -240,9 +235,7 @@ function originsInBuild(dir = "out") {
  * link-only above. Adding an embed now forces a decision here.
  */
 function checkDrift(csp) {
-  const allowed = new Set(
-    [...csp.matchAll(/https:\/\/[a-zA-Z0-9.*-]+/g)].map((m) => m[0])
-  );
+  const allowed = new Set([...csp.matchAll(/https:\/\/[a-zA-Z0-9.*-]+/g)].map((m) => m[0]));
   const unaccounted = [...originsInBuild()].filter((o) => {
     if (LINK_ONLY.has(o) || INERT.has(o) || PRECONNECT_ONLY.has(o)) return false;
     if (allowed.has(o)) return false;

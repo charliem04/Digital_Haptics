@@ -43,6 +43,9 @@ export function JsonLd() {
   const pruned = Object.fromEntries(Object.entries(data).filter(([, v]) => isReal(v)));
 
   return (
-    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(pruned) }} />
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(pruned) }}
+    />
   );
 }

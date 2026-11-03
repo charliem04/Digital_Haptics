@@ -46,9 +46,7 @@ export function checkSeo() {
     const html = readFileSync(f, "utf8");
 
     const title = decode((html.match(/<title>([^<]*)<\/title>/) ?? [, ""])[1]);
-    const desc = decode(
-      (html.match(/<meta name="description" content="([^"]*)"/) ?? [, ""])[1]
-    );
+    const desc = decode((html.match(/<meta name="description" content="([^"]*)"/) ?? [, ""])[1]);
 
     if (!title) problems.push(`${path} has no <title>`);
     else if (title.length > MAX_TITLE)

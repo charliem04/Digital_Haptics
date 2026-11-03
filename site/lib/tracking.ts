@@ -23,10 +23,7 @@ declare global {
 
 export type ConversionEvent = "Call" | "Text" | "Book" | "Form submit";
 
-export function trackEvent(
-  event: ConversionEvent,
-  props: Record<string, string> = {}
-): void {
+export function trackEvent(event: ConversionEvent, props: Record<string, string> = {}): void {
   if (typeof window === "undefined") return;
   try {
     window.plausible?.(event, {

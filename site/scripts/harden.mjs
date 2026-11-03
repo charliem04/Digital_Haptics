@@ -106,9 +106,7 @@ const MUST_STAY_SECRET = [
 ];
 for (const name of MUST_STAY_SECRET) {
   if (PUBLIC_BUILD_VARS.has(name)) {
-    throw new Error(
-      `[harden] ${name} is a secret and cannot be listed in PUBLIC_BUILD_VARS.`
-    );
+    throw new Error(`[harden] ${name} is a secret and cannot be listed in PUBLIC_BUILD_VARS.`);
   }
 }
 

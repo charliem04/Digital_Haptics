@@ -37,30 +37,23 @@ export function FaqList({
       <h2 className="font-display text-heading font-semibold">{heading}</h2>
       {lede && <p className="mt-4 max-w-lede text-steel-deep">{lede}</p>}
       <div className="mt-10 border-t border-ink">
-          {faqs.map((f, i) => (
-            <details
-              key={f.q}
-              open={i === 0}
-              className="group border-b border-ink py-5"
-            >
-              <summary className="flex min-h-touch cursor-pointer list-none items-start justify-between gap-6 font-display text-subheading font-semibold text-ink">
-                {f.q}
-                <span
-                  aria-hidden
-                  className="mt-1 shrink-0 font-mono text-steel group-open:hidden"
-                >
-                  +
-                </span>
-                <span
-                  aria-hidden
-                  className="mt-1 hidden shrink-0 font-mono text-steel group-open:block"
-                >
-                  −
-                </span>
-              </summary>
-              <p className="mt-3 max-w-[68ch]">{f.a}</p>
-            </details>
-          ))}
+        {faqs.map((f, i) => (
+          <details key={f.q} open={i === 0} className="group border-b border-ink py-5">
+            <summary className="flex min-h-touch cursor-pointer list-none items-start justify-between gap-6 font-display text-subheading font-semibold text-ink">
+              {f.q}
+              <span aria-hidden className="mt-1 shrink-0 font-mono text-steel group-open:hidden">
+                +
+              </span>
+              <span
+                aria-hidden
+                className="mt-1 hidden shrink-0 font-mono text-steel group-open:block"
+              >
+                −
+              </span>
+            </summary>
+            <p className="mt-3 max-w-[68ch]">{f.a}</p>
+          </details>
+        ))}
       </div>
       <script
         type="application/ld+json"
