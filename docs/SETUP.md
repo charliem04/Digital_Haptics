@@ -36,7 +36,7 @@ Under **Settings** → **Build** → **Variables and secrets**. These are **buil
 | `FEATURE_AUTOMATIONS` | `false` | Hides the Automations page, copy and webhook (PLAN §2.1). |
 | `FEATURE_AUTOMATIONS_DEMO` | `false` | Hides the SMS demo. |
 | `FEATURE_VOICE` | `false` | Hides the AI voice section. |
-| `NODE_VERSION` | `20` | Matches `site/.nvmrc` and CI. |
+| `NODE_VERSION` | `22` | Matches `site/.nvmrc` and CI. Wrangler (the deploy step) refuses to run on anything older. |
 
 Notes:
 - **One set of variables covers every branch.** Workers Builds has no separate Preview list, and nothing here needs one.
