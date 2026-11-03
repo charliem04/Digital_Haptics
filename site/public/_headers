@@ -1,5 +1,7 @@
-# Cloudflare Pages response headers.
-# Rules are matched in order; the most specific match wins per header.
+# Response headers, served by Workers static assets.
+# Keep ONE /* rule: when several rules share a pattern, only the last
+# applies. scripts/csp.mjs and preview-headers.mjs add their headers
+# inside this block (scripts/headers-file.mjs).
 
 /*
   # Don't let a browser guess a MIME type we didn't send.
@@ -37,7 +39,7 @@
   Cache-Control: public, max-age=86400, must-revalidate
 
 # The Content-Security-Policy is NOT here — scripts/csp.mjs generates it
-# at build time and appends it to the copy of this file in out/, after
+# at build time and adds it to the /* rule in the copy of this file in out/, after
 # checking every origin the build references against it.
 #
 # That script also fails the build if the output references an origin

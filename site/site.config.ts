@@ -90,7 +90,7 @@ export const site = {
 
   // ── Intake form ───────────────────────────────────────────────────
   intake: {
-    /** Same-origin Pages Function (decision D1). Built in Phase 4. */
+    /** Same-origin, in the site Worker (decision D1, revised). Built in Phase 4. */
     endpoint: "/api/intake",
     /** Public half of the Turnstile key; the secret lives server-side. */
     turnstileSiteKey: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "",

@@ -13,8 +13,8 @@ const flag = (name) => (process.env[name] === "true" ? "true" : "false");
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Static export: `npm run build` emits ./out for Cloudflare Pages.
-  // The intake endpoint is a Pages Function beside it (decision D1),
+  // Static export: `npm run build` emits ./out, served by the Worker.
+  // The intake endpoint joins that Worker in Phase 4 (decision D1),
   // so no page needs a server runtime.
   output: "export",
   images: {

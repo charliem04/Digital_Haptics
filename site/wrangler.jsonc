@@ -1,0 +1,26 @@
+// Cloudflare Worker for digitalhaptics.dev (decision D1, revised
+// 2026-11-03: a Worker with static assets instead of Pages).
+//
+// Phase 0–3: static files only. `npm run build` writes the export to
+// out/, and Workers serves it, including out/_headers (CSP, HSTS) and
+// out/_redirects. Phase 4 adds "main" (the intake endpoint) and the
+// D1, Analytics Engine and secret bindings.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  // Must match the Worker's name in the dashboard. Workers Builds
+  // overrides it with the dashboard name anyway.
+  "name": "digitalhaptics",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./out",
+    // Unknown paths get out/404.html with a 404 status, which is how a
+    // flagged route stays a real 404 (PLAN §2.1).
+    "not_found_handling": "404-page",
+    // Matches next.config.mjs trailingSlash: /privacy → /privacy/.
+    "html_handling": "auto-trailing-slash",
+  },
+  // workers.dev and preview URLs stay on for review builds. Every
+  // non-main build is noindex (scripts/is-preview.mjs).
+  "workers_dev": true,
+  "preview_urls": true,
+}

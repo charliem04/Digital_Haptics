@@ -1,6 +1,6 @@
 /**
  * ════════════════════════════════════════════════════════════════════
- *  PREVIEW MODE — builds deployed to a *.pages.dev preview URL.
+ *  PREVIEW MODE — builds of any branch except main.
  *
  *  A preview must never compete with digitalhaptics.dev in search. In a
  *  preview build every page is noindex, robots.txt disallows
@@ -9,7 +9,7 @@
  *  they cost nothing.
  *
  *  Which builds count as previews: scripts/is-preview.mjs (any
- *  Cloudflare Pages branch except main, or NEXT_PUBLIC_PREVIEW=1).
+ *  Cloudflare branch build except main, or NEXT_PUBLIC_PREVIEW=1).
  *  next.config.mjs inlines the answer as SITE_PREVIEW.
  * ════════════════════════════════════════════════════════════════════
  */

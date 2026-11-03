@@ -29,7 +29,7 @@ jobs:
 
       - uses: actions/setup-node@v7
         with:
-          # The version Cloudflare Pages builds with.
+          # The version Cloudflare Workers Builds uses (NODE_VERSION).
           node-version-file: site/.nvmrc
           cache: npm
           cache-dependency-path: site/package-lock.json
@@ -55,7 +55,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # lead-relay stays until Phase 4 ports it to a Pages Function.
+        # lead-relay stays until Phase 4 ports it into the site Worker.
         worker: [lead-relay]
     defaults:
       run:

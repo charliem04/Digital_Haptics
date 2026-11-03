@@ -18,7 +18,7 @@ export const metadata: Metadata = {
  *  Describe what THIS site actually does. The processors this stack
  *  introduces (only list the ones switched on at launch):
  *
- *   · Intake form → Cloudflare Pages Function → Cloudflare D1. Name,
+ *   · Intake form → Cloudflare Worker → Cloudflare D1. Name,
  *     business, trade, phone, email, website, services, timeline,
  *     budget, message.
  *   · Lead notification email → Resend (transactional email).

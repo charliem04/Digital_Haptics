@@ -15,23 +15,17 @@
  * this is a preview, so a production build's out/_headers is exactly
  * public/_headers.
  */
-import { appendFileSync, existsSync, readFileSync } from "node:fs";
+import { existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { resolve } from "node:path";
 import { isPreviewBuild } from "./is-preview.mjs";
+import { addToAllPaths } from "./headers-file.mjs";
 
 const FILE = "out/_headers";
-const MARKER = "# ── preview build ──";
-
-const BLOCK = `
-
-${MARKER}
-# This deploy is a preview on a temporary URL. Keep every crawler off
-# it, including from files that cannot carry a meta tag. Removing this
-# block is how a preview starts competing with digitalhaptics.dev.
-/*
-  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
-`;
+// Removing this header is how a preview starts competing with
+// digitalhaptics.dev in search.
+const MARKER = "── preview build: keep every crawler off this deploy ──";
+const LINES = ["X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex"];
 
 /** @returns true on success, false if there was nothing to write to. */
 export function applyPreviewHeaders() {
@@ -42,12 +36,16 @@ export function applyPreviewHeaders() {
     return false;
   }
 
-  if (readFileSync(FILE, "utf8").includes(MARKER)) {
+  // Inside the existing /* block, not a new one (headers-file.mjs).
+  const result = addToAllPaths(FILE, MARKER, LINES);
+  if (result === "present") {
     console.log("[preview] headers already present, nothing to do");
     return true;
   }
-
-  appendFileSync(FILE, BLOCK);
+  if (result === "no-block") {
+    console.error(`[preview] ${FILE} has no /* rule to add X-Robots-Tag to.`);
+    return false;
+  }
   console.log("[preview] X-Robots-Tag: noindex added to out/_headers");
   return true;
 }
