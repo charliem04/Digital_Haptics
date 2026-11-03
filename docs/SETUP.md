@@ -12,7 +12,9 @@ Two jobs from Phase 0: connect the repo to Cloudflare Pages, and fill the placeh
 
 ### Step 1: create the project
 
-1. Cloudflare dashboard → **Workers & Pages** → **Create application** → **Pages** → **Connect to Git**.
+1. Cloudflare dashboard → **Workers & Pages** → **Create application** → **Pages** tab → **Import an existing Git repository** (older dashboards: **Connect to Git**).
+
+   > **Make sure it's Pages, not Workers.** The Create screen opens on the Workers tab, and its "Import a repository" button makes a *Worker* project. That one fails with `Could not detect a directory containing static files` because it runs `npx wrangler deploy` without building. If you only see Workers options, use the **"Looking to deploy Pages? Get started"** link near the bottom. The Pages setup screen has **Framework preset** and **Build output directory** fields; if you see a **Deploy command** field instead, you're in Workers. Delete that project (its **Settings** → bottom of the page) and start again on the Pages tab.
 2. Choose **GitHub** and authorize Cloudflare. When GitHub asks which repositories to allow, pick only `charliem04/Digital_Haptics`.
 3. Select the repo → **Begin setup**.
 
