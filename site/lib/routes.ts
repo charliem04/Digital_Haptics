@@ -90,6 +90,9 @@ export const auxRoutes: RouteNode[] = [
     })
   ),
   { href: "/privacy/", label: "Privacy policy", live: true, noindex: true },
+  // Phase 1 design system. Hidden: noindex, out of the sitemap, linked
+  // from nowhere (PLAN §9).
+  { href: "/styleguide/", label: "Styleguide", live: true, noindex: true },
   { href: "/terms/", label: "Terms of service", live: true, noindex: true },
 ];
 

@@ -40,7 +40,7 @@ export function SocialIcons({
           aria-label={`${site.name} on ${l.label}`}
           className={
             linkClassName ??
-            "inline-flex min-h-touch min-w-[44px] items-center justify-center text-ink hover:text-steel"
+            "inline-flex min-h-touch min-w-[44px] items-center justify-center text-ink hover:text-steel active:text-steel-deep"
           }
         >
           <svg viewBox="0 0 24 24" width={size} height={size} fill="currentColor" aria-hidden>

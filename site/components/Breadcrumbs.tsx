@@ -37,7 +37,7 @@ export function Breadcrumbs({ path, leafLabel }: { path: string; leafLabel?: str
                 ) : (
                   <Link
                     href={t.href}
-                    className="no-underline underline-offset-4 hover:text-ink hover:underline"
+                    className="no-underline underline-offset-4 hover:text-ink hover:underline active:text-steel-deep"
                   >
                     {t.label}
                   </Link>

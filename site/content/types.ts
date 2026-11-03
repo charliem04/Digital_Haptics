@@ -34,3 +34,21 @@ export type PageMeta = {
   /** Path with leading and trailing slash, e.g. "/services/web-design/". */
   path: string;
 };
+
+/**
+ * A service item in the hero sidebar / mobile band (PLAN §4.5),
+ * e.g. ACT.01 — DESIGN.
+ */
+export type Act = {
+  code: string;
+  name: string;
+  blurb: string;
+  /** The signal-filled one. */
+  highlight?: boolean;
+};
+
+/** One step of the lead-flow panel (🚩 FEATURE_AUTOMATIONS). */
+export type LeadFlowStep = {
+  key: string;
+  value: string;
+};

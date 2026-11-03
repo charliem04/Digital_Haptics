@@ -79,6 +79,13 @@ export const stagger = {
   tight: 0.06,
   /** 120ms — the few big elements of a band opening: mark, heading, lede, CTA. */
   loose: 0.12,
+  /**
+   * 550ms — the lead-flow panel's rows (PLAN §4.6). Slow on purpose:
+   * each row is a step in a story (form, text, owner, job), and the gap
+   * is what makes it read as a sequence of events rather than a list
+   * arriving. Four rows finish inside 2.4s.
+   */
+  sequence: 0.55,
 } as const;
 
 /**

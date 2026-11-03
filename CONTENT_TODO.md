@@ -18,6 +18,13 @@ What each item needs, with examples: [docs/SETUP.md §2](docs/SETUP.md).
 | `[PLACEHOLDER: privacy policy, written in Phase 5]` | `site/app/privacy/page.tsx` | Phase 5 draft, then attorney review | Open |
 | `[PLACEHOLDER: terms of service, written in Phase 5]` | `site/app/terms/page.tsx` | Phase 5 draft, then attorney review | Open |
 
+## Phase 1 (design system)
+
+| Item | Where | Needed from | Status |
+|---|---|---|---|
+| Hero sidebar blurbs, taken verbatim from the Hybrid mockup: "Sites that look like the work you do: solid, square, built right." / "Found first when someone nearby searches for your trade." / 🚩 "Every form and missed call gets a reply in seconds." | `site/data/acts.ts` | You: approve or rewrite | Open |
+| Styleguide sample values `[Client name]`, `[RESULT]`, `[Timeline options]` | `site/app/styleguide/page.tsx` | Nobody: they're demo placeholders on a hidden page and stay bracketed | n/a |
+
 ## Coming in later phases (from PLAN.md, logged when the code lands)
 
 - `[PRICE]` ×2 on /pricing (Websites, Local SEO); a third for Automations behind 🚩 `FEATURE_AUTOMATIONS`
