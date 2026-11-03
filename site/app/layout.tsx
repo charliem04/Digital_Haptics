@@ -1,41 +1,51 @@
 import type { Metadata } from "next";
-import { Chakra_Petch, JetBrains_Mono, Manrope } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { site } from "@/site.config";
 import { IS_PREVIEW } from "@/lib/preview";
 import { JsonLd } from "@/components/JsonLd";
 
 /*
- * Fonts (PLAN §4.2). next/font downloads them at build time and serves
- * them from this origin, so font-src stays 'self' in scripts/csp.mjs
- * and no request goes to Google at runtime. It also writes the preload
- * links and size-adjusted fallbacks, which keeps CLS near zero.
+ * Fonts (PLAN §4.2), committed in app/fonts/ and loaded with
+ * next/font/local.
  *
- * Only the weights the design uses are loaded (REFACTOR_AUDIT §3.2).
+ * Why local rather than next/font/google: Next 14's Google loader
+ * crashes the build when Google Fonts returns an unexpected response,
+ * which happened in 2 of 5 Phase 0 builds. Committed files make every
+ * build deterministic and need no network. The runtime result is the
+ * same: files served from this origin (font-src 'self' in
+ * scripts/csp.mjs), preload links, and size-adjusted fallbacks that
+ * keep CLS near zero.
+ *
+ * Files are Google Fonts' latin subsets, downloaded 2026-11-02. All
+ * three families are SIL OFL 1.1; the licenses sit beside the files.
+ * Only the weights the design uses ship (REFACTOR_AUDIT §3.2).
+ * Manrope and JetBrains Mono are variable fonts: one file covers both
+ * weights.
  */
-const display = Chakra_Petch({
-  subsets: ["latin"],
-  weight: ["600", "700"],
+const display = localFont({
+  src: [
+    { path: "./fonts/chakra-petch-600.woff2", weight: "600", style: "normal" },
+    { path: "./fonts/chakra-petch-700.woff2", weight: "700", style: "normal" },
+  ],
   variable: "--font-display",
   display: "swap",
   fallback: ["system-ui", "sans-serif"],
 });
 
-const body = Manrope({
-  subsets: ["latin"],
-  weight: ["400", "500"],
+const body = localFont({
+  src: [{ path: "./fonts/manrope-variable.woff2", weight: "400 500", style: "normal" }],
   variable: "--font-body",
   display: "swap",
   fallback: ["system-ui", "sans-serif"],
 });
 
-const mono = JetBrains_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500"],
+const mono = localFont({
+  src: [{ path: "./fonts/jetbrains-mono-variable.woff2", weight: "400 500", style: "normal" }],
   variable: "--font-mono",
   display: "swap",
   fallback: ["ui-monospace", "monospace"],
-  // Labels are small and rarely above the fold's largest paint.
+  // Labels are small and rarely the largest paint above the fold.
   preload: false,
 });
 

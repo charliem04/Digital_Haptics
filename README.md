@@ -15,7 +15,7 @@ docs/      plan, audit, runbooks
 
 ## Stack
 
-Next.js 14 (App Router, TypeScript, `output: "export"`), Tailwind CSS, Framer Motion, `next/font` (Chakra Petch, Manrope, JetBrains Mono). Hosted on Cloudflare Pages. The intake endpoint becomes a Pages Function backed by D1 in Phase 4.
+Next.js 14 (App Router, TypeScript, `output: "export"`), Tailwind CSS, Framer Motion, `next/font/local` (Chakra Petch, Manrope, JetBrains Mono; files and OFL licenses in `site/app/fonts/`). Hosted on Cloudflare Pages. The intake endpoint becomes a Pages Function backed by D1 in Phase 4.
 
 ## Working on it
 
