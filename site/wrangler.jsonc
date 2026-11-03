@@ -23,4 +23,9 @@
   // non-main build is noindex (scripts/is-preview.mjs).
   "workers_dev": true,
   "preview_urls": true,
+  // Required by `wrangler preview`, the command Workers Builds runs for
+  // non-production branches. Empty means a preview inherits everything
+  // above. Phase 4 puts preview-only bindings here (a separate D1, so
+  // preview submissions never reach the production leads table).
+  "previews": {},
 }
