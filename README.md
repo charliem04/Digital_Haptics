@@ -6,6 +6,7 @@ The Digital Haptics agency site: web design and local SEO for trades businesses 
 - **Design reference:** [docs/design-reference/digital-haptics-design-system/Hybrid.dc.html](docs/design-reference/digital-haptics-design-system/Hybrid.dc.html)
 - **Refactor audit, token table, decisions:** [docs/REFACTOR_AUDIT.md](docs/REFACTOR_AUDIT.md)
 - **Open placeholders:** [CONTENT_TODO.md](CONTENT_TODO.md)
+- **Cloudflare Pages + placeholder setup:** [docs/SETUP.md](docs/SETUP.md)
 
 ```
 site/      Next.js App Router (static export) → Cloudflare Pages

@@ -4,6 +4,8 @@ Every `[PLACEHOLDER]` (and PLAN's own bracketed placeholders like `[PRICE]`) in 
 
 Never replace a placeholder with an invented price, stat, client result, testimonial or client name.
 
+What each item needs, with examples: [docs/SETUP.md §2](docs/SETUP.md).
+
 | Placeholder | Where | Needed from | Status |
 |---|---|---|---|
 | `[PLACEHOLDER: legal entity name]` | `site/site.config.ts` → `legalName` | You | Open |
