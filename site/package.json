@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build && node scripts/csp.mjs && node scripts/seo.mjs && node scripts/routes.mjs --check && node scripts/harden.mjs",
+    "build": "next build && node scripts/csp.mjs && node scripts/seo.mjs && node scripts/routes.mjs --check && node scripts/preview-headers.mjs --if-preview && node scripts/harden.mjs",
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",

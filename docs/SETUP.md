@@ -38,10 +38,10 @@ You can add these on the setup screen under **Environment variables (optional)**
 | `FEATURE_AUTOMATIONS` | `false` | `false` | Hides the Automations page, copy and webhook (PLAN §2.1). |
 | `FEATURE_AUTOMATIONS_DEMO` | `false` | `false` | Hides the SMS demo. |
 | `FEATURE_VOICE` | `false` | `false` | Hides the AI voice section. |
-| `NEXT_PUBLIC_PREVIEW` | *(don't add it)* | `1` | Preview builds become noindex, with robots.txt blocking crawlers and an empty sitemap, so preview URLs never show up in Google. |
 | `NODE_VERSION` | `20` | `20` | Matches `site/.nvmrc` and CI. Pages should read `.nvmrc` from the root directory anyway; this pins it either way. |
 
 Notes:
+- **No preview variable needed.** Any branch other than `main` builds as a preview automatically (Cloudflare tells the build which branch it is): every page is noindex, robots.txt blocks crawlers, the sitemap is empty, and an `X-Robots-Tag` header covers everything else. `NEXT_PUBLIC_PREVIEW=1` still forces it on for a manual build, but don't set it in Production.
 - **The flags are off even if you don't set them** (anything other than exactly `true` counts as off). Setting them to `false` makes the state visible in the dashboard and gives Phase 7 something to flip.
 - **These are plain text variables.** Don't tick **Encrypt**: none of them are secrets. Phase 4 adds the real secrets (`RESEND_API_KEY`, `TURNSTILE_SECRET_KEY`, and so on), and those do get **Encrypt**.
 - **Changes apply on the next build.** After editing a variable, open **Deployments** and use **Retry deployment** on the latest one (or push a commit).
@@ -51,7 +51,7 @@ Notes:
 1. **Save and Deploy.** The first build runs from `main`, which still holds the old template until Phase 0 is merged. That's expected and harmless, because no custom domain is attached yet.
 2. Once `refactor/phase-0` is pushed, its preview URL appears under **Deployments** (something like `refactor-phase-0.digitalhaptics.pages.dev`). Open it and check:
    - The home page shows "Websites that book the job." in the new fonts on the dotted ice background.
-   - `/robots.txt` says `Disallow: /`, which proves `NEXT_PUBLIC_PREVIEW` reached the build.
+   - `/robots.txt` says `Disallow: /`, which proves the build detected it was a preview.
    - `/services/automations/` returns the 404 page.
 3. **Leave the custom domain for now.** Attaching `digitalhaptics.dev` is a Phase 6 launch task (`docs/CUTOVER.md` gets rewritten for it).
 

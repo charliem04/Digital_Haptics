@@ -7,6 +7,8 @@
  * inlines the same literal into server and client code. These are
  * booleans, not secrets.
  */
+import { isPreviewBuild } from "./scripts/is-preview.mjs";
+
 const flag = (name) => (process.env[name] === "true" ? "true" : "false");
 
 /** @type {import('next').NextConfig} */
@@ -24,6 +26,8 @@ const nextConfig = {
     FEATURE_AUTOMATIONS: flag("FEATURE_AUTOMATIONS"),
     FEATURE_AUTOMATIONS_DEMO: flag("FEATURE_AUTOMATIONS_DEMO"),
     FEATURE_VOICE: flag("FEATURE_VOICE"),
+    // Read through lib/preview.ts. Decided in scripts/is-preview.mjs.
+    SITE_PREVIEW: isPreviewBuild() ? "1" : "0",
   },
   eslint: {
     // data/ holds typed content modules every page imports, so it gets
