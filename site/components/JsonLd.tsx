@@ -32,10 +32,13 @@ export function JsonLd() {
       addressRegion: site.location.state,
       addressCountry: site.location.country,
     },
-    areaServed: site.serviceArea.cities.map((city) => ({
-      "@type": "City",
-      name: `${city}, ${site.location.state}`,
-    })),
+    areaServed: [
+      ...site.serviceArea.cities.map((city) => ({
+        "@type": "City",
+        name: `${city}, ${site.location.state}`,
+      })),
+      { "@type": "Country", name: site.serviceArea.remoteCountry },
+    ],
     knowsAbout: services,
     sameAs: Object.values(site.socials).filter(Boolean),
   };

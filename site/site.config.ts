@@ -18,7 +18,12 @@
 export const site = {
   // ── Identity ──────────────────────────────────────────────────────
   name: "Digital Haptics",
-  legalName: "[PLACEHOLDER: legal entity name]",
+  /**
+   * Operating as a sole proprietor until the LLC is filed. Change to
+   * "Digital Haptics LLC" once the Louisiana filing goes through
+   * (CONTENT_TODO.md).
+   */
+  legalName: "Charles Meyers",
   /** schema.org type for the site-wide JSON-LD (PLAN §8). */
   schemaType: "ProfessionalService",
 
@@ -37,11 +42,12 @@ export const site = {
 
   // ── Contact ───────────────────────────────────────────────────────
   phone: {
-    display: "[PLACEHOLDER: agency phone]",
+    display: "(337) 412-5714",
     /** E.164, for tel: links. Empty hides every tel: link. */
-    e164: "",
+    e164: "+13374125714",
   },
-  email: "[PLACEHOLDER: agency email]",
+  /** Needs a mailbox or Email Routing rule before launch (CONTENT_TODO.md). */
+  email: "charles@digitalhaptics.dev",
 
   // ── Location ──────────────────────────────────────────────────────
   /** Service-area business: no street address is published. */
@@ -49,8 +55,8 @@ export const site = {
   serviceArea: {
     label: "Acadiana, LA",
     /**
-     * PLAN §3 lists these and says to confirm the list. A city page is
-     * only published once it has unique content (PLAN §5).
+     * PLAN §3's list, confirmed 2026-11-03. A city page is only
+     * published once it has unique content (PLAN §5).
      */
     cities: [
       "Lafayette",
@@ -61,6 +67,11 @@ export const site = {
       "New Iberia",
       "Breaux Bridge",
     ],
+    /**
+     * Also takes remote projects anywhere in the US. Used in structured
+     * data only; site copy stays Acadiana-first per PLAN §3.
+     */
+    remoteCountry: "United States",
   },
 
   // ── Primary action ────────────────────────────────────────────────
@@ -72,6 +83,7 @@ export const site = {
     /**
      * Public Cal.com booking page URL (https://cal.com/<user>/<event>).
      * Embedded on /start/ only. Empty hides the embed.
+     * Not set up yet; deferred (CONTENT_TODO.md).
      */
     calUrl: "",
   },
@@ -83,10 +95,11 @@ export const site = {
     /** Public half of the Turnstile key; the secret lives server-side. */
     turnstileSiteKey: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "",
     /** Thank-you page copy (PLAN §5). */
-    responseTime: "[RESPONSE TIME]",
+    responseTime: "one business day",
   },
 
   // ── Socials (empty string hides the link) ─────────────────────────
+  // None yet; add each URL here when the account exists.
   socials: {
     googleBusiness: "",
     facebook: "",

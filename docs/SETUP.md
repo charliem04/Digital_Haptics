@@ -59,6 +59,8 @@ Notes:
 
 ## 2. Placeholders (`CONTENT_TODO.md`)
 
+> **Status 2026-11-03:** filled except Cal.com and socials (deferred) and the legal pages (Phase 5). `CONTENT_TODO.md` has the current state. Two follow-ups: switch the legal name to `Digital Haptics LLC` once it's filed, and create the `charles@digitalhaptics.dev` mailbox or Email Routing rule before launch.
+
 Nothing here blocks the build. Every placeholder renders visibly or stays hidden until filled, and Phase 6 won't launch with any still open. **Easiest route:** send me the values in chat and I'll put them in `site/site.config.ts` and close the rows. Or edit that file yourself; every value is in one place.
 
 | Item | What to give me | Format / example | What happens until then |

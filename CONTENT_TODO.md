@@ -8,13 +8,13 @@ What each item needs, with examples: [docs/SETUP.md §2](docs/SETUP.md).
 
 | Placeholder | Where | Needed from | Status |
 |---|---|---|---|
-| `[PLACEHOLDER: legal entity name]` | `site/site.config.ts` → `legalName` | You | Open |
-| `[PLACEHOLDER: agency phone]` + `phone.e164` | `site/site.config.ts` → `phone` | You | Open |
-| `[PLACEHOLDER: agency email]` | `site/site.config.ts` → `email` | You | Open |
-| Cal.com event URL (`booking.calUrl`, currently empty) | `site/site.config.ts` | You | Open |
-| `[RESPONSE TIME]` | `site/site.config.ts` → `intake.responseTime` (thank-you page) | You | Open |
-| Social URLs (all empty, so hidden) | `site/site.config.ts` → `socials` | You | Open |
-| Service-area city list: confirm the seven in PLAN §3 | `site/site.config.ts` → `serviceArea.cities` | You | Open |
+| Legal entity name | `site/site.config.ts` → `legalName` | You | Done 2026-11-03: `Charles Meyers` (sole proprietor). **Change to `Digital Haptics LLC` once the LLC is filed.** |
+| Agency phone | `site/site.config.ts` → `phone` | You | Done 2026-11-03: (337) 412-5714 |
+| Agency email | `site/site.config.ts` → `email` | You | Done 2026-11-03: `charles@digitalhaptics.dev`. **Before launch:** set up a mailbox or Cloudflare Email Routing for it, or mail to it bounces. |
+| Cal.com event URL (`booking.calUrl`, currently empty) | `site/site.config.ts` | You | Deferred: no Cal.com account yet. /start/ shows only the intake form until set. |
+| Response time | `site/site.config.ts` → `intake.responseTime` (thank-you page) | You | Done 2026-11-03: one business day |
+| Social URLs (all empty, so hidden) | `site/site.config.ts` → `socials` | You | Deferred: no accounts yet. Add each when created. |
+| Service-area city list | `site/site.config.ts` → `serviceArea` | You | Done 2026-11-03: all seven confirmed, plus remote work nationwide (structured data only). |
 | `[PLACEHOLDER: privacy policy, written in Phase 5]` | `site/app/privacy/page.tsx` | Phase 5 draft, then attorney review | Open |
 | `[PLACEHOLDER: terms of service, written in Phase 5]` | `site/app/terms/page.tsx` | Phase 5 draft, then attorney review | Open |
 
