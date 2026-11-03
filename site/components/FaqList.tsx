@@ -9,7 +9,6 @@
  * list, so the two can never say different things.
  */
 import type { Faq } from "@/content/types";
-import { SectionHead } from "./SectionHead";
 
 export function FaqList({
   faqs,
@@ -33,27 +32,28 @@ export function FaqList({
   };
 
   return (
-    <section className="band bg-surface">
-      <div className="section">
-        <SectionHead heading={heading} lede={lede} />
-        <div className="mt-10 border-t border-line">
+    // Restyled in Phase 3 with the section label and heading components.
+    <section className="page-x section-y">
+      <h2 className="font-display text-heading font-semibold">{heading}</h2>
+      {lede && <p className="mt-4 max-w-lede text-steel-deep">{lede}</p>}
+      <div className="mt-10 border-t border-ink">
           {faqs.map((f, i) => (
             <details
               key={f.q}
               open={i === 0}
-              className="group border-b border-line py-5"
+              className="group border-b border-ink py-5"
             >
-              <summary className="flex cursor-pointer list-none items-start justify-between gap-6 font-display text-[21px] font-bold uppercase leading-tight text-ink transition-colors duration-150 hover:text-brand active:text-brand-strong">
+              <summary className="flex min-h-touch cursor-pointer list-none items-start justify-between gap-6 font-display text-subheading font-semibold text-ink">
                 {f.q}
                 <span
                   aria-hidden
-                  className="mt-1 shrink-0 font-mono text-base text-brand-soft group-open:hidden"
+                  className="mt-1 shrink-0 font-mono text-steel group-open:hidden"
                 >
                   +
                 </span>
                 <span
                   aria-hidden
-                  className="mt-1 hidden shrink-0 font-mono text-base text-brand-soft group-open:block"
+                  className="mt-1 hidden shrink-0 font-mono text-steel group-open:block"
                 >
                   −
                 </span>
@@ -61,7 +61,6 @@ export function FaqList({
               <p className="mt-3 max-w-[68ch]">{f.a}</p>
             </details>
           ))}
-        </div>
       </div>
       <script
         type="application/ld+json"

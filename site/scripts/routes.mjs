@@ -17,7 +17,7 @@
  *  A hand-written list of routes is out of date the first time somebody
  *  edits a component, and a source-level scan cannot see a destination
  *  assembled from a variable — which on this site is most of them, since
- *  hrefs come from client.config, content/*.ts and lib/routes.ts.
+ *  hrefs come from site.config.ts, data/*.ts and lib/routes.ts.
  *
  *  The rendered HTML has no such ambiguity. Whatever is in the `href`
  *  attribute of the file being served is, definitionally, where the
@@ -26,8 +26,7 @@
  *  ── WHAT IT CANNOT SEE, STATED PLAINLY ──────────────────────────────
  *
  *  Buttons that move the visitor with JavaScript rather than with an
- *  href — the process steps, the radar transport, the gallery lightbox,
- *  the filter chips. Those are not navigation: they change what is on
+ *  href — the mobile menu toggle, FAQ disclosures, filter chips. Those are not navigation: they change what is on
  *  the current page. The document says so rather than pretending the
  *  list is exhaustive, and they are counted so a reader knows how many
  *  there are.
@@ -203,14 +202,11 @@ counted once per page, not once per occurrence.
 ${scripted} controls on this site are buttons rather than links. They do not
 navigate — they act on the page the visitor is already on:
 
-- the four **process steps** on the home page scroll the pinned band to
-  that step
-- the **radar** play/pause control and its frame ticks
-- the **gallery** tiles and lightbox arrows
-- the **gallery filters**
-- the **cookie banner**, and the **"load the calendar"** consent button
-- **form submit** buttons, which post to the endpoints in \`.env.example\`
-  rather than to a URL
+- the **mobile menu** toggle
+- the **work filter chips**
+- the **"load the calendar"** button on /start/
+- **form submit** buttons, which post to the intake endpoint rather than
+  to a URL
 
 A destination assembled at runtime cannot appear in a static file, so
 those are counted here and described above rather than tabulated.

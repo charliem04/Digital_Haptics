@@ -2,8 +2,7 @@
 # pull request — so a broken build, a dead link, an undeclared CSP
 # origin or a leaked secret fails here rather than on Cloudflare.
 #
-# No secrets are needed: every integration is optional at build time,
-# and the gallery falls back to the committed gallery.generated.json.
+# No secrets are needed: every integration is optional at build time.
 name: CI
 
 on:
@@ -36,11 +35,13 @@ jobs:
           cache-dependency-path: site/package-lock.json
 
       - run: npm ci
+      - run: npm run format:check
       - run: npm run lint
       - run: npm run typecheck
 
-      # gallery → next build → csp → fonts → seo → routes → harden.
-      # Any of the five gates failing fails this step.
+      # next build → csp → seo → routes → harden. Any gate failing
+      # fails this step. Runs with every feature flag unset (= off),
+      # which is the state every deployed environment must build in.
       - run: npm run build
 
       # Advisory: prints placeholder and inherited-default findings
@@ -54,7 +55,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        worker: [lead-relay, careers-upload]
+        # lead-relay stays until Phase 4 ports it to a Pages Function.
+        worker: [lead-relay]
     defaults:
       run:
         working-directory: workers/${{ matrix.worker }}

@@ -21,8 +21,8 @@
  * filter forces the compositor to re-rasterize the layer every frame,
  * and the elements that would want it here are the big ones — band
  * headings, full-width figures — which is exactly where the cost lands
- * hardest and where a mid-range phone drops frames. `scale` gets the
- * same "settling into focus" read for the price of a transform.
+ * hardest and where a mid-range phone drops frames. A short rise
+ * (PLAN §4.6: 8–16px) does the job for the price of a transform.
  * ────────────────────────────────────────────────────────────────────
  */
 import { motion } from "framer-motion";
@@ -35,21 +35,18 @@ type RevealAs = "div" | "li" | "figure";
 /**
  * How the content arrives.
  *
- *   rise    the default block entrance — 28px up, for a card or a paragraph
- *   riseSm  14px, for items in a cascade where the full travel would
+ *   rise    the default block entrance — 16px up, for a card or a paragraph
+ *   riseSm  8px, for items in a cascade where the full travel would
  *           read as the row jostling rather than arriving
  *   fade    opacity only, for content whose position is already load-
  *           bearing (a figure inside a fixed grid cell, say)
- *   scale   settles from 1.06 down to rest, for photography — it reads
- *           as the image coming into focus rather than sliding
  */
-type RevealVariant = "rise" | "riseSm" | "fade" | "scale";
+type RevealVariant = "rise" | "riseSm" | "fade";
 
 const VARIANTS: Record<RevealVariant, { from: Record<string, number>; to: Record<string, number> }> = {
   rise: { from: { opacity: 0, y: travel.md }, to: { opacity: 1, y: 0 } },
   riseSm: { from: { opacity: 0, y: travel.sm }, to: { opacity: 1, y: 0 } },
   fade: { from: { opacity: 0 }, to: { opacity: 1 } },
-  scale: { from: { opacity: 0, scale: 1.06 }, to: { opacity: 1, scale: 1 } },
 };
 
 export function Reveal({

@@ -1,63 +1,35 @@
-"use client";
-
 /**
  * ════════════════════════════════════════════════════════════════════
- *  THE SCHEDULER, embedded rather than linked — the plan's point being
- *  that bouncing someone to a booking site mid-decision loses the ones
- *  who were only half sure.
+ *  THE CAL.COM SCHEDULER, embedded on /start/ (PLAN §5).
  *
- *  This band, on /contact/, is the only part of the site that reaches
- *  Calendly. Every CTA elsewhere points at the page rather than at the
- *  calendar (see CTA_HREF in lib/routes.ts), so a visitor arrives here
- *  having chosen to book rather than having been sent.
+ *  Click-to-load (decision D3). There is no site-wide cookie banner, so
+ *  the scheduler, a third party that sets its own cookies, only loads
+ *  when the visitor presses "Load the calendar". The direct link and
+ *  the intake form are always there for anyone who would rather not.
  *
- *  It does not load on arrival. The scheduler is a third party that
- *  sets its own cookies, so the iframe goes in when the visitor asks —
- *  either because they already accepted cookies, or because they
- *  pressed the button on this panel, which is consent for this one
- *  embed and nothing else. Anyone who would rather not can still use
- *  the direct link, the phone, or the form below.
+ *  Pointing at or focusing the button opens the connection, so the
+ *  handshake is usually done by the time the click lands. Once loaded,
+ *  the iframe mounts when it is within a third of a screen, inside a
+ *  box drawn at full size so nothing below it moves.
  *
- *  ── WHY IT USED TO FEEL SLOW, AND WHAT CHANGED ──────────────────────
+ *  Nothing connects to the scheduler before the visitor reaches for the
+ *  button: no preconnect in <head>, no lazy iframe waiting in the page.
  *
- *  The iframe carried `loading="lazy"`, which sounds like the right
- *  answer and was the wrong one here. The booking band sits well down
- *  /contact/, so for a visitor who had already accepted cookies the
- *  browser deferred the whole embed until they had very nearly scrolled
- *  to it — and then started a DNS lookup, a TCP handshake, a TLS
- *  negotiation and a document fetch, all while they sat looking at the
- *  empty box. The lazy attribute did not make the calendar slow to
- *  load; it made it start loading at the last possible moment, which
- *  the visitor experiences as the same thing.
- *
- *  So the work is moved earlier rather than made smaller, in two steps:
- *
- *    1. As soon as the embed is allowed, open the connection to
- *       the scheduler. DNS, TCP and TLS are the fixed cost of talking to
- *       a new origin, and none of it needs to wait for a scroll.
- *    2. About a third of a screen out, mount the iframe and let it
- *       fetch over the connection that is already warm.
- *
- *  A visitor who has not allowed it gets neither, until they reach for
- *  the button — a pointer arriving on it opens the connection, so the
- *  handshake is usually finished by the time the click lands.
- *
- *  ── AND WHY THE PRECONNECT IS NOT IN THE HEAD ───────────────────────
- *
- *  A <link rel="preconnect"> in the document head would be simpler and
- *  faster still, and it would open a connection to a third party for
- *  every visitor who ever lands on this page — including the ones who
- *  decline cookies and the ones who never scroll this far. That
- *  contradicts the rest of the page's posture, so it is not done. Every
- *  path to warmScheduler() runs behind either consent or a deliberate
- *  reach for the button.
+ *  PHASE 3: restyled with <Button> and <CutFrame>. The class strings
+ *  below are temporary stand-ins on the new tokens.
  * ════════════════════════════════════════════════════════════════════
  */
+"use client";
+
 import { useEffect, useRef, useState } from "react";
-import { client } from "@/client.config";
-import { getConsent, CONSENT_EVENT } from "@/lib/consent";
+import { site } from "@/site.config";
 import { bookingOrigins, bookingEmbedSrc, schedulerName } from "@/lib/booking";
-import { btn } from "./Button";
+
+/** Temporary until <Button> lands in Phase 1. */
+const primaryBtn =
+  "inline-flex min-h-button items-center gap-3 bg-signal px-6 font-mono text-label-lg font-medium uppercase tracking-label-sm text-ink";
+const ghostBtn =
+  "inline-flex min-h-button items-center gap-3 border border-ink px-6 font-mono text-label-lg font-medium uppercase tracking-label-sm text-ink";
 
 /** Close enough that the visitor means to use it. */
 const MOUNT_MARGIN = "300px";
@@ -65,14 +37,14 @@ const MOUNT_MARGIN = "300px";
 /**
  * The scheduler URL, widened to string.
  *
- * client.config.ts is `as const`, so with booking switched off the
- * literal type of client.bookingUrl is "" and TypeScript narrows every
+ * site.config.ts is `as const`, so with booking switched off the
+ * literal type of site.booking.calUrl is "" and TypeScript narrows every
  * guarded use of it to `never` — correct about today's config, useless
  * to a component written to work either way. Reading it through one
  * widened binding keeps the code honest about what it handles without
  * loosening the config's types for everyone else.
  */
-const bookingUrl: string = client.bookingUrl;
+const bookingUrl: string = site.booking.calUrl;
 
 /**
  * Open connections to the scheduler without asking it for anything yet.
@@ -82,11 +54,8 @@ const bookingUrl: string = client.bookingUrl;
  * fetch — a hardcoded host quietly warms the wrong one the first time
  * the scheduler changes.
  *
- * Idempotent per origin, and it has to be: /contact/ also preconnects
- * from an inline script before this file has even downloaded, so by
- * the time this runs the links are usually already there. It can also
- * be reached from a hover, a focus and an observer inside the same
- * second. Re-appending would be litter in the head, not a second
+ * Idempotent per origin: it can be reached from a hover, a focus and
+ * a click inside the same second. Re-appending would be litter in the head, not a second
  * connection.
  */
 function warmScheduler() {
@@ -108,7 +77,7 @@ function warmScheduler() {
 }
 
 export function BookingEmbed() {
-  /** The visitor has allowed this embed — by cookie consent or by button. */
+  /** The visitor pressed "Load the calendar". */
   const [allowed, setAllowed] = useState(false);
   /** Scrolled close enough to mount the iframe. */
   const [near, setNear] = useState(false);
@@ -116,34 +85,9 @@ export function BookingEmbed() {
   const [ready, setReady] = useState(false);
   const boxRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (!bookingUrl) return;
-    const check = () => {
-      if (getConsent() === "accepted") setAllowed(true);
-    };
-    check();
-    window.addEventListener(CONSENT_EVENT, check);
-    return () => window.removeEventListener(CONSENT_EVENT, check);
-  }, []);
-
-  /* ── Warm the connection the moment the embed is allowed ─────────
-     Consent is the gate, so once it exists there is nothing left to
-     wait for: opening the socket early is the entire saving, and the
-     visitor on /contact/ with the calendar allowed is going to use it.
-
-     This was an observer on a 900px root margin, which was measured
-     and thrown away — the booking band sits about 360px below the fold
-     on a 900px viewport, so a margin that size fired on page load
-     anyway while reading as though it waited for something. Doing it
-     plainly is the same behaviour with none of the pretence, and it
-     leaves the whole scroll distance between the handshake and the
-     fetch instead of an arbitrary 600px of it.
-
-     It is inside the `allowed` gate and must stay there. Warming
-     unconditionally would open a connection to a third party for a
-     visitor who has just declined cookies, which is the one thing this
-     component exists to avoid. Somebody who has not decided gets a
-     connection only if they reach for the button. */
+  /* ── Warm the connection once the visitor has asked for the embed.
+     The button's pointer/focus handlers usually got there first; this
+     covers a keyboard Enter with no prior focus event. */
   useEffect(() => {
     if (allowed) warmScheduler();
   }, [allowed]);
@@ -156,7 +100,7 @@ export function BookingEmbed() {
     if (!el) return;
     if (typeof IntersectionObserver === "undefined") {
       // No observer: mount on arrival rather than never. The embed is
-      // still behind the consent gate, which is the part that matters.
+      // still behind the load button, which is the part that matters.
       setNear(true);
       return;
     }
@@ -181,11 +125,11 @@ export function BookingEmbed() {
     return (
       <div
         ref={boxRef}
-        className="rounded border border-dashed border-line bg-surface p-8 text-center"
+        className="border border-dashed border-ink bg-frost p-8 text-center"
       >
-        <p className="u-label">Booking calendar</p>
-        {/* Named, not "a scheduling service": consent to a third party
-            the visitor cannot identify is not consent, and /privacy/
+        <p className="font-mono text-label uppercase tracking-label-lg text-steel">Booking calendar</p>
+        {/* Named, not "a scheduling service": agreeing to a third party
+            the visitor cannot identify is not agreement, and /privacy/
             names the same one — both read schedulerName() from
             lib/booking.ts, so swapping bookingUrl renames it in both. */}
         <p className="mx-auto mt-3 max-w-[46ch]">
@@ -202,7 +146,7 @@ export function BookingEmbed() {
             // goes out on an open connection.
             onPointerEnter={warmScheduler}
             onFocus={warmScheduler}
-            className={btn("gold")}
+            className={primaryBtn}
           >
             Load the calendar
           </button>
@@ -211,7 +155,7 @@ export function BookingEmbed() {
             target="_blank"
             rel="noopener noreferrer"
             onPointerEnter={warmScheduler}
-            className={btn("line")}
+            className={ghostBtn}
           >
             Open {schedulerName()} instead
           </a>
@@ -227,7 +171,7 @@ export function BookingEmbed() {
   return (
     <div
       ref={boxRef}
-      className="relative h-[760px] w-full overflow-hidden rounded border border-line bg-surface md:h-[700px]"
+      className="relative h-[760px] w-full overflow-hidden border border-ink bg-white md:h-[700px]"
     >
       {/* ── The wait ────────────────────────────────────────────────
           The box is drawn at full size before anything arrives in it,
@@ -252,17 +196,17 @@ export function BookingEmbed() {
               in flight, and it stops when the calendar lands.
               deliberate-ignore decorative-motion */}
           <div className="animate-pulse" aria-hidden>
-            <div className="h-3 w-40 rounded bg-line" />
+            <div className="h-3 w-40 bg-hairline" />
             <div className="mt-8 grid grid-cols-7 gap-2">
               {Array.from({ length: 7 }, (_, i) => (
-                <div key={`d${i}`} className="h-2 rounded bg-line/60" />
+                <div key={`d${i}`} className="h-2 bg-hairline/60" />
               ))}
               {Array.from({ length: 35 }, (_, i) => (
-                <div key={i} className="aspect-square rounded bg-line/40" />
+                <div key={i} className="aspect-square bg-hairline/40" />
               ))}
             </div>
           </div>
-          <p className="mt-8 text-center font-mono text-[11px] uppercase tracking-[0.09em] text-ink-faint">
+          <p className="mt-8 text-center font-mono text-label-sm uppercase tracking-label text-steel">
             Loading the booking calendar…
           </p>
         </div>
@@ -271,7 +215,7 @@ export function BookingEmbed() {
       {near && (
         <iframe
           src={src}
-          title={`Book a free assessment with ${client.businessName}`}
+          title={`Book a call with ${site.name}`}
           // Deliberately NOT lazy. Reaching this line already means the
           // visitor allowed the embed and is within a third of a screen
           // of it; deferring again is the behaviour this component was

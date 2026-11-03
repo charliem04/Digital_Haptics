@@ -42,9 +42,8 @@ import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { loadEnvFile } from "./env-file.mjs";
 
-// So a SANITY_READ_TOKEN that lives in .env.local is one this check can
-// actually look for in the output. Without it the token most likely to
-// leak was the only one invisible here.
+// So a secret that lives in .env.local is one this check can actually
+// look for in the output.
 loadEnvFile();
 
 const OUT = "out";
@@ -78,21 +77,9 @@ const SECRET_PATTERNS = [
   [/\bAKIA[0-9A-Z]{16}\b/, "an AWS access key id"],
   [/\bey[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}/, "a JWT"],
   [/\bAIza[0-9A-Za-z_-]{35}\b/, "a Google API key"],
-  // A Sanity API token. The gallery build reads one, and it is the one
-  // credential in this project that a static export could plausibly
-  // leak: it is passed to a build script rather than to a browser, so
-  // the way it would escape is somebody prefixing it NEXT_PUBLIC_ or
-  // interpolating it into a component. The env check below catches
-  // that when the variable is set at build time; this catches it when
-  // the value was pasted into a file instead.
-  //
-  // Sanity tokens are `sk` followed by roughly eighty base62
-  // characters. The length floor is set at 50 rather than at the
-  // shortest possible token because an unbroken run of that many
-  // alphanumerics after "sk" does not otherwise occur in minified
-  // output, and a scanner that cries wolf on a build is a scanner
-  // somebody deletes.
-  [/\bsk[A-Za-z0-9]{50,}\b/, "a Sanity API token"],
+  // A Resend API key: the intake endpoint's email credential (Phase 4).
+  // It belongs to the Pages Function and must never reach out/.
+  [/re_[A-Za-z0-9]{8,}_[A-Za-z0-9]{16,}/, "a Resend API key"],
 ];
 
 /**
@@ -100,26 +87,23 @@ const SECRET_PATTERNS = [
  *
  * The check below takes every variable that is not NEXT_PUBLIC_ and
  * looks for its value in the built files, on the reasoning that a
- * server-only value appearing in a static export is a leak. Two
- * variables are exceptions, and they are named here rather than left
- * to slip under the length floor by luck:
+ * server-only value appearing in a static export is a leak. Anything
+ * legitimately public but not NEXT_PUBLIC_ is named here instead.
  *
- *   SANITY_PROJECT_ID  appears in the URL of every gallery photograph
- *   SANITY_DATASET     appears in the same URLs, beside it
- *
- * Both are public identifiers — anyone who loads /gallery/ can read
- * them off an <img> tag, and Sanity treats them as public. They are
- * not NEXT_PUBLIC_ because nothing in the browser bundle reads them:
- * they are consumed by scripts/gallery.mjs, which bakes the finished
- * URLs into content at build time.
- *
- * SANITY_READ_TOKEN is deliberately NOT here, and must never be. It is
- * the one value in this list's neighbourhood that is a secret, and the
- * assertion below makes adding it by accident fail loudly.
+ * The FEATURE_* flags are inlined on purpose (next.config.mjs), but
+ * their values are "true"/"false", which the length floor already
+ * skips, so they need no entry.
  */
-const PUBLIC_BUILD_VARS = new Set(["SANITY_PROJECT_ID", "SANITY_DATASET"]);
+const PUBLIC_BUILD_VARS = new Set([]);
 
-const MUST_STAY_SECRET = ["SANITY_READ_TOKEN", "CF_DEPLOY_HOOK_URL"];
+/** Secrets of this stack. Adding one to PUBLIC_BUILD_VARS fails loudly. */
+const MUST_STAY_SECRET = [
+  "RESEND_API_KEY",
+  "TURNSTILE_SECRET_KEY",
+  "AUTOMATIONS_WEBHOOK_URL",
+  "EXPORT_TOKEN",
+  "CF_DEPLOY_HOOK_URL",
+];
 for (const name of MUST_STAY_SECRET) {
   if (PUBLIC_BUILD_VARS.has(name)) {
     throw new Error(

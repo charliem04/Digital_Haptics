@@ -1,91 +1,44 @@
-# White-label site template
+# digitalhaptics.dev
 
-A statically-exported Next.js marketing site with the build pipeline,
-integrations and Cloudflare infrastructure already wired up.
+The Digital Haptics agency site: web design and local SEO for trades businesses in Acadiana, Louisiana.
+
+- **Plan (source of truth):** [docs/PLAN.md](docs/PLAN.md)
+- **Design reference:** [docs/design-reference/digital-haptics-design-system/Hybrid.dc.html](docs/design-reference/digital-haptics-design-system/Hybrid.dc.html)
+- **Refactor audit, token table, decisions:** [docs/REFACTOR_AUDIT.md](docs/REFACTOR_AUDIT.md)
+- **Open placeholders:** [CONTENT_TODO.md](CONTENT_TODO.md)
 
 ```
-site/      the Next.js app (static export → Cloudflare Pages)
-workers/   two Cloudflare Workers: lead relay + résumé upload
-docs/      runbooks for the integrations
+site/      Next.js App Router (static export) → Cloudflare Pages
+workers/   lead-relay: reference for the Phase 4 intake endpoint
+docs/      plan, audit, runbooks
 ```
 
-**Requirements:** Node 20+ for the site (Cloudflare Pages reads
-`site/.nvmrc`). **Node 22.6+ for the workers' tests** — `npm test` runs
-the TypeScript directly with `node --test`, which needs Node's built-in
-type stripping.
+## Stack
 
-**No Sanity studio ships in this repo yet.** The gallery builds from the
-committed `site/content/gallery.generated.json`; `npm run gallery`
-compares the category lists in `content/types.ts` and
-`content/gallery.ts`, and adds the studio's list to that comparison
-automatically once a `studio/` folder exists. `docs/GALLERY-CMS.md` is
-the runbook for when it does.
+Next.js 14 (App Router, TypeScript, `output: "export"`), Tailwind CSS, Framer Motion, `next/font` (Chakra Petch, Manrope, JetBrains Mono). Hosted on Cloudflare Pages. The intake endpoint becomes a Pages Function backed by D1 in Phase 4.
 
-## Quick start
+## Working on it
+
+Requires Node 20+ (`site/.nvmrc`).
 
 ```bash
 cd site
-cp .env.example .env.local     # every value is optional to start
+cp .env.example .env.local
 npm install
 npm run dev
 ```
 
-Then work through the list in [PORTING.md](./PORTING.md) — it says what
-was extracted, what was deliberately left behind, and what you owe
-before a site built from this can ship.
-
-## The build is the point
-
-`npm run build` is seven steps, and five of them can fail the build:
-
-```
-gallery → next build → csp → fonts → seo → routes --check → harden
-```
-
-- **gallery** — fetches the CMS, fails on a photo with no alt text or a
-  category the site cannot render
-- **csp** — generates the Content-Security-Policy and fails if any
-  origin in the output is not accounted for
-- **fonts** — injects the preload for the display face
-- **seo** — fails on a title over 60 characters or a missing description
-- **routes** — fails on an internal link to a page that does not exist
-- **harden** — fails if a secret, a sourcemap or a stray `.env` shipped
-
-Plus `npm run check`, which is not in the build: a static checker for
-inherited-default frontend patterns. Advisory by default, `--strict` to
-make it fail.
-
-**CI** (`.github/workflows/ci.yml`) runs all of it on every pull request
-and every push to `main`: `npm run lint`, `typecheck`, the full `build`
-and `check` for the site, and `typecheck` plus `npm test` for each
-Worker. It needs no secrets.
-
-## Per-client surface
-
-In rough order of how long each takes:
-
-| What | Where |
+| Script | What it does |
 |---|---|
-| Business facts and copy | `site/client.config.ts` |
-| Colours and type | `site/app/globals.css` (token block at the top) |
-| Which pages exist | `site/lib/routes.ts` (`live` flags) |
-| Long-form content | `site/content/*.ts`, behind `site/lib/content.ts` |
-| Third-party origins | `INTEGRATIONS` in `site/scripts/csp.mjs` |
-| Endpoints and keys | `site/.env.local` |
-| Worker config | `workers/*/wrangler.toml` |
-| Images | `site/public/brand/` |
+| `npm run build` | `next build` → CSP generation and drift check → SEO title/description limits → dead-link check → secret/sourcemap scan. Any gate failing fails the build. |
+| `npm run lint` / `typecheck` / `format:check` | Same checks CI runs. |
+| `npm run check` | Advisory scan for inherited-default frontend patterns. |
+| `npm run preview:build` | Build with `NEXT_PUBLIC_PREVIEW=1` (noindex everywhere). |
 
-`tailwind.config.ts` maps every colour utility onto the CSS variables in
-`globals.css`, so it should not need editing per client.
+## Single config
 
-## Shipped but not mounted
+Business facts live in [`site/site.config.ts`](site/site.config.ts). Components never hard-code them. Page-specific copy lives in `site/data/*.ts` or the page.
 
-Some code has no importer on purpose — it is kit, ready for the page
-that needs it, not dead code:
+## Feature flags
 
-- **Motion and UI primitives:** `BandTransition`, `BeforeAfterSlider`,
-  `DrawRule`, `Mark`, `Pending`, `PinnedSteps`, `Stars` in
-  `site/components/`.
-- **Careers:** `CareersForm`, `Turnstile`, `lib/submitApplication.ts` and
-  `content/careers.ts`, waiting on a `/careers/` page (`live: false` in
-  `lib/routes.ts`). `workers/careers-upload` is its back end.
+`FEATURE_AUTOMATIONS`, `FEATURE_AUTOMATIONS_DEMO`, `FEATURE_VOICE`: read only through [`site/lib/flags.ts`](site/lib/flags.ts), resolved at build time, off unless set to exactly `true`. A flagged route is not emitted when its flag is off (Cloudflare Pages serves the 404), and the route registry in [`site/lib/routes.ts`](site/lib/routes.ts) keeps it out of nav, footer and sitemap. Every deployed environment builds with all flags off until PLAN §9 Phase 7.

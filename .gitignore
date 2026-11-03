@@ -12,3 +12,10 @@ dist/
 
 # JetBrains IDE settings
 .idea/
+
+# Windows / OneDrive folder metadata
+desktop.ini
+
+# Design reference runtime (the mockup viewer, not the design). Kept in the zip.
+docs/design-reference/digital-haptics-design-system/support.js
+docs/design-reference/digital-haptics-design-system/vendor/

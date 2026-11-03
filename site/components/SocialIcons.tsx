@@ -1,4 +1,4 @@
-import { client } from "@/client.config";
+import { site } from "@/site.config";
 
 /**
  * Social links live here — the utility strip and the footer — and not
@@ -23,8 +23,8 @@ export function SocialIcons({
   size?: number;
 }) {
   const links = [
-    { label: "Facebook", href: client.socials.facebook },
-    { label: "Instagram", href: client.socials.instagram },
+    { label: "Facebook", href: site.socials.facebook as string },
+    { label: "Instagram", href: site.socials.instagram as string },
   ].filter((l) => l.href);
 
   if (links.length === 0) return null;
@@ -37,10 +37,10 @@ export function SocialIcons({
           href={l.href}
           target="_blank"
           rel="noopener noreferrer"
-          aria-label={`${client.businessName} on ${l.label}`}
+          aria-label={`${site.name} on ${l.label}`}
           className={
             linkClassName ??
-            "text-ink-invert-soft transition-colors duration-150 hover:text-accent active:text-accent-press"
+            "inline-flex min-h-touch min-w-[44px] items-center justify-center text-ink hover:text-steel"
           }
         >
           <svg viewBox="0 0 24 24" width={size} height={size} fill="currentColor" aria-hidden>
