@@ -703,7 +703,13 @@ function scanFile(path, root) {
     const ROUND =
       /(?:^|[\s>"'(])(99\.9+%|100%|24\/7|10,?000\+|1,?000\+|500\+|100\+|1M\+|5x|10x)(?=[\s<"').,!]|$)/;
     {
-      const m = line.match(ROUND);
+      // "100%" inside a CSS length (clip-path polygons, calc(), inset
+      // values) is geometry, not a stat. Tuned in Phase 1 (REFACTOR_AUDIT R11).
+      const css =
+        /(polygon\(|calc\(|`.*\d+%? \d|100% \$\{|\$\{[^}]*\} 100%|"100% |"0 100%|[:=] "100%")/.test(
+          line
+        );
+      const m = css ? null : line.match(ROUND);
       if (m) F(i, "round-stat", m[1]);
     }
 

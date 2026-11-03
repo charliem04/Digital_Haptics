@@ -424,3 +424,23 @@ Approved in chat after Phase 0 merged. One Worker (`digitalhaptics`) serves the 
 - **Preview versions share production's runtime bindings.** On Pages, Preview had its own D1 and variables; a Worker preview version uses the same D1 database and secrets as production. The intake endpoint has to keep preview submissions out of the production table (separate D1 binding selected at build, or refuse writes when the build is a preview).
 - Flags reach the endpoint by build-time inlining (C17).
 
+## 10. Phase 1 record (design system, branch `refactor/phase-1`)
+
+**Built:** `components/ui/` holds CutFrame (+ `cutPath`), Arrow/ArrowBlock, Button (primary/accent/ghost × md/sm), Field (TextField, TextAreaField, SelectField, Checkbox, CheckboxGroup), Chip/ChipButton, BoxedLabel, SectionLabel, Marker, Flare and Logo. In `components/`: CaseCard, HeroSidebar (rail + band) and LeadFlowPanel 🚩 (+ LeadFlowRows). `/styleguide/` is live, noindex, out of the sitemap and linked from nowhere.
+
+**Deviations and decisions:**
+- **Header, mobile menu and sticky CTA stay in Phase 2.** PLAN §4.5 lists them, but §9 schedules them in the layout shell. Phase 1 built their parts (Logo, Button).
+- **The ↘ is an SVG, not a character.** The self-hosted JetBrains Mono latin subset has no U+2198, so a typed arrow fell back to a system font. MoreLink was switched too.
+- **Focus ring on cut shapes (C10):** CutFrame `ring` draws two clipped layers outside the frame (signal at 2px, ink at 4px) that appear on `:focus-visible` or `:has(:focus-visible)`. There's no layout shift and the ring follows the cut. Verified with real Tab presses on a case card and an input.
+- **Errors (D5):** "Error —" line in ink plus a 2px signal bar inside the bottom of the field. The bar is an element, because a box-shadow bar was removed by the focus style.
+- **Flagged copy stays out of flag-off JavaScript.** LeadFlowPanel is a server component that checks the flag and passes rows to a client child, so a flag-off build ships none of its copy. Checked by grepping `out/`.
+- **Hero geometry, for Phase 3 (R6/R12, measured in the styleguide assembly):**
+  - The crossing sits at `calc(100% - 670px)`, 350px left of the rail as drawn (770px at 1440). A percentage put the flag-on panel 2px over the rail at 1280.
+  - The headline is capped at xl with `min(7rem, (100vw - 548px) / 7.6)`. Uncapped, "Websites that" wrapped to three lines at 1280.
+  - Below xl the crossing drops under the buttons, so the horizontal line never crosses body text, and the two headline lines use a 4px gap instead of 26px.
+  - Measured: 1440 rail at 1105, panel 775–1025; 1280 panel ends 865, rail at 945; 1024 and 375 band, no horizontal overflow.
+- **Press states:** Button and ChipButton nudge 1px on `:active`. Breadcrumbs, MoreLink and SocialIcons got press states too, which clears `check.mjs`'s no-active-state warnings.
+- **`check.mjs` tuned (R11):** round-stat no longer fires on `100%` inside clip-path polygons, calc() or CSS length defaults.
+- **Utility conflicts:** a component's default position or padding class can't be overridden by a caller's class, because Tailwind order decides, not class order. HeroSidebar no longer sets its own position. Overrides use `!` where needed.
+- **Sidebar blurbs and lead-flow rows** are the mockup's copy verbatim (`data/acts.ts`, `data/leadFlow.ts`). Logged in CONTENT_TODO.md for your sign-off.
+

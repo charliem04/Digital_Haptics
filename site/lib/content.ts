@@ -17,4 +17,22 @@
  *  service, for example) never reaches a page with its flag off.
  * ════════════════════════════════════════════════════════════════════
  */
-export {};
+import { flags, isOn } from "@/lib/flags";
+import { acts, actsFlowLine } from "@/data/acts";
+import { leadFlowSteps } from "@/data/leadFlow";
+import type { Act, LeadFlowStep } from "@/content/types";
+
+/** Hero sidebar items, with flagged ones removed when their flag is off. */
+export function getActs(): Act[] {
+  return acts.filter((a) => isOn(a.flag)).map(({ flag: _flag, ...act }) => act);
+}
+
+/** The sidebar footer line for this build's flag state. */
+export function getActsFlowLine(): string {
+  return flags.automations ? actsFlowLine.on : actsFlowLine.off;
+}
+
+/** Lead-flow rows. Empty with the flag off, so nothing can render them. */
+export function getLeadFlowSteps(): LeadFlowStep[] {
+  return flags.automations ? leadFlowSteps : [];
+}

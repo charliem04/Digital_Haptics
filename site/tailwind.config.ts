@@ -129,6 +129,18 @@ const config: Config = {
         "dot-pitch": "var(--dot-size) var(--dot-size)",
         "dot-pitch-dense": "10px 10px",
       },
+      // Flare glow pulse (PLAN §4.6). Opacity only, so it stays on the
+      // compositor. Curve = ease.inOut in lib/motion.ts. Use it as
+      // `motion-safe:animate-flare-pulse` so reduced motion never runs it.
+      keyframes: {
+        "flare-pulse": {
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0.7" },
+        },
+      },
+      animation: {
+        "flare-pulse": "flare-pulse 4.8s cubic-bezier(0.65, 0, 0.35, 1) infinite",
+      },
       transitionTimingFunction: {
         // Same curve as `ease.out` in lib/motion.ts; change both together.
         brand: "cubic-bezier(0.21, 0.65, 0.36, 1)",

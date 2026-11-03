@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { isLive } from "@/lib/routes";
+import { Arrow } from "./ui/Arrow";
 
 /**
  * The funnel link that closes a home band. Each section carries its own
@@ -45,12 +46,7 @@ export function MoreLink({
       }`}
     >
       {children}
-      <span
-        aria-hidden
-        className="transition-transform duration-150 group-hover:translate-x-0.5 group-hover:translate-y-0.5"
-      >
-        ↘
-      </span>
+      <Arrow className="size-3.5 transition-transform duration-[250ms] ease-brand group-hover:translate-x-0.5 group-hover:translate-y-0.5 group-active:translate-y-1" />
     </Link>
   );
 }

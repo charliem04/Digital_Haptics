@@ -24,7 +24,7 @@ Under the Worker → **Settings** → **Build**:
 | Production branch | `main` | Merging a phase into `main` is what publishes it. |
 | Build command | `npm run build` | Runs `next build` plus the CSP, SEO, dead-link and secret checks. Any failure stops the deploy. |
 | Deploy command | `npx wrangler deploy` | Uploads `out/` as the Worker's assets, using `site/wrangler.jsonc`. |
-| Non-production branch deploy command | `npx wrangler versions upload` | Previews get their own URL and never replace production. Make sure builds for non-production branches are **enabled**. |
+| Non-production branch deploy command | `npx wrangler preview` (the dashboard default) | Each branch gets its own preview URL, named after the branch, and never replaces production. Needs the `previews` block in `site/wrangler.jsonc`, which is already there. Make sure builds for non-production branches are **enabled**. |
 | Root directory | `/site` | The Next.js app and `wrangler.jsonc` live in `site/`. |
 
 ### Step 3: build variables
