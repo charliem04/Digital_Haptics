@@ -20,7 +20,7 @@ Next.js 14 (App Router, TypeScript, `output: "export"`), Tailwind CSS, Framer Mo
 
 ## Working on it
 
-Requires Node 20+ (`site/.nvmrc`).
+Requires Node 22+ (`site/.nvmrc`; Wrangler needs 22).
 
 ```bash
 cd site

@@ -2,6 +2,9 @@
   "name": "digitalhaptics-site",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build && node scripts/csp.mjs && node scripts/seo.mjs && node scripts/routes.mjs --check && node scripts/preview-headers.mjs --if-preview && node scripts/harden.mjs",
