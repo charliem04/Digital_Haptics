@@ -9,8 +9,7 @@ The Digital Haptics agency site: web design and local SEO for trades businesses 
 - **Cloudflare Workers + placeholder setup:** [docs/SETUP.md](docs/SETUP.md)
 
 ```
-site/      Next.js App Router (static export) → Cloudflare Worker (static assets)
-workers/   lead-relay: reference for the Phase 4 intake endpoint
+site/      Next.js App Router (static export) + worker/ (the /api endpoints) → one Cloudflare Worker
 docs/      plan, audit, runbooks
 ```
 
@@ -32,7 +31,8 @@ npm run dev
 | Script | What it does |
 |---|---|
 | `npm run build` | `next build` → CSP generation and drift check → SEO title/description limits → dead-link check → secret/sourcemap scan. Any gate failing fails the build. |
-| `npm run lint` / `typecheck` / `format:check` | Same checks CI runs. |
+| `npm run lint` / `typecheck` / `format:check` / `test` | Same checks CI runs. `test` covers the Worker. |
+| `npm run worker:dev` | Serve the built site and the Worker locally (local D1). |
 | `npm run check` | Advisory scan for inherited-default frontend patterns. |
 | `npm run preview:build` | Build with `NEXT_PUBLIC_PREVIEW=1` (noindex everywhere). |
 

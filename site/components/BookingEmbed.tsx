@@ -23,6 +23,7 @@ import { useEffect, useRef, useState } from "react";
 import { site } from "@/site.config";
 import { bookingOrigins, bookingEmbedSrc, schedulerName } from "@/lib/booking";
 import { Button } from "@/components/ui/Button";
+import { trackEvent } from "@/lib/tracking";
 
 /** Close enough that the visitor means to use it. */
 const MOUNT_MARGIN = "300px";
@@ -83,6 +84,25 @@ export function BookingEmbed() {
      covers a keyboard Enter with no prior focus event. */
   useEffect(() => {
     if (allowed) warmScheduler();
+  }, [allowed]);
+
+  /* ── booking_complete (PLAN §8) ─────────────────────────────────
+     Cal.com's embed posts a message to the parent page when a booking
+     goes through. Only messages from the scheduler's own origins count.
+     // OPEN: confirm the event name against a real Cal.com booking once
+     // the event URL is set (CONTENT_TODO.md). */
+  useEffect(() => {
+    if (!allowed) return;
+    const origins = bookingOrigins();
+    const onMessage = (e: MessageEvent) => {
+      if (!origins.includes(e.origin)) return;
+      const type = (e.data as { type?: unknown } | null)?.type;
+      if (typeof type === "string" && type.includes("bookingSuccessful")) {
+        trackEvent("booking_complete");
+      }
+    };
+    window.addEventListener("message", onMessage);
+    return () => window.removeEventListener("message", onMessage);
   }, [allowed]);
 
   /* ── Mount on approach ───────────────────────────────────────────

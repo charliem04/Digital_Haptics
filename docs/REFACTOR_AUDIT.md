@@ -495,3 +495,32 @@ Approved in chat after Phase 0 merged. One Worker (`digitalhaptics`) serves the 
 - **Copy:** service, process, FAQ and CTA copy is DRAFT, written to describe the work only (no prices, stats, results, guarantees or client claims). All of it is listed in CONTENT_TODO.md for review.
 - **Dev server caveat:** Next 14's dev server can wrongly report "missing generateStaticParams" on `/services/[slug]` after a client reload (production builds are unaffected). For checking real behaviour, `.claude/launch.json` gains `site-static`, which serves the built `out/` through `wrangler dev`.
 
+## 13. Phase 4 record (systems, branch `refactor/phase-4`)
+
+**Built:**
+- `site/worker/` is the Worker entry (`wrangler.jsonc` `main`), with `run_worker_first: ["/api/*"]`. Everything else is served straight from `out/`.
+  - `POST /api/intake`: same-origin, at most 16 KB, per-IP rate limit (`ratelimits` binding), then shared validation, Turnstile, D1, and email via Resend after the response (`ctx.waitUntil`).
+  - `POST /api/event`: whitelisted conversion events into Analytics Engine (decision D2). No IP and no id.
+  - 🚩 `POST /api/demo`: a 404 unless `FEATURE_AUTOMATIONS_DEMO` is on. Mock: it validates, stores nothing, and returns the sequence.
+  - The cron (every 15 minutes) retries undelivered emails and, 🚩, webhooks.
+- `lib/intake-rules.ts` holds the one set of validation rules, used by both the form and the Worker. The form maps the Worker's 400 field errors back inline, and shows distinct messages for 429 and 403.
+- Analytics: `lib/tracking.ts` posts events with `sendBeacon`. `InteractionTracking`, mounted in the layout, records `cta_click` (with location from `data-track-loc` or the landmark) and `call_click`. The form records `form_start` and `form_submit`; the booking embed records `booking_complete`.
+- 🚩 Automations page: problem, modules (AI voice "coming soon"), live demo (its own flag, mock in local dev via `lib/demo.ts`), voice call-in (FEATURE_VOICE, number placeholder), and add-on positioning.
+- `workers/lead-relay` is retired: its store-first, retry-sweep and idempotent-delivery patterns are ported. CI now runs `npm test` (19 Worker tests with flags off; 18 more cases with flags on, 4 skipped per state) and no longer builds the relay.
+
+**Decisions:**
+- **Flags reach the Worker from the same build variables** (C17): `scripts/worker-flags.mjs` writes `worker/flags.generated.ts` (gitignored) at the start of `build` and `typecheck`. One switch per flag.
+- **Previews get their own D1 database and analytics dataset** (the `previews` block), as §9 required. Emails from previews say `[PREVIEW]`.
+- **D1 is provisioned by Wrangler** (no `database_id` in config), and the table is created on first use (`CREATE TABLE IF NOT EXISTS` in `worker/db.ts`), so there's no migration step. SETUP.md §3 covers the fallback if provisioning fails in Workers Builds.
+- **Turnstile fails open only while unconfigured.** With no secret set, rows are marked `unconfigured` and the email says so. With a secret, a missing or bad token is a 403, and an unreachable Turnstile also fails closed.
+- **Email errors:** 4xx spends an attempt (configuration problem; stops after 6), while 5xx, 429 and network errors retry free. An `Idempotency-Key` per lead prevents duplicate emails on retry.
+- **No flagged copy in flag-off JavaScript**, again: the demo component gets every word as a prop and was renamed `LiveDemo` (the export name survived minification). The scan of `out/`, JavaScript included, is clean.
+- **Verified end to end** under `wrangler dev` with the production build:
+  - Turnstile, using Cloudflare's published test keys, loaded under the CSP and passed server-side.
+  - The form's POST returned 200 and redirected to the thank-you page.
+  - The row was in local D1: E.164 phone, `turnstile=passed`, `email_status=disabled`, `webhook_status=off`.
+  - `form_start` and `form_submit` events returned 204.
+  - curl: cross-origin 403, no token 403, unknown `/api` 404, demo 404, flagged page 404, cron 200.
+- **Workers types** pinned to `5.20261016.1` rather than the release published that day.
+- **Found in passing:** `/favicon.ico` 404s. The icon and OG images are Phase 5.
+

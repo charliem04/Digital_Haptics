@@ -1,43 +1,44 @@
 "use client";
 
 /**
- * One delegated listener for call and booking links, instead of an onClick on every button that offers them.
+ * One delegated click listener for the PLAN §8 events, instead of an
+ * onClick on every button that offers them. A link added anywhere later
+ * is tracked without anyone remembering to wire it.
  *
- * Doing it here means a link added anywhere later is tracked without
- * anyone remembering to wire it, and no component has to import
- * analytics to render a phone number.
+ *   cta_click   any link to the CTA destination (/start/). Location is
+ *               the nearest [data-track-loc], else the enclosing
+ *               landmark or section's id ("hero", "footer", …).
+ *   call_click  any tel: link.
  *
- * PHASE 4: rewritten to emit the PLAN §8 events (cta_click, call_click,
- * booking_complete…) to the destination chosen in decision D2, then
- * mounted in the layout. Unmounted until then.
+ * form_start / form_submit fire from the intake form, booking_complete
+ * from the scheduler embed. Mounted once, in the root layout.
  */
 import { useEffect } from "react";
-import { site } from "@/site.config";
+import { trackEvent } from "@/lib/tracking";
 
-/** Widened: site.config.ts is `as const`. */
-const calUrl: string = site.booking.calUrl;
-import { trackEvent, type ConversionEvent } from "@/lib/tracking";
-
-function classify(href: string): ConversionEvent | null {
-  if (href.startsWith("tel:")) return "Call";
-  if (href.startsWith("sms:")) return "Text";
-  if (calUrl && href.startsWith(calUrl)) return "Book";
-  return null;
+function locationOf(el: Element): string | undefined {
+  const tagged = el.closest("[data-track-loc]")?.getAttribute("data-track-loc");
+  if (tagged) return tagged;
+  if (el.closest("header")) return "header";
+  if (el.closest("footer")) return "footer";
+  if (el.closest("dialog")) return "menu";
+  const section = el.closest("section[aria-labelledby]")?.getAttribute("aria-labelledby");
+  return section ?? undefined;
 }
 
-export function InteractionTracking() {
+export function InteractionTracking({ ctaHref }: { ctaHref: string }) {
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
-      const anchor = (e.target as HTMLElement | null)?.closest?.("a");
-      if (!anchor) return;
-      const event = classify(anchor.getAttribute("href") ?? "");
-      if (!event) return;
-      trackEvent(event);
+      const a = (e.target as Element | null)?.closest?.("a");
+      if (!a) return;
+      const href = a.getAttribute("href") ?? "";
+      if (href.startsWith("tel:")) trackEvent("call_click", locationOf(a));
+      else if (href === ctaHref || href === ctaHref.replace(/\/$/, ""))
+        trackEvent("cta_click", locationOf(a));
     };
-
     document.addEventListener("click", onClick);
     return () => document.removeEventListener("click", onClick);
-  }, []);
+  }, [ctaHref]);
 
   return null;
 }

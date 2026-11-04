@@ -16,7 +16,7 @@ export function CtaBand({ copy, id = "cta" }: { copy: CtaCopy; id?: string }) {
   const { phone } = contactLinks();
 
   return (
-    <Section tone="ink" aria-labelledby={id}>
+    <Section tone="ink" aria-labelledby={id} data-track-loc="cta-band">
       <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
         <div className="flex max-w-[720px] flex-col gap-4">
           <SectionLabel tone="ice">Next step</SectionLabel>

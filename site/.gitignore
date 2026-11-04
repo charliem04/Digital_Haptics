@@ -4,3 +4,9 @@ out
 .env*.local
 *.tsbuildinfo
 next-env.d.ts
+
+# Generated per build by scripts/worker-flags.mjs
+worker/flags.generated.ts
+# Local wrangler dev secrets
+.dev.vars
+.wrangler/

@@ -43,7 +43,7 @@ export function Hero() {
   const work = isLive("/work/");
 
   return (
-    <section aria-labelledby="hero-title">
+    <section aria-labelledby="hero-title" data-track-loc="hero">
       <div className="relative mx-auto max-w-page [--fh:0px] [--fx:86%] [--fy:calc(100%-40px)] xl:[--fh:320px] xl:[--fx:calc(100%-670px)] xl:[--fy:470px]">
         {/* Pulled up behind the header at xl, so the lines start at the
             top edge of the page as drawn. */}

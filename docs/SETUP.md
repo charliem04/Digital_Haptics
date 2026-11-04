@@ -1,6 +1,6 @@
 # Setup you do yourself
 
-Two jobs from Phase 0: connect the repo to Cloudflare, and fill the placeholders in `CONTENT_TODO.md`. Neither blocks Phase 1.
+Connect the repo to Cloudflare (§1), fill the placeholders (§2), and switch on the intake form's email and spam check (§3, from Phase 4).
 
 ---
 
@@ -74,3 +74,57 @@ Nothing here blocks the build. Every placeholder renders visibly or stays hidden
 | **Privacy policy / terms** | Nothing yet. I draft both in Phase 5 from what the site actually does; then an attorney should read them before launch. | n/a | Stub pages, kept out of search. |
 
 **Coming later** (listed at the bottom of `CONTENT_TODO.md`, not needed now): starting prices for /pricing, case-study results and each client's permission, intake-form timeline and budget options, unique city content, and your About-page details.
+
+---
+
+## 3. Intake form: database, email, spam check (Phase 4)
+
+The form works the moment Phase 4 deploys: every submission is stored in the database. Until the steps below are done, two things wait:
+
+- **No email.** Nobody is emailed about the lead. It's stored with `email_status = disabled` and sent automatically once email is set up, by the retry that runs every 15 minutes.
+- **No spam check.** Turnstile is skipped, and the row says `turnstile = unconfigured`.
+
+Do all of this before launch (Phase 6).
+
+### Step 1: the database (nothing to do, then check)
+
+`site/wrangler.jsonc` asks for a D1 database named `digitalhaptics-leads`, plus `digitalhaptics-leads-preview` for branch previews, so test submissions never mix with real leads. Wrangler creates both on the first deploy that needs them, and the Worker creates its table on the first submission.
+
+**Check:** after the first deploy from `main`, open **Storage & Databases → D1**. Both databases should be listed. If the deploy log instead says it couldn't create the database, create it there with exactly that name and send me the log.
+
+**Reading leads:** D1 → `digitalhaptics-leads` → **Console**, then:
+
+```sql
+SELECT received_at, name, business, phone, email, email_status FROM leads ORDER BY received_at DESC LIMIT 50;
+```
+
+### Step 2: Turnstile (spam check)
+
+1. Dashboard → **Turnstile** → **Add widget**. Name it `digitalhaptics`. Under hostnames, add `digitalhaptics.dev` and `charliem04work.workers.dev` (the second covers the workers.dev and preview URLs). Mode: **Managed**.
+2. Copy the **site key** (public) and the **secret key**.
+3. Worker → **Settings → Build → Variables and secrets**: add `NEXT_PUBLIC_TURNSTILE_SITE_KEY` = the site key, as a plain variable. It's a build variable because the page needs it.
+4. Worker → **Settings → Variables and Secrets** (the runtime ones, not Build): add `TURNSTILE_SECRET_KEY` = the secret key, type **Secret**.
+5. Retry the latest build. The form now shows the check, and the Worker refuses submissions without a valid token.
+
+### Step 3: email (Resend)
+
+Lead emails go to `LEAD_NOTIFY_TO` (`charles@digitalhaptics.dev`) from `LEAD_NOTIFY_FROM` (`leads@digitalhaptics.dev`). Both are in `site/wrangler.jsonc`; tell me if you want them changed.
+
+1. Create a free account at resend.com. Under **Domains**, add `digitalhaptics.dev` and add the DNS records it shows (SPF/DKIM) wherever the domain's DNS lives. Wait for **Verified**.
+2. **API Keys → Create**: permission **Sending access**, domain `digitalhaptics.dev`. Copy it; it's shown once.
+3. Worker → **Settings → Variables and Secrets**: add `RESEND_API_KEY`, type **Secret**.
+4. `charles@digitalhaptics.dev` has to receive mail: set up the mailbox or Cloudflare Email Routing first (CONTENT_TODO.md).
+5. **Check:** send a test through the form on the live site. The email arrives with the lead as Reply-To. Leads that came in before this step go out within 15 minutes.
+
+### Step 4 (optional, Phase 7): automations webhook 🚩
+
+Only when `FEATURE_AUTOMATIONS` is turned on. Add `AUTOMATIONS_WEBHOOK_URL` (and optionally `AUTOMATIONS_WEBHOOK_SECRET`, sent as the `X-Webhook-Secret` header) as runtime **Secrets**. With the flag off, nothing is ever forwarded, whatever is set.
+
+### Analytics
+
+Conversion events (`cta_click`, `form_start`, `form_submit`, `call_click`, `booking_complete`) go into the Analytics Engine dataset `digitalhaptics_events`, which is created on first write. Query them under **Workers → Analytics Engine**, or ask me for a saved query. Pageviews come from Cloudflare Web Analytics (Phase 6).
+
+### Testing locally
+
+Run `npm run build`, then `npm run worker:dev` in `site/`. It serves the built site plus the Worker on a local database. To exercise Turnstile, create `site/.dev.vars` (git-ignored) with Cloudflare's published test secret `TURNSTILE_SECRET_KEY=1x0000000000000000000000000000000AA`, and build with `NEXT_PUBLIC_TURNSTILE_SITE_KEY=1x00000000000000000000AA`. Never put real keys in that file.
+

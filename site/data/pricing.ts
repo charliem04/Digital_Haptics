@@ -1,4 +1,4 @@
-import type { FlagName } from "@/lib/flags";
+import type { FlagName } from "@/lib/flag-names";
 
 /**
  * Pricing page (PLAN §5). No tiers. Figures stay [PRICE] until you set

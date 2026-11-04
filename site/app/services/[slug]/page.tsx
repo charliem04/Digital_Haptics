@@ -11,6 +11,7 @@ import { CtaBand } from "@/components/page/CtaBand";
 import { FaqList } from "@/components/FaqList";
 import { Marker } from "@/components/ui/Marker";
 import { MoreLink } from "@/components/MoreLink";
+import { AutomationsSections } from "@/components/automations/AutomationsSections";
 
 /**
  * ════════════════════════════════════════════════════════════════════
@@ -19,8 +20,8 @@ import { MoreLink } from "@/components/MoreLink";
  *
  *  Flagged services are filtered out of generateStaticParams, so with
  *  FEATURE_AUTOMATIONS off /services/automations/ is never emitted and
- *  the Worker serves the real 404 (REFACTOR_AUDIT R2). Its full page
- *  (modules, demo) is Phase 4.
+ *  the Worker serves the real 404 (REFACTOR_AUDIT R2). Its own sections
+ *  (problem, modules, demo, voice, add-on) come from AutomationsSections.
  * ════════════════════════════════════════════════════════════════════
  */
 export const dynamicParams = false;
@@ -88,6 +89,8 @@ export default function ServicePage({ params }: { params: { slug: string } }) {
           </div>
         </div>
       </Section>
+
+      {s.slug === "automations" && <AutomationsSections />}
 
       {cases.length > 0 && (
         <Section aria-labelledby="cases">

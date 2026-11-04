@@ -21,6 +21,8 @@
  * ════════════════════════════════════════════════════════════════════
  */
 
+import type { FlagName } from "./flag-names";
+
 const on = (value: string | undefined): boolean => value === "true";
 
 const automations = on(process.env.FEATURE_AUTOMATIONS);
@@ -37,7 +39,11 @@ export const flags = {
   voice: on(process.env.FEATURE_VOICE),
 } as const;
 
-export type FlagName = keyof typeof flags;
+export type { FlagName };
+
+// Fails to compile if the names and the object ever drift apart.
+const _names: Record<FlagName, boolean> = flags;
+void _names;
 
 /** `isOn(undefined)` is true: an element with no flag is always shown. */
 export function isOn(flag: FlagName | undefined): boolean {

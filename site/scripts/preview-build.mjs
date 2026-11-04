@@ -27,6 +27,8 @@ import { applyPreviewHeaders } from "./preview-headers.mjs";
 import { applyCsp } from "./csp.mjs";
 import { checkSeo } from "./seo.mjs";
 import { harden } from "./harden.mjs";
+// Same flags into the Worker as into the pages (scripts/worker-flags.mjs).
+await import("./worker-flags.mjs");
 
 const require = createRequire(import.meta.url);
 

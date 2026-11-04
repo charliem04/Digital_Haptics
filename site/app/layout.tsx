@@ -9,6 +9,8 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { StickyCta } from "@/components/layout/StickyCta";
 import { ctaLink } from "@/lib/nav";
+import { CTA_HREF } from "@/lib/routes";
+import { InteractionTracking } from "@/components/InteractionTracking";
 
 /*
  * Fonts (PLAN §4.2), committed in app/fonts/ and loaded with
@@ -107,6 +109,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         </main>
         <Footer />
         <StickyCta cta={ctaLink()} />
+        <InteractionTracking ctaHref={CTA_HREF} />
         <JsonLd />
       </body>
     </html>

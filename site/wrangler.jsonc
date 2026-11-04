@@ -1,31 +1,82 @@
 // Cloudflare Worker for digitalhaptics.dev (decision D1, revised
 // 2026-11-03: a Worker with static assets instead of Pages).
 //
-// Phase 0–3: static files only. `npm run build` writes the export to
-// out/, and Workers serves it, including out/_headers (CSP, HSTS) and
-// out/_redirects. Phase 4 adds "main" (the intake endpoint) and the
-// D1, Analytics Engine and secret bindings.
+// `npm run build` writes the static export to out/. The asset server
+// answers every path except /api/*, which runs worker/index.ts first
+// (intake form, conversion events, the flagged demo).
+//
+// Secrets are NOT here. Set them in the dashboard (Worker → Settings →
+// Variables and Secrets) or with `npx wrangler secret put NAME`:
+//   RESEND_API_KEY, TURNSTILE_SECRET_KEY,
+//   🚩 AUTOMATIONS_WEBHOOK_URL, AUTOMATIONS_WEBHOOK_SECRET
+// docs/SETUP.md §3 walks through each.
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   // Must match the Worker's name in the dashboard. Workers Builds
   // overrides it with the dashboard name anyway.
   "name": "digitalhaptics",
+  "main": "worker/index.ts",
   "compatibility_date": "2026-10-01",
   "assets": {
     "directory": "./out",
+    "binding": "ASSETS",
+    // Only the API runs code; every page is a plain file.
+    "run_worker_first": ["/api/*"],
     // Unknown paths get out/404.html with a 404 status, which is how a
     // flagged route stays a real 404 (PLAN §2.1).
     "not_found_handling": "404-page",
     // Matches next.config.mjs trailingSlash: /privacy → /privacy/.
     "html_handling": "auto-trailing-slash",
   },
-  // workers.dev and preview URLs stay on for review builds. Every
-  // non-main build is noindex (scripts/is-preview.mjs).
   "workers_dev": true,
   "preview_urls": true,
-  // Required by `wrangler preview`, the command Workers Builds runs for
-  // non-production branches. Empty means a preview inherits everything
-  // above. Phase 4 puts preview-only bindings here (a separate D1, so
-  // preview submissions never reach the production leads table).
-  "previews": {},
+  "observability": { "enabled": true },
+
+  // ── Production bindings ─────────────────────────────────────────
+  "vars": {
+    "SITE_ENV": "production",
+    // Lead notifications. FROM must be on a domain verified in Resend.
+    "LEAD_NOTIFY_TO": "charles@digitalhaptics.dev",
+    "LEAD_NOTIFY_FROM": "Digital Haptics <leads@digitalhaptics.dev>",
+  },
+  "d1_databases": [
+    {
+      // No database_id: Wrangler creates the database on first deploy
+      // and remembers it. The table is created on first use
+      // (worker/db.ts), so there is no migration step.
+      "binding": "DB",
+      "database_name": "digitalhaptics-leads",
+    },
+  ],
+  "ratelimits": [
+    {
+      // 10 submissions per minute per IP for intake and demo. A
+      // backstop behind Turnstile, not the main defence.
+      "name": "LIMITER",
+      "namespace_id": "1001",
+      "simple": { "limit": 10, "period": 60 },
+    },
+  ],
+  "analytics_engine_datasets": [{ "binding": "EVENTS", "dataset": "digitalhaptics_events" }],
+  // Retry undelivered lead emails (and 🚩 webhooks) every 15 minutes.
+  "triggers": { "crons": ["*/15 * * * *"] },
+
+  // ── Preview bindings ────────────────────────────────────────────
+  // `wrangler preview` (every non-main branch) uses these instead.
+  // A separate database, so test submissions never reach the real
+  // leads table (REFACTOR_AUDIT §9), and a separate events dataset.
+  "previews": {
+    "vars": {
+      "SITE_ENV": "preview",
+      "LEAD_NOTIFY_TO": "charles@digitalhaptics.dev",
+      "LEAD_NOTIFY_FROM": "Digital Haptics <leads@digitalhaptics.dev>",
+    },
+    "d1_databases": [{ "binding": "DB", "database_name": "digitalhaptics-leads-preview" }],
+    "ratelimits": [
+      { "name": "LIMITER", "namespace_id": "1002", "simple": { "limit": 10, "period": 60 } },
+    ],
+    "analytics_engine_datasets": [
+      { "binding": "EVENTS", "dataset": "digitalhaptics_events_preview" },
+    ],
+  },
 }

@@ -39,6 +39,17 @@ What each item needs, with examples: [docs/SETUP.md §2](docs/SETUP.md).
 | 🚩 SMS consent wording: check against your SMS provider's and carrier rules before Phase 7 | `site/data/intake.ts` → `smsConsent` | You (and provider) | Open |
 | 🚩 Live systems teaser copy (home, flag on) | `site/app/page.tsx` | You | Open |
 
+## Phase 4 (systems)
+
+| Item | Where | Needed from | Status |
+|---|---|---|---|
+| Turnstile widget + keys, Resend domain + API key: the form stores leads without them but sends no email and skips the spam check | Cloudflare / Resend dashboards ([docs/SETUP.md §3](docs/SETUP.md)) | You | Open |
+| Confirm lead email addresses (`LEAD_NOTIFY_TO` charles@, `LEAD_NOTIFY_FROM` leads@digitalhaptics.dev) | `site/wrangler.jsonc` → `vars` | You | Open |
+| 🚩 Automations page DRAFT copy: problem, modules, add-on | `site/data/automations.ts` | You | Open |
+| 🚩 Demo copy and message sequence (Demo Plumbing Co., fictional) | `site/data/automations.ts`, `site/data/demo.ts` | You | Open |
+| 🚩 `[PLACEHOLDER: voice demo number]` (FEATURE_VOICE section) | `site/data/automations.ts` → `voiceCopy.number` | You, when the voice agent ships | Open |
+| Cal.com `bookingSuccessful` event name: confirm with a real booking once the event URL is set (`// OPEN:`) | `site/components/BookingEmbed.tsx` | Me, after Cal.com is set up | Open |
+
 ## Coming in later phases (from PLAN.md, logged when the code lands)
 
 - Unique content for each city page (cities without it stay unpublished)

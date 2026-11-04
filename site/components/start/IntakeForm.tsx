@@ -13,6 +13,14 @@ import {
 } from "@/components/ui/Field";
 import { Button } from "@/components/ui/Button";
 import { Turnstile } from "@/components/Turnstile";
+import { trackEvent } from "@/lib/tracking";
+import {
+  checkField,
+  fieldsFor,
+  type FieldName,
+  type IntakeErrors,
+  type IntakeOptions,
+} from "@/lib/intake-rules";
 
 /**
  * ════════════════════════════════════════════════════════════════════
@@ -30,18 +38,19 @@ import { Turnstile } from "@/components/Turnstile";
  *  and a failed submit puts an error summary first and moves focus to
  *  it, so screen-reader and keyboard users land on the problem.
  *
- *  Submits JSON to the intake endpoint (site.config.ts). The endpoint
- *  (validate → Turnstile → D1 → email) is built in Phase 4; until it
- *  answers, a submit shows the failure state with phone and email.
- *  On success: /start/thanks/.
+ *  The rules are lib/intake-rules.ts, the same ones the Worker applies,
+ *  so the two never disagree. Submits JSON to the intake endpoint
+ *  (worker/intake.ts: validate → Turnstile → D1 → email). A 400 maps
+ *  the Worker's field errors back onto the form; any other failure
+ *  shows phone and email. On success: /start/thanks/.
  *
  *  Options come in as props from the server, so this file never
  *  imports content or flags itself.
  * ════════════════════════════════════════════════════════════════════
  */
-type Errors = Partial<Record<string, string>>;
+type Errors = IntakeErrors;
 
-const LABELS: Record<string, string> = {
+const LABELS: Record<FieldName, string> = {
   name: "Your name",
   business: "Business name",
   trade: "Trade",
@@ -50,46 +59,18 @@ const LABELS: Record<string, string> = {
   website: "Current website",
   services: "Services interested in",
   timeline: "Timeline",
+  budget: "Budget range",
   message: "Message",
+  smsConsent: "",
 };
 
 export type SmsConsentCopy = { legend: string; label: string; error: string };
 
-const digits = (v: string) => v.replace(/\D/g, "");
-
-/** One field's problem, in words, or undefined. */
-function check(name: string, form: FormData): string | undefined {
-  const v = String(form.get(name) ?? "").trim();
-  switch (name) {
-    case "name":
-      return v ? undefined : "Enter your name.";
-    case "business":
-      return v ? undefined : "Enter your business name.";
-    case "trade":
-      return v ? undefined : "Choose your trade.";
-    case "phone": {
-      if (!v) return "Enter a phone number we can call.";
-      const d = digits(v);
-      const ok = d.length === 10 || (d.length === 11 && d.startsWith("1"));
-      return ok ? undefined : "Enter a 10-digit US phone number.";
-    }
-    case "email":
-      if (!v) return "Enter an email we can reply to.";
-      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? undefined : "Check the email address.";
-    case "website":
-      if (!v) return undefined;
-      return /^(https?:\/\/)?[^\s.]+\.[^\s]{2,}$/i.test(v)
-        ? undefined
-        : "Check the web address, or leave it blank.";
-    case "services":
-      return form.getAll("services").length ? undefined : "Choose at least one.";
-    case "timeline":
-      return v ? undefined : "Choose a timeline.";
-    case "message":
-      return v ? undefined : "Tell us a little about the job.";
-    default:
-      return undefined;
-  }
+/** A field's value as the shared rules expect it. */
+function read(name: FieldName, fd: FormData): string | string[] | boolean {
+  if (name === "services") return fd.getAll("services").map(String);
+  if (name === "smsConsent") return fd.get("smsConsent") === "yes";
+  return String(fd.get(name) ?? "");
 }
 
 export function IntakeForm({
@@ -113,37 +94,39 @@ export function IntakeForm({
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
   const summaryRef = useRef<HTMLDivElement>(null);
+  const started = useRef(false);
   const [errors, setErrors] = useState<Errors>({});
-  const [summary, setSummary] = useState<string[]>([]);
-  const [status, setStatus] = useState<"idle" | "sending" | "failed">("idle");
+  const [summary, setSummary] = useState<FieldName[]>([]);
+  const [status, setStatus] = useState<"idle" | "sending" | "failed" | "busy" | "check">("idle");
 
-  const fields = [
-    "name",
-    "business",
-    "trade",
-    "phone",
-    "email",
-    "website",
-    "services",
-    "timeline",
-    "message",
-    ...(sms ? ["smsConsent"] : []),
-  ];
+  // The same rules the Worker applies (lib/intake-rules.ts).
+  const opts: IntakeOptions = {
+    trades: trades.map((o) => o.value),
+    timelines: timelines.map((o) => o.value),
+    budgets: budgets.map((o) => o.value),
+    services: services.map((o) => o.value),
+    smsConsentError: sms?.error,
+  };
+  const fields = fieldsFor(opts);
+  const labelOf = (name: FieldName) => (name === "smsConsent" ? sms?.legend : LABELS[name]);
 
-  /** Built-in checks, plus the consent box when it exists. */
-  const validate = (name: string, fd: FormData) =>
-    name === "smsConsent" ? (fd.get("smsConsent") ? undefined : sms?.error) : check(name, fd);
-  const labelOf = (name: string) => (name === "smsConsent" ? sms?.legend : LABELS[name]);
+  /** Show every error and move focus to the summary. */
+  const showErrors = (next: Errors) => {
+    setErrors(next);
+    const bad = fields.filter((f) => next[f]);
+    setSummary(bad);
+    if (bad.length) requestAnimationFrame(() => summaryRef.current?.focus());
+  };
 
-  /** Re-check one field when the visitor leaves it (only once it's shown an error, or has a value). */
-  const onBlur = (name: string) => {
+  /** Re-check one field when the visitor leaves it (once it has a value or an error). */
+  const onBlur = (name: FieldName) => {
     const form = formRef.current;
     if (!form) return;
     const fd = new FormData(form);
-    const had = errors[name] !== undefined;
-    const value = String(fd.get(name) ?? "").trim();
-    if (!had && !value) return;
-    setErrors((e) => ({ ...e, [name]: validate(name, fd) }));
+    const value = read(name, fd);
+    const empty = value === "" || (Array.isArray(value) && value.length === 0);
+    if (errors[name] === undefined && empty) return;
+    setErrors((e) => ({ ...e, [name]: checkField(name, value, opts) }));
   };
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
@@ -152,15 +135,9 @@ export function IntakeForm({
     const fd = new FormData(form);
 
     const next: Errors = {};
-    for (const f of fields) next[f] = validate(f, fd);
-    setErrors(next);
-    const bad = fields.filter((f) => next[f]);
-    if (bad.length) {
-      setSummary(bad);
-      // Let the summary render, then move focus to it.
-      requestAnimationFrame(() => summaryRef.current?.focus());
-      return;
-    }
+    for (const f of fields) next[f] = checkField(f, read(f, fd), opts);
+    if (fields.some((f) => next[f])) return showErrors(next);
+    setErrors({});
     setSummary([]);
 
     // Honeypot: real people never see or fill this field.
@@ -187,17 +164,40 @@ export function IntakeForm({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      if (!res.ok) throw new Error(String(res.status));
-      router.push("/start/thanks/");
+      if (res.ok) {
+        trackEvent("form_submit");
+        router.push("/start/thanks/");
+        return;
+      }
+      // The Worker re-checks with the same rules; show what it found.
+      if (res.status === 400) {
+        const data = (await res.json().catch(() => ({}))) as { errors?: Errors };
+        if (data.errors && Object.keys(data.errors).length) {
+          setStatus("idle");
+          return showErrors(data.errors);
+        }
+      }
+      setStatus(res.status === 429 ? "busy" : res.status === 403 ? "check" : "failed");
     } catch {
       setStatus("failed");
     }
   }
 
-  const blur = (name: string) => ({ onBlur: () => onBlur(name) });
+  const blur = (name: FieldName) => ({ onBlur: () => onBlur(name) });
 
   return (
-    <form ref={formRef} onSubmit={onSubmit} noValidate className="flex flex-col gap-6">
+    <form
+      ref={formRef}
+      onSubmit={onSubmit}
+      // form_start: the first time anything in the form takes focus.
+      onFocus={() => {
+        if (started.current) return;
+        started.current = true;
+        trackEvent("form_start");
+      }}
+      noValidate
+      className="flex flex-col gap-6"
+    >
       {summary.length > 0 && (
         // Focused by script after a failed submit, so screen readers read
         // it. It isn't a control, so it gets no ring.
@@ -349,13 +349,23 @@ export function IntakeForm({
 
       <Turnstile />
 
-      {status === "failed" && (
+      {(status === "failed" || status === "busy" || status === "check") && (
         <div role="alert" className="flex flex-col gap-2 border-l-4 border-signal bg-white p-4">
           <p className="font-mono text-label font-medium uppercase tracking-label">
-            Error — that didn&rsquo;t send
+            Error —{" "}
+            {status === "busy"
+              ? "too many tries"
+              : status === "check"
+                ? "we couldn’t verify that"
+                : "that didn’t send"}
           </p>
           <p className="text-body-sm text-ink">
-            Nothing you typed is lost. Try again, or reach us directly
+            {status === "busy"
+              ? "Wait a minute and try again. "
+              : status === "check"
+                ? "The spam check didn’t go through. Wait for it to finish and try again. "
+                : "Nothing you typed is lost. Try again. "}
+            Or reach us directly
             {contact.phone && (
               <>
                 {" "}
