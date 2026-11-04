@@ -20,6 +20,7 @@
  */
 import { site } from "@/site.config";
 import { isOn, type FlagName } from "./flags";
+import { hasCases } from "./content";
 
 export type RouteNode = {
   href: string;
@@ -53,32 +54,34 @@ export const citySlug = (city: string) =>
  * "Start a Project" as the separate primary button.
  */
 export const nav: RouteNode[] = [
-  { href: "/work/", label: "Work", live: false, priority: 0.9 },
+  // Live only when this build has a case study to show (PLAN §10:
+  // unpublished until the client confirms). Drafts count on previews.
+  { href: "/work/", label: "Work", live: hasCases(), priority: 0.9 },
   {
     href: "/services/",
     label: "Services",
-    live: false,
+    live: true,
     priority: 0.9,
     children: [
-      { href: "/services/web-design/", label: "Web Design", live: false, priority: 0.8 },
-      { href: "/services/local-seo/", label: "Local SEO", live: false, priority: 0.8 },
+      { href: "/services/web-design/", label: "Web Design", live: true, priority: 0.8 },
+      { href: "/services/local-seo/", label: "Local SEO", live: true, priority: 0.8 },
       {
         href: "/services/automations/",
         label: "Automations",
-        live: false,
+        live: true,
         flag: "automations",
         priority: 0.8,
       },
     ],
   },
-  { href: "/pricing/", label: "Pricing", live: false, priority: 0.8 },
+  { href: "/pricing/", label: "Pricing", live: true, priority: 0.8 },
   { href: "/about/", label: "About", live: false, priority: 0.7 },
 ];
 
 /** Routes that exist but aren't header items. */
 export const auxRoutes: RouteNode[] = [
-  { href: "/start/", label: "Start a Project", live: false, priority: 0.9 },
-  { href: "/start/thanks/", label: "Thank you", live: false, noindex: true },
+  { href: "/start/", label: "Start a Project", live: true, priority: 0.9 },
+  { href: "/start/thanks/", label: "Thank you", live: true, noindex: true },
   { href: "/blog/", label: "Blog", live: false, priority: 0.6 },
   ...site.serviceArea.cities.map(
     (city): RouteNode => ({

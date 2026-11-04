@@ -20,7 +20,10 @@ export function StickyCta({ cta }: { cta: { href: string; label: string } | null
   return (
     <>
       <div aria-hidden className="h-[calc(57px+env(safe-area-inset-bottom))] bg-ink lg:hidden" />
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-ink bg-signal pb-[env(safe-area-inset-bottom)] lg:hidden">
+      <div
+        data-track-loc="sticky"
+        className="fixed inset-x-0 bottom-0 z-40 border-t border-ink bg-signal pb-[env(safe-area-inset-bottom)] lg:hidden"
+      >
         <Button href={cta.href} block className="!min-h-[56px] !px-gutter-sm">
           {cta.label}
         </Button>

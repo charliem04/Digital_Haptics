@@ -25,10 +25,32 @@ What each item needs, with examples: [docs/SETUP.md §2](docs/SETUP.md).
 | Hero sidebar blurbs, taken verbatim from the Hybrid mockup: "Sites that look like the work you do: solid, square, built right." / "Found first when someone nearby searches for your trade." / 🚩 "Every form and missed call gets a reply in seconds." | `site/data/acts.ts` | You: approve or rewrite | Open |
 | Styleguide sample values `[Client name]`, `[RESULT]`, `[Timeline options]` | `site/app/styleguide/page.tsx` | Nobody: they're demo placeholders on a hidden page and stay bracketed | n/a |
 
+## Phase 3 (core pages)
+
+| Item | Where | Needed from | Status |
+|---|---|---|---|
+| `[PRICE]` ×2 (×3 with 🚩): "Websites from [PRICE]", "Local SEO from [PRICE]/mo", 🚩 "Automations from [PRICE]/mo" | `site/data/services.ts` → `price` | You | Open |
+| Budget ranges for the intake form (the field stays hidden until set) | `site/data/intake.ts` → `budgets` | You | Open |
+| Timeline options: defaults in place, `// OPEN:` | `site/data/intake.ts` → `timelines` | You: confirm or edit | Open |
+| Case studies, all five drafts: `location`, `systems`, `summary`, `results` (`[RESULT]`), body sections, screenshots, `liveUrl`. **Then client permission** (`permission: true`) and `published: true`. Until permission, drafts render on previews as `/work/draft-N/` with no name, live link or screenshot: **keep the client name out of the body text until then too.** | `site/content/work/*.mdx` | You and each client | Open |
+| DRAFT copy to review: service leads, "What you get", "A good fit if", service FAQs | `site/data/services.ts` | You | Open |
+| DRAFT copy to review: process steps, /start steps, /start FAQ, thank-you next steps | `site/data/process.ts`, `site/data/faq.ts`, `site/app/start/thanks/page.tsx` | You | Open |
+| DRAFT copy to review: home service-area lede ("…when the AC quits in August"), CTA band headings | `site/app/page.tsx` and each page's `CtaBand` | You | Open |
+| 🚩 SMS consent wording: check against your SMS provider's and carrier rules before Phase 7 | `site/data/intake.ts` → `smsConsent` | You (and provider) | Open |
+| 🚩 Live systems teaser copy (home, flag on) | `site/app/page.tsx` | You | Open |
+
+## Phase 4 (systems)
+
+| Item | Where | Needed from | Status |
+|---|---|---|---|
+| Turnstile widget + keys, Resend domain + API key: the form stores leads without them but sends no email and skips the spam check | Cloudflare / Resend dashboards ([docs/SETUP.md §3](docs/SETUP.md)) | You | Open |
+| Confirm lead email addresses (`LEAD_NOTIFY_TO` charles@, `LEAD_NOTIFY_FROM` leads@digitalhaptics.dev) | `site/wrangler.jsonc` → `vars` | You | Open |
+| 🚩 Automations page DRAFT copy: problem, modules, add-on | `site/data/automations.ts` | You | Open |
+| 🚩 Demo copy and message sequence (Demo Plumbing Co., fictional) | `site/data/automations.ts`, `site/data/demo.ts` | You | Open |
+| 🚩 `[PLACEHOLDER: voice demo number]` (FEATURE_VOICE section) | `site/data/automations.ts` → `voiceCopy.number` | You, when the voice agent ships | Open |
+| Cal.com `bookingSuccessful` event name: confirm with a real booking once the event URL is set (`// OPEN:`) | `site/components/BookingEmbed.tsx` | Me, after Cal.com is set up | Open |
+
 ## Coming in later phases (from PLAN.md, logged when the code lands)
 
-- `[PRICE]` ×2 on /pricing (Websites, Local SEO); a third for Automations behind 🚩 `FEATURE_AUTOMATIONS`
-- `[RESULT]` on every case study, plus client permission for each candidate (CTL Pro Construction, Douet A/C, DA Plumbing, Coastal Construction Services, Stan's Tire and Automotive)
-- Intake form: timeline options and budget ranges
 - Unique content for each city page (cities without it stay unpublished)
 - About page: founder name and background details

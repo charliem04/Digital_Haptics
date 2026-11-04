@@ -268,6 +268,7 @@ export function CheckboxGroup({
   const meta = { id, label: legend, hint, error, optional };
   return (
     <fieldset
+      id={id}
       aria-describedby={describedBy(meta)}
       aria-invalid={error ? true : undefined}
       className={cn("flex flex-col gap-1", className)}

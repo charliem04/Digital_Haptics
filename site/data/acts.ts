@@ -1,4 +1,4 @@
-import type { FlagName } from "@/lib/flags";
+import type { FlagName } from "@/lib/flag-names";
 import type { Act } from "@/content/types";
 
 /**

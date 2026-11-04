@@ -1,35 +1,46 @@
 /**
  * ════════════════════════════════════════════════════════════════════
- *  CONVERSION TRACKING
+ *  CONVERSION EVENTS (PLAN §8, decision D2).
  *
- *  PHASE 4 rewrites this module. Cloudflare Web Analytics has no
- *  custom-event API, so the PLAN §8 events (cta_click, form_start,
- *  form_submit, call_click, booking_complete; flagged demo_start and
- *  demo_complete) go to our own endpoint and into Workers Analytics
- *  Engine (decision D2).
+ *  Cloudflare Web Analytics counts pageviews but has no custom-event
+ *  API, so these go to our own endpoint (worker/events.ts) and into
+ *  Workers Analytics Engine.
+ *  // OPEN: D2 alternative is a cookieless tool such as Plausible.
  *
- *  Until then this is a no-op: nothing loads window.plausible any more.
+ *  An event carries its name, an optional location ("hero", "footer")
+ *  and the page path. Nothing identifying: no IP is stored, no cookie,
+ *  no user id. Sent with sendBeacon so navigating away never waits.
  *
- *  Nothing here fires without a real user gesture, and no event carries
- *  anything identifying — just which action, on which page.
+ *  Flagged events (demo_start, demo_complete) are only fired by the demo,
+ *  which only exists with FEATURE_AUTOMATIONS_DEMO on; the Worker also
+ *  refuses them while the flag is off.
  * ════════════════════════════════════════════════════════════════════
  */
 
-declare global {
-  interface Window {
-    plausible?: (event: string, opts?: { props?: Record<string, string> }) => void;
-  }
-}
+export type ConversionEvent =
+  | "cta_click"
+  | "form_start"
+  | "form_submit"
+  | "call_click"
+  | "booking_complete"
+  | "demo_start"
+  | "demo_complete";
 
-export type ConversionEvent = "Call" | "Text" | "Book" | "Form submit";
+export const EVENT_ENDPOINT = "/api/event";
 
-export function trackEvent(event: ConversionEvent, props: Record<string, string> = {}): void {
+export function trackEvent(event: ConversionEvent, location?: string): void {
   if (typeof window === "undefined") return;
   try {
-    window.plausible?.(event, {
-      props: { path: window.location.pathname, ...props },
+    const body = JSON.stringify({
+      e: event,
+      loc: location?.slice(0, 40),
+      path: window.location.pathname.slice(0, 200),
     });
+    const blob = new Blob([body], { type: "application/json" });
+    if (!navigator.sendBeacon?.(EVENT_ENDPOINT, blob)) {
+      void fetch(EVENT_ENDPOINT, { method: "POST", body, keepalive: true }).catch(() => {});
+    }
   } catch {
-    // Analytics must never break a phone call.
+    // Analytics must never break a phone call or a form.
   }
 }

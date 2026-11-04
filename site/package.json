@@ -7,13 +7,15 @@
   },
   "scripts": {
     "dev": "next dev",
-    "build": "next build && node scripts/csp.mjs && node scripts/seo.mjs && node scripts/routes.mjs --check && node scripts/preview-headers.mjs --if-preview && node scripts/harden.mjs",
+    "build": "node scripts/worker-flags.mjs && next build && node scripts/csp.mjs && node scripts/seo.mjs && node scripts/routes.mjs --check && node scripts/preview-headers.mjs --if-preview && node scripts/harden.mjs",
     "start": "next start",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "node scripts/worker-flags.mjs && tsc --noEmit && tsc -p worker --noEmit",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "deploy": "npm run build && wrangler deploy",
+    "test": "node --experimental-strip-types --no-warnings --test \"worker/test/*.test.ts\"",
+    "worker:dev": "node scripts/worker-flags.mjs && wrangler dev",
     "preview:build": "node scripts/preview-build.mjs",
     "preview:deploy": "npm run preview:build && wrangler versions upload --preview-alias preview",
     "check": "node scripts/check.mjs app components lib content site.config.ts",
@@ -22,11 +24,14 @@
   },
   "dependencies": {
     "framer-motion": "^11.11.17",
+    "gray-matter": "4.0.3",
     "next": "^14.2.15",
+    "next-mdx-remote": "6.0.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "5.20261104.1",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

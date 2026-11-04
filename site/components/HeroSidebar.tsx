@@ -83,7 +83,7 @@ export function HeroSidebar({
   return (
     // No position class here: the caller places the rail (the hero pins
     // it absolute). The inner wrapper is the marker's positioned parent.
-    <div className={cn("w-sidebar", className)}>
+    <div className={cn("w-sidebar", className)} data-track-loc="hero-rail">
       <div className="relative h-full">
         {/* Edge layer: 1px ink on the left and bottom only (mockup). */}
         <div className="h-full bg-ink pb-px pl-px" style={clip}>
