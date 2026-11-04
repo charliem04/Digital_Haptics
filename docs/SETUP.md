@@ -86,11 +86,16 @@ The form works the moment Phase 4 deploys: every submission is stored in the dat
 
 Do all of this before launch (Phase 6).
 
-### Step 1: the database (nothing to do, then check)
+### Step 1: the database (done)
 
-`site/wrangler.jsonc` asks for a D1 database named `digitalhaptics-leads`, plus `digitalhaptics-leads-preview` for branch previews, so test submissions never mix with real leads. Wrangler creates both on the first deploy that needs them, and the Worker creates its table on the first submission.
+Two D1 databases, both pinned by ID in `site/wrangler.jsonc`:
 
-**Check:** after the first deploy from `main`, open **Storage & Databases → D1**. Both databases should be listed. If the deploy log instead says it couldn't create the database, create it there with exactly that name and send me the log.
+| Database | ID | Used by |
+|---|---|---|
+| `digitalhaptics-leads` | `dc861fa5-c152-4904-9193-18e536d1771f` | Production (`main`). Created automatically by the first `wrangler deploy`. |
+| `digitalhaptics-leads-preview` | `68201293-423c-4c82-91ab-0eab9f888156` | Every branch preview. Created in the dashboard, because `wrangler preview` won't create one. |
+
+The Worker creates its table on the first submission, so there is no migration step. If a preview build ever fails with `binding DB of type d1 must have a database_id specified`, that preview ID is missing.
 
 **Reading leads:** D1 → `digitalhaptics-leads` → **Console**, then:
 
