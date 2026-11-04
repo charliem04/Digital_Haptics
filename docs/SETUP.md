@@ -86,11 +86,16 @@ The form works the moment Phase 4 deploys: every submission is stored in the dat
 
 Do all of this before launch (Phase 6).
 
-### Step 1: the database (nothing to do, then check)
+### Step 1: the database (done)
 
-`site/wrangler.jsonc` asks for a D1 database named `digitalhaptics-leads`, plus `digitalhaptics-leads-preview` for branch previews, so test submissions never mix with real leads. Wrangler creates both on the first deploy that needs them, and the Worker creates its table on the first submission.
+Two D1 databases, both pinned by ID in `site/wrangler.jsonc`:
 
-**Check:** after the first deploy from `main`, open **Storage & Databases → D1**. Both databases should be listed. If the deploy log instead says it couldn't create the database, create it there with exactly that name and send me the log.
+| Database | ID | Used by |
+|---|---|---|
+| `digitalhaptics-leads` | `dc861fa5-c152-4904-9193-18e536d1771f` | Production (`main`). Created automatically by the first `wrangler deploy`. |
+| `digitalhaptics-leads-preview` | `68201293-423c-4c82-91ab-0eab9f888156` | Every branch preview. Created in the dashboard, because `wrangler preview` won't create one. |
+
+The Worker creates its table on the first submission, so there is no migration step. If a preview build ever fails with `binding DB of type d1 must have a database_id specified`, that preview ID is missing.
 
 **Reading leads:** D1 → `digitalhaptics-leads` → **Console**, then:
 
@@ -105,6 +110,8 @@ SELECT received_at, name, business, phone, email, email_status FROM leads ORDER 
 3. Worker → **Settings → Build → Variables and secrets**: add `NEXT_PUBLIC_TURNSTILE_SITE_KEY` = the site key, as a plain variable. It's a build variable because the page needs it.
 4. Worker → **Settings → Variables and Secrets** (the runtime ones, not Build): add `TURNSTILE_SECRET_KEY` = the secret key, type **Secret**.
 5. Retry the latest build. The form now shows the check, and the Worker refuses submissions without a valid token.
+   - **The usual mix-up:** the site key is a *build* variable, but the secret is a *runtime* secret. If the Turnstile dashboard says "Siteverify isn't being called", the Worker can't see `TURNSTILE_SECRET_KEY`. It's probably under Build variables; move it to **Settings → Variables and Secrets**.
+   - **What the Worker checks:** a token passes only if Cloudflare confirms it, it was solved on the same form (`action`: `intake` or `demo`), and it was issued on the same hostname as the request. Each token works once; the form gets a fresh one after any failed send.
 
 ### Step 3: email (Resend)
 

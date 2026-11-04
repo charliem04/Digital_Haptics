@@ -38,7 +38,15 @@ export async function handleDemo(req: Request, env: Env): Promise<Response> {
       400
     );
   }
-  const turnstile = await verifyTurnstile(env, body.turnstile, req.headers.get("CF-Connecting-IP"));
+  const turnstile = await verifyTurnstile(
+    env,
+    body.turnstile,
+    req.headers.get("CF-Connecting-IP"),
+    {
+      action: "demo",
+      hostname: new URL(req.url).hostname,
+    }
+  );
   if (turnstile === "failed") return json({ error: "turnstile" }, 403);
 
   return json({ ok: true, mock: true, messages: demoSequence });

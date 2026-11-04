@@ -41,11 +41,13 @@
   },
   "d1_databases": [
     {
-      // No database_id: Wrangler creates the database on first deploy
-      // and remembers it. The table is created on first use
-      // (worker/db.ts), so there is no migration step.
+      // IDs are pinned so a deploy can never create a second database
+      // and strand the leads in the first. Not secrets: they only work
+      // inside this Cloudflare account. The table is created on first
+      // use (worker/db.ts), so there is no migration step.
       "binding": "DB",
       "database_name": "digitalhaptics-leads",
+      "database_id": "dc861fa5-c152-4904-9193-18e536d1771f",
     },
   ],
   "ratelimits": [
@@ -71,7 +73,15 @@
       "LEAD_NOTIFY_TO": "charles@digitalhaptics.dev",
       "LEAD_NOTIFY_FROM": "Digital Haptics <leads@digitalhaptics.dev>",
     },
-    "d1_databases": [{ "binding": "DB", "database_name": "digitalhaptics-leads-preview" }],
+    // `wrangler preview` won't create a database, so this one was made
+    // in the dashboard and its ID pinned here.
+    "d1_databases": [
+      {
+        "binding": "DB",
+        "database_name": "digitalhaptics-leads-preview",
+        "database_id": "68201293-423c-4c82-91ab-0eab9f888156",
+      },
+    ],
     "ratelimits": [
       { "name": "LIMITER", "namespace_id": "1002", "simple": { "limit": 10, "period": 60 } },
     ],

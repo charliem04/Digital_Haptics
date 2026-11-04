@@ -153,7 +153,9 @@ test("intake: with a Turnstile secret, a bad token is refused and nothing stored
 
 test("intake: with Turnstile and Resend configured, the lead is emailed", async () => {
   const f = mockFetch((url) =>
-    url.includes("siteverify") ? Response.json({ success: true }) : Response.json({ id: "email-1" })
+    url.includes("siteverify")
+      ? Response.json({ success: true, action: "intake", hostname: "digitalhaptics.dev" })
+      : Response.json({ id: "email-1" })
   );
   try {
     const { env, rows } = makeEnv({
@@ -398,4 +400,55 @@ test("webhook errors never record the (secret) URL", { skip: !flags.automations 
   } finally {
     f.restore();
   }
+});
+
+/* ── Turnstile: action, hostname, status, timeout (Cloudflare checklist) ── */
+
+async function intakeWithSiteverify(answer: () => Response, secret = "0xREAL-LOOKING-SECRET") {
+  const f = mockFetch((url) => (url.includes("siteverify") ? answer() : Response.json({})));
+  try {
+    const { env, rows } = makeEnv({ TURNSTILE_SECRET_KEY: secret });
+    const res = await worker.fetch(
+      post("/api/intake", { ...validLead, turnstile: "tok" }),
+      env,
+      fakeCtx().ctx
+    );
+    return { status: res.status, stored: rows.length };
+  } finally {
+    f.restore();
+  }
+}
+
+test("turnstile: a token solved on another form (wrong action) is refused", async () => {
+  const r = await intakeWithSiteverify(() =>
+    Response.json({ success: true, action: "demo", hostname: "digitalhaptics.dev" })
+  );
+  assert.deepEqual(r, { status: 403, stored: 0 });
+});
+
+test("turnstile: a token issued on another hostname is refused", async () => {
+  const r = await intakeWithSiteverify(() =>
+    Response.json({ success: true, action: "intake", hostname: "evil.test" })
+  );
+  assert.deepEqual(r, { status: 403, stored: 0 });
+});
+
+test("turnstile: siteverify answering non-200 fails closed", async () => {
+  const r = await intakeWithSiteverify(() => new Response("oops", { status: 500 }));
+  assert.deepEqual(r, { status: 403, stored: 0 });
+});
+
+test("turnstile: matching action and hostname passes", async () => {
+  const r = await intakeWithSiteverify(() =>
+    Response.json({ success: true, action: "intake", hostname: "digitalhaptics.dev" })
+  );
+  assert.deepEqual(r, { status: 200, stored: 1 });
+});
+
+test("turnstile: Cloudflare's dummy test secret skips action/hostname", async () => {
+  const r = await intakeWithSiteverify(
+    () => Response.json({ success: true, action: "", hostname: "example.com" }),
+    "1x0000000000000000000000000000000AA"
+  );
+  assert.deepEqual(r, { status: 200, stored: 1 });
 });

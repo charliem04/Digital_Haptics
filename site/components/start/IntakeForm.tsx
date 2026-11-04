@@ -12,7 +12,7 @@ import {
   TextField,
 } from "@/components/ui/Field";
 import { Button } from "@/components/ui/Button";
-import { Turnstile } from "@/components/Turnstile";
+import { Turnstile, resetTurnstile } from "@/components/Turnstile";
 import { trackEvent } from "@/lib/tracking";
 import {
   checkField,
@@ -169,6 +169,8 @@ export function IntakeForm({
         router.push("/start/thanks/");
         return;
       }
+      // Anything but success may have spent the token: get a fresh one.
+      resetTurnstile(formRef.current);
       // The Worker re-checks with the same rules; show what it found.
       if (res.status === 400) {
         const data = (await res.json().catch(() => ({}))) as { errors?: Errors };
@@ -179,6 +181,7 @@ export function IntakeForm({
       }
       setStatus(res.status === 429 ? "busy" : res.status === 403 ? "check" : "failed");
     } catch {
+      resetTurnstile(formRef.current);
       setStatus("failed");
     }
   }
@@ -347,7 +350,7 @@ export function IntakeForm({
         <input id="intake-company-url" name="company_url" tabIndex={-1} autoComplete="off" />
       </div>
 
-      <Turnstile />
+      <Turnstile action="intake" />
 
       {(status === "failed" || status === "busy" || status === "check") && (
         <div role="alert" className="flex flex-col gap-2 border-l-4 border-signal bg-white p-4">
