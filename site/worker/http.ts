@@ -28,10 +28,33 @@ export function sameOrigin(req: Request): boolean {
 
 /** Read a JSON object body, refusing anything larger than `max` bytes. */
 export async function readJson(req: Request, max: number): Promise<Record<string, unknown> | null> {
+  // A declared length over the cap is refused before reading anything.
   const declared = Number(req.headers.get("Content-Length") ?? "0");
   if (declared > max) return null;
-  const text = await req.text();
-  if (text.length > max) return null;
+  // The header can be absent (chunked) or wrong, so the real cap is on
+  // the bytes actually read: stop and cancel the moment it's passed,
+  // rather than buffering the whole body first.
+  if (!req.body) return null;
+  const reader = req.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let total = 0;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    total += value.byteLength;
+    if (total > max) {
+      await reader.cancel().catch(() => {});
+      return null;
+    }
+    chunks.push(value);
+  }
+  const bytes = new Uint8Array(total);
+  let offset = 0;
+  for (const c of chunks) {
+    bytes.set(c, offset);
+    offset += c.byteLength;
+  }
+  const text = new TextDecoder().decode(bytes);
   try {
     const v = JSON.parse(text);
     return v && typeof v === "object" && !Array.isArray(v) ? (v as Record<string, unknown>) : null;

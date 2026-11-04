@@ -63,6 +63,9 @@ export async function forwardLead(
     const spends = res.status < 500 && res.status !== 429;
     return { ok: false, error: `webhook ${res.status}`, spendsAttempt: spends };
   } catch (e) {
-    return { ok: false, error: `webhook unreachable: ${String(e)}`, spendsAttempt: false };
+    // The URL is a secret, and a network error's text can include it.
+    // Only the error's kind goes to the log and the database.
+    const kind = e instanceof Error ? e.name : "Error";
+    return { ok: false, error: `webhook unreachable (${kind})`, spendsAttempt: false };
   }
 }

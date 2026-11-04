@@ -358,3 +358,44 @@ test("demo flag on: mock sequence, nothing stored", { skip: !flags.automationsDe
   );
   assert.equal(noConsent.status, 400);
 });
+
+test("body cap holds without a Content-Length header (streamed body)", async () => {
+  const { env, rows } = makeEnv();
+  const big = new TextEncoder().encode(
+    JSON.stringify({ ...validLead, message: "x".repeat(40000) })
+  );
+  const stream = new ReadableStream({
+    start(c) {
+      for (let i = 0; i < big.length; i += 1024) c.enqueue(big.slice(i, i + 1024));
+      c.close();
+    },
+  });
+  const req = new Request("https://digitalhaptics.dev/api/intake", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Origin: "https://digitalhaptics.dev" },
+    body: stream,
+    // @ts-expect-error Node needs this for a streamed request body
+    duplex: "half",
+  });
+  const res = await worker.fetch(req, env, fakeCtx().ctx);
+  assert.equal(res.status, 400);
+  assert.equal(rows.length, 0);
+});
+
+test("webhook errors never record the (secret) URL", { skip: !flags.automations }, async () => {
+  const secretUrl = "https://hooks.example.test/secret-token-123";
+  const f = mockFetch((url) => {
+    if (url === secretUrl) throw new TypeError(`fetch failed: ${secretUrl}`);
+    return Response.json({});
+  });
+  try {
+    const { env, rows } = makeEnv({ AUTOMATIONS_WEBHOOK_URL: secretUrl });
+    const { ctx, settle } = fakeCtx();
+    await worker.fetch(post("/api/intake", validLead), env, ctx);
+    await settle();
+    assert.equal(rows[0].webhook_status, "failed");
+    assert.equal(String(rows[0].webhook_error).includes("secret-token"), false);
+  } finally {
+    f.restore();
+  }
+});

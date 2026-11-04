@@ -523,4 +523,5 @@ Approved in chat after Phase 0 merged. One Worker (`digitalhaptics`) serves the 
   - curl: cross-origin 403, no token 403, unknown `/api` 404, demo 404, flagged page 404, cron 200.
 - **Workers types** pinned to `5.20261016.1` rather than the release published that day.
 - **Found in passing:** `/favicon.ico` 404s. The icon and OG images are Phase 5.
+- **Security review fixes (automated review, before push):** `readJson` now streams the body and cancels the moment it passes the cap, instead of trusting `Content-Length` and buffering. Webhook network errors record only the error's kind, never its text, which could contain the secret URL. Both have tests.
 
