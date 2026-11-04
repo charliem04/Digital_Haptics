@@ -123,9 +123,33 @@ Lead emails go to `LEAD_NOTIFY_TO` (`charles@digitalhaptics.dev`) from `LEAD_NOT
 4. `charles@digitalhaptics.dev` has to receive mail: set up the mailbox or Cloudflare Email Routing first (CONTENT_TODO.md).
 5. **Check:** send a test through the form on the live site. The email arrives with the lead as Reply-To. Leads that came in before this step go out within 15 minutes.
 
+### Step 3b: reply as charles@digitalhaptics.dev (Gmail "Send mail as")
+
+Email Routing only *receives*. To make your replies come from `charles@digitalhaptics.dev` instead of your personal Gmail address, Gmail sends them through Resend's mail server (SMTP). Free, and Email Routing stays as it is. (Decided 2026-11-04: Option A. Google Workspace remains the upgrade path; switching later only means pointing the MX records at Google.)
+
+1. **Resend → API Keys → Create API key.** Name `gmail-send-as`, permission **Sending access**, domain `digitalhaptics.dev`. Copy it (shown once). Keep it separate from the Worker's key, so revoking one never breaks the other.
+2. **Gmail** (the account Email Routing forwards to) → gear icon → **See all settings → Accounts and Import → Send mail as → Add another email address.**
+3. Name: how you want to appear, e.g. `Charles Meyers` or `Charles at Digital Haptics`. Email: `charles@digitalhaptics.dev`. Leave **Treat as an alias** ticked. **Next.**
+4. SMTP server: `smtp.resend.com`. Port: `465`. Username: `resend`. Password: the API key from step 1. Choose **Secured connection using SSL**. **Add account.**
+5. Gmail emails a confirmation to `charles@digitalhaptics.dev`. Email Routing forwards it back to this inbox: click the link (or enter the code).
+6. Back in **Accounts and Import**, under **When replying to a message**, choose **Reply from the same address the message was sent to**. Lead emails are sent *to* charles@, so replies to them go out *from* charles@ automatically. Optionally **make default** so new emails start from charles@ too.
+7. **Check:** reply to a test lead email. The customer side should see `charles@digitalhaptics.dev` only, with no "via" line.
+
+Your replies count against Resend's sending limits along with the lead notifications. Check the current free-plan limits in Resend; one person's mail is far below them.
+
 ### Step 4 (optional, Phase 7): automations webhook 🚩
 
 Only when `FEATURE_AUTOMATIONS` is turned on. Add `AUTOMATIONS_WEBHOOK_URL` (and optionally `AUTOMATIONS_WEBHOOK_SECRET`, sent as the `X-Webhook-Secret` header) as runtime **Secrets**. With the flag off, nothing is ever forwarded, whatever is set.
+
+### Step 5 (Phase 6, before launch): DMARC
+
+One DNS record that tells receiving mail servers what to do with mail that claims to be from `digitalhaptics.dev` but fails its checks. It makes your legitimate mail (lead notifications, your replies as charles@) look more trustworthy. In the Cloudflare DNS for `digitalhaptics.dev`, add:
+
+| Type | Name | Content |
+|---|---|---|
+| TXT | `_dmarc` | `v=DMARC1; p=none; rua=mailto:charles@digitalhaptics.dev` |
+
+`p=none` only monitors. Daily reports from big providers arrive at charles@ (it's safe to filter them into a folder). After a few weeks of clean reports, tighten it to `p=quarantine`. Resend signs as `digitalhaptics.dev`, so its mail already passes. Safe to add any time before launch.
 
 ### Analytics
 

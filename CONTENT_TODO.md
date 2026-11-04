@@ -45,6 +45,8 @@ What each item needs, with examples: [docs/SETUP.md §2](docs/SETUP.md).
 |---|---|---|---|
 | Turnstile widget + keys, Resend domain + API key: the form stores leads without them but sends no email and skips the spam check | Cloudflare / Resend dashboards ([docs/SETUP.md §3](docs/SETUP.md)) | You | Open |
 | Confirm lead email addresses (`LEAD_NOTIFY_TO` charles@, `LEAD_NOTIFY_FROM` leads@digitalhaptics.dev) | `site/wrangler.jsonc` → `vars` | You | Open |
+| Reply as charles@digitalhaptics.dev: Gmail "Send mail as" via Resend SMTP (Option A, chosen 2026-11-04) | Resend + Gmail ([docs/SETUP.md §3 Step 3b](docs/SETUP.md)) | You | Open |
+| **Phase 6, before launch:** DMARC TXT record `_dmarc` → `v=DMARC1; p=none; rua=mailto:charles@digitalhaptics.dev` | Cloudflare DNS ([docs/SETUP.md §3 Step 5](docs/SETUP.md)) | You | Open |
 | 🚩 Automations page DRAFT copy: problem, modules, add-on | `site/data/automations.ts` | You | Open |
 | 🚩 Demo copy and message sequence (Demo Plumbing Co., fictional) | `site/data/automations.ts`, `site/data/demo.ts` | You | Open |
 | 🚩 `[PLACEHOLDER: voice demo number]` (FEATURE_VOICE section) | `site/data/automations.ts` → `voiceCopy.number` | You, when the voice agent ships | Open |
