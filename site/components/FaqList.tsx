@@ -1,21 +1,24 @@
 /**
- * Questions people actually ask before they call, answered in the open
- * rather than hidden behind an accordion that has to be fought with on
- * a phone. The first one starts open; the rest are one tap away, and
- * they are real <details> elements, so find-in-page and the keyboard
- * both work without any of this component’s help.
+ * Questions people ask, as real <details> elements: keyboard and
+ * find-in-page work without any script, and the first one starts open.
  *
  * Emits FAQPage structured data from the same array that renders the
- * list, so the two can never say different things.
+ * list, so the two can never say different things (PLAN §8).
  */
 import type { Faq } from "@/content/types";
+import { Section } from "@/components/layout/Section";
+import { SectionHead } from "@/components/page/SectionHead";
 
 export function FaqList({
   faqs,
+  id = "faq",
+  index,
   heading = "Questions people ask",
   lede,
 }: {
   faqs: Faq[];
+  id?: string;
+  index?: number;
   heading?: string;
   lede?: string;
 }) {
@@ -32,33 +35,31 @@ export function FaqList({
   };
 
   return (
-    // Restyled in Phase 3 with the section label and heading components.
-    <section className="page-x section-y">
-      <h2 className="font-display text-heading font-semibold">{heading}</h2>
-      {lede && <p className="mt-4 max-w-lede text-steel-deep">{lede}</p>}
-      <div className="mt-10 border-t border-ink">
-        {faqs.map((f, i) => (
-          <details key={f.q} open={i === 0} className="group border-b border-ink py-5">
-            <summary className="flex min-h-touch cursor-pointer list-none items-start justify-between gap-6 font-display text-subheading font-semibold text-ink">
-              {f.q}
-              <span aria-hidden className="mt-1 shrink-0 font-mono text-steel group-open:hidden">
-                +
-              </span>
-              <span
-                aria-hidden
-                className="mt-1 hidden shrink-0 font-mono text-steel group-open:block"
-              >
-                −
-              </span>
-            </summary>
-            <p className="mt-3 max-w-[68ch]">{f.a}</p>
-          </details>
-        ))}
+    <Section aria-labelledby={id}>
+      <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:gap-16">
+        <SectionHead id={id} index={index} label="FAQ" title={heading} lede={lede} />
+        <div className="border-t border-ink">
+          {faqs.map((f, i) => (
+            <details key={f.q} open={i === 0} className="group border-b border-ink">
+              <summary className="flex min-h-[64px] cursor-pointer list-none items-center justify-between gap-6 py-4 font-display text-subheading font-semibold text-ink [&::-webkit-details-marker]:hidden">
+                {f.q}
+                <span
+                  aria-hidden
+                  className="flex size-8 shrink-0 items-center justify-center border border-ink font-mono text-label transition-colors duration-[250ms] group-open:bg-ink group-open:text-ice"
+                >
+                  <span className="group-open:hidden">+</span>
+                  <span className="hidden group-open:inline">−</span>
+                </span>
+              </summary>
+              <p className="max-w-[68ch] pb-6 text-body text-steel-deep">{f.a}</p>
+            </details>
+          ))}
+        </div>
       </div>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
       />
-    </section>
+    </Section>
   );
 }

@@ -25,10 +25,21 @@ What each item needs, with examples: [docs/SETUP.md §2](docs/SETUP.md).
 | Hero sidebar blurbs, taken verbatim from the Hybrid mockup: "Sites that look like the work you do: solid, square, built right." / "Found first when someone nearby searches for your trade." / 🚩 "Every form and missed call gets a reply in seconds." | `site/data/acts.ts` | You: approve or rewrite | Open |
 | Styleguide sample values `[Client name]`, `[RESULT]`, `[Timeline options]` | `site/app/styleguide/page.tsx` | Nobody: they're demo placeholders on a hidden page and stay bracketed | n/a |
 
+## Phase 3 (core pages)
+
+| Item | Where | Needed from | Status |
+|---|---|---|---|
+| `[PRICE]` ×2 (×3 with 🚩): "Websites from [PRICE]", "Local SEO from [PRICE]/mo", 🚩 "Automations from [PRICE]/mo" | `site/data/services.ts` → `price` | You | Open |
+| Budget ranges for the intake form (the field stays hidden until set) | `site/data/intake.ts` → `budgets` | You | Open |
+| Timeline options: defaults in place, `// OPEN:` | `site/data/intake.ts` → `timelines` | You: confirm or edit | Open |
+| Case studies, all five drafts: `location`, `systems`, `summary`, `results` (`[RESULT]`), body sections, screenshots, `liveUrl`. **Then client permission** (`permission: true`) and `published: true` | `site/content/work/*.mdx` | You and each client | Open |
+| DRAFT copy to review: service leads, "What you get", "A good fit if", service FAQs | `site/data/services.ts` | You | Open |
+| DRAFT copy to review: process steps, /start steps, /start FAQ, thank-you next steps | `site/data/process.ts`, `site/data/faq.ts`, `site/app/start/thanks/page.tsx` | You | Open |
+| DRAFT copy to review: home service-area lede ("…when the AC quits in August"), CTA band headings | `site/app/page.tsx` and each page's `CtaBand` | You | Open |
+| 🚩 SMS consent wording: check against your SMS provider's and carrier rules before Phase 7 | `site/data/intake.ts` → `smsConsent` | You (and provider) | Open |
+| 🚩 Live systems teaser copy (home, flag on) | `site/app/page.tsx` | You | Open |
+
 ## Coming in later phases (from PLAN.md, logged when the code lands)
 
-- `[PRICE]` ×2 on /pricing (Websites, Local SEO); a third for Automations behind 🚩 `FEATURE_AUTOMATIONS`
-- `[RESULT]` on every case study, plus client permission for each candidate (CTL Pro Construction, Douet A/C, DA Plumbing, Coastal Construction Services, Stan's Tire and Automotive)
-- Intake form: timeline options and budget ranges
 - Unique content for each city page (cities without it stay unpublished)
 - About page: founder name and background details

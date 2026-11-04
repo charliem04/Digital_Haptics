@@ -468,3 +468,30 @@ Approved in chat after Phase 0 merged. One Worker (`digitalhaptics`) serves the 
 - **Sticky CTA** is 56px plus a 1px rule, padded for the iPhone home indicator. A same-height ink spacer after the footer keeps it from covering the last links. Verified at 375.
 - **Copyright** reads `© {year} {legalName}` (currently Charles Meyers) and switches automatically when the LLC name goes into `site.config.ts`.
 
+## 12. Phase 3 record (core pages, branch `refactor/phase-3`)
+
+**Built:**
+- Pages: Home, Work index and `/work/[slug]` case study template, Services overview and `/services/[slug]` (Web Design, Local SEO; Automations 🚩), Pricing, Start a Project (intake form UI, booking slot, FAQ), and Thank-you.
+- Data and content: `data/` (services, process, pricing, faq, intake), five case study drafts in `content/work/*.mdx`, and the getters in `lib/content.ts`.
+- Page parts in `components/page/`: PageHero, SectionHead, StepsStrip, CtaBand, ServiceCard and CaseGrid.
+- The home Hero in `components/home/`, and IntakeForm in `components/start/`.
+
+**Decisions:**
+- **Case studies ship as drafts (PLAN §10).**
+  - Production shows a case only when `published` and `permission` are both true. Preview builds also show drafts, marked "Draft", with the client's name replaced by `[Client name]` until `permission` is true, because preview URLs are publicly reachable even though they're noindex.
+  - Work's registry entry is `live: hasCases()`, so with nothing publishable, nothing links to Work: no nav item, no proof strip, no "See the Work" button.
+  - Static export refuses a dynamic route with zero params, so `/work/[slug]` emits one placeholder, `/work/_/`, which renders the 404 page (noindex, unlinked). It disappears once a case is published.
+- **MDX:** `next-mdx-remote` 6.0.0 (JavaScript expressions blocked by default) plus `gray-matter` 4.0.3, both pinned. Frontmatter follows PLAN §5's fields, plus `published`, `permission` and `summary`.
+- **Flagged Automations page:** filtered out of `generateStaticParams`, so it's a real 404 with the flag off (R2, checked through `wrangler dev`). Its full page (modules, demo) is Phase 4.
+- **Flagged copy in client JS (again):** the intake form's SMS consent text used to sit in the client component, so it shipped in the flag-off `/start` bundle. It's now a prop the server passes only with the flag on. The flag scan of `out/`, JavaScript included, is clean.
+- **Home header:** `OnHome` insets the header 320px at xl on `/` and hides its CTA there, because the rail and flare start at the top of the page and run behind the header (`--header-h`, 88/108px). Measured at 1440: rail at 0–840, horizontal flare line at 470 stopping at the rail, nav ends at 1017.
+- **Intake form:**
+  - Validation is inline, in words, on blur and on submit.
+  - A failed submit focuses an error summary (role alert) with a link to each field.
+  - It also has a honeypot and Turnstile (shown once a key is set).
+  - It posts JSON to `site.intake.endpoint`. Until Phase 4 builds the endpoint, a submit shows the failure message with phone and email. Verified in the browser: 8 errors on an empty submit, then a POST to `/api/intake/`, a 404, and the failure state.
+  - **Phase 4 note:** with `trailingSlash`, the POST goes to `/api/intake/`. The Worker route must match both forms.
+- **Budget field hidden** until ranges exist (they are prices). Timeline options are defaults with an `// OPEN:` comment.
+- **Copy:** service, process, FAQ and CTA copy is DRAFT, written to describe the work only (no prices, stats, results, guarantees or client claims). All of it is listed in CONTENT_TODO.md for review.
+- **Dev server caveat:** Next 14's dev server can wrongly report "missing generateStaticParams" on `/services/[slug]` after a client reload (production builds are unaffected). For checking real behaviour, `.claude/launch.json` gains `site-static`, which serves the built `out/` through `wrangler dev`.
+

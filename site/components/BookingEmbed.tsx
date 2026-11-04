@@ -15,8 +15,6 @@
  *  Nothing connects to the scheduler before the visitor reaches for the
  *  button: no preconnect in <head>, no lazy iframe waiting in the page.
  *
- *  PHASE 3: restyled with <Button> and <CutFrame>. The class strings
- *  below are temporary stand-ins on the new tokens.
  * ════════════════════════════════════════════════════════════════════
  */
 "use client";
@@ -24,12 +22,7 @@
 import { useEffect, useRef, useState } from "react";
 import { site } from "@/site.config";
 import { bookingOrigins, bookingEmbedSrc, schedulerName } from "@/lib/booking";
-
-/** Temporary until <Button> lands in Phase 1. */
-const primaryBtn =
-  "inline-flex min-h-button items-center gap-3 bg-signal px-6 font-mono text-label-lg font-medium uppercase tracking-label-sm text-ink";
-const ghostBtn =
-  "inline-flex min-h-button items-center gap-3 border border-ink px-6 font-mono text-label-lg font-medium uppercase tracking-label-sm text-ink";
+import { Button } from "@/components/ui/Button";
 
 /** Close enough that the visitor means to use it. */
 const MOUNT_MARGIN = "300px";
@@ -136,8 +129,7 @@ export function BookingEmbed() {
           open it in a new tab — your choice.
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-2.5">
-          <button
-            type="button"
+          <Button
             onClick={() => setAllowed(true)}
             // The pointer arriving on the button is the earliest honest
             // signal there is. By the time the click lands the
@@ -145,19 +137,18 @@ export function BookingEmbed() {
             // goes out on an open connection.
             onPointerEnter={warmScheduler}
             onFocus={warmScheduler}
-            className={primaryBtn}
           >
             Load the calendar
-          </button>
-          <a
+          </Button>
+          <Button
             href={bookingUrl}
             target="_blank"
             rel="noopener noreferrer"
             onPointerEnter={warmScheduler}
-            className={ghostBtn}
+            variant="ghost"
           >
             Open {schedulerName()} instead
-          </a>
+          </Button>
         </div>
       </div>
     );

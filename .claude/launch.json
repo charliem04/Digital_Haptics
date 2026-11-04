@@ -11,6 +11,19 @@
         "dev"
       ],
       "port": 3000
+    },
+    {
+      "name": "site-static",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "wrangler",
+        "dev",
+        "--cwd",
+        "site",
+        "--port",
+        "8799"
+      ],
+      "port": 8799
     }
   ]
 }

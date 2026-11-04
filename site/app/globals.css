@@ -33,11 +33,21 @@
 
   /* Dot grid pitch: 16px desktop, 14px mobile (PLAN §4.4). */
   --dot-size: 14px;
+
+  /* Header row height. The home hero reads it to start its rail and
+     flare at the very top of the page, behind the header (mockup). */
+  --header-h: 88px;
 }
 
 @media (min-width: 768px) {
   :root {
     --dot-size: 16px;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --header-h: 108px;
   }
 }
 

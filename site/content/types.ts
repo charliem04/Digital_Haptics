@@ -52,3 +52,63 @@ export type LeadFlowStep = {
   key: string;
   value: string;
 };
+
+/** A service (PLAN §5, §6): card, sub-page and pricing line. */
+export type Service = {
+  slug: string;
+  /** Boxed label code, e.g. ACT.01. */
+  code: string;
+  name: string;
+  /** One line for cards and the hero sidebar. */
+  short: string;
+  /** Sub-page opening paragraph. */
+  lead: string;
+  included: string[];
+  forWho: string[];
+  faq: Faq[];
+  /** Pricing page line, e.g. "Websites from [PRICE]". */
+  price: string;
+  /** Case-study `systems` value that marks a case as relevant here. */
+  system: string;
+};
+
+/** One step of a process strip (PLAN §5). */
+export type ProcessStep = {
+  name: string;
+  body: string;
+};
+
+/** A key/value result on a case study. Placeholders until confirmed. */
+export type CaseResult = {
+  label: string;
+  value: string;
+};
+
+/**
+ * A case study (PLAN §5 Work, §6): frontmatter of content/work/*.mdx.
+ *
+ * Shown in production only when BOTH `published` and `permission` are
+ * true (PLAN §10: unpublished until the client confirms). Preview
+ * builds also show drafts, labelled, with the client name held back
+ * until `permission` is true.
+ */
+export type CaseStudy = {
+  slug: string;
+  client: string;
+  trade: string;
+  location: string;
+  systems: string[];
+  liveUrl?: string;
+  heroImage?: Photo;
+  results: CaseResult[];
+  featured: boolean;
+  order: number;
+  published: boolean;
+  permission: boolean;
+  summary: string;
+  /** Computed: visible in this build but not publishable yet. */
+  draft: boolean;
+};
+
+/** A select or checkbox option (PLAN §5, /start). */
+export type Option = { value: string; label: string };
