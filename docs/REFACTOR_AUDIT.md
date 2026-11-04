@@ -478,7 +478,7 @@ Approved in chat after Phase 0 merged. One Worker (`digitalhaptics`) serves the 
 
 **Decisions:**
 - **Case studies ship as drafts (PLAN §10).**
-  - Production shows a case only when `published` and `permission` are both true. Preview builds also show drafts, marked "Draft", with the client's name replaced by `[Client name]` until `permission` is true, because preview URLs are publicly reachable even though they're noindex.
+  - Production shows a case only when `published` and `permission` are both true. Preview builds also show drafts, marked "Draft", with the client's name replaced by `[Client name]` until `permission` is true, because preview URLs are publicly reachable even though they're noindex. Without permission the slug also becomes `draft-{order}` (a file-name slug like `/work/douet-ac/` names the client), and `liveUrl` and `heroImage` are dropped. This was flagged by an automated security review before the branch was pushed.
   - Work's registry entry is `live: hasCases()`, so with nothing publishable, nothing links to Work: no nav item, no proof strip, no "See the Work" button.
   - Static export refuses a dynamic route with zero params, so `/work/[slug]` emits one placeholder, `/work/_/`, which renders the 404 page (noindex, unlinked). It disappears once a case is published.
 - **MDX:** `next-mdx-remote` 6.0.0 (JavaScript expressions blocked by default) plus `gray-matter` 4.0.3, both pinned. Frontmatter follows PLAN §5's fields, plus `published`, `permission` and `summary`.

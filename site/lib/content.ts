@@ -131,17 +131,28 @@ const CLIENT_HELD = "[Client name]";
 
 type Frontmatter = Omit<CaseStudy, "slug" | "draft">;
 
+/**
+ * Without the client's permission, nothing that identifies them leaves
+ * this function: not the name, not the file-name slug (a URL such as
+ * /work/douet-ac/ names the client by itself), not the live-site link
+ * or screenshot. Preview URLs are noindex but publicly reachable, so
+ * this applies to previews too. The MDX body is still shown so drafts
+ * can be reviewed: keep the client's name out of it until permission
+ * is recorded (CONTENT_TODO.md).
+ */
 function readCase(file: string): { meta: CaseStudy; body: string } {
   const raw = readFileSync(join(WORK_DIR, file), "utf8");
   const { data, content } = matter(raw);
   const fm = data as Frontmatter;
-  const publishable = fm.published === true && fm.permission === true;
+  const permitted = fm.permission === true;
+  const publishable = fm.published === true && permitted;
   return {
     meta: {
       ...fm,
-      slug: file.replace(/\.mdx$/, ""),
-      client: fm.permission ? fm.client : CLIENT_HELD,
-      liveUrl: fm.liveUrl || undefined,
+      slug: permitted ? file.replace(/\.mdx$/, "") : `draft-${fm.order}`,
+      client: permitted ? fm.client : CLIENT_HELD,
+      liveUrl: permitted ? fm.liveUrl || undefined : undefined,
+      heroImage: permitted ? fm.heroImage : undefined,
       draft: !publishable,
     },
     body: content,

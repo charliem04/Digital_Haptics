@@ -32,7 +32,7 @@ What each item needs, with examples: [docs/SETUP.md §2](docs/SETUP.md).
 | `[PRICE]` ×2 (×3 with 🚩): "Websites from [PRICE]", "Local SEO from [PRICE]/mo", 🚩 "Automations from [PRICE]/mo" | `site/data/services.ts` → `price` | You | Open |
 | Budget ranges for the intake form (the field stays hidden until set) | `site/data/intake.ts` → `budgets` | You | Open |
 | Timeline options: defaults in place, `// OPEN:` | `site/data/intake.ts` → `timelines` | You: confirm or edit | Open |
-| Case studies, all five drafts: `location`, `systems`, `summary`, `results` (`[RESULT]`), body sections, screenshots, `liveUrl`. **Then client permission** (`permission: true`) and `published: true` | `site/content/work/*.mdx` | You and each client | Open |
+| Case studies, all five drafts: `location`, `systems`, `summary`, `results` (`[RESULT]`), body sections, screenshots, `liveUrl`. **Then client permission** (`permission: true`) and `published: true`. Until permission, drafts render on previews as `/work/draft-N/` with no name, live link or screenshot: **keep the client name out of the body text until then too.** | `site/content/work/*.mdx` | You and each client | Open |
 | DRAFT copy to review: service leads, "What you get", "A good fit if", service FAQs | `site/data/services.ts` | You | Open |
 | DRAFT copy to review: process steps, /start steps, /start FAQ, thank-you next steps | `site/data/process.ts`, `site/data/faq.ts`, `site/app/start/thanks/page.tsx` | You | Open |
 | DRAFT copy to review: home service-area lede ("…when the AC quits in August"), CTA band headings | `site/app/page.tsx` and each page's `CtaBand` | You | Open |
