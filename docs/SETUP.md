@@ -105,6 +105,8 @@ SELECT received_at, name, business, phone, email, email_status FROM leads ORDER 
 3. Worker → **Settings → Build → Variables and secrets**: add `NEXT_PUBLIC_TURNSTILE_SITE_KEY` = the site key, as a plain variable. It's a build variable because the page needs it.
 4. Worker → **Settings → Variables and Secrets** (the runtime ones, not Build): add `TURNSTILE_SECRET_KEY` = the secret key, type **Secret**.
 5. Retry the latest build. The form now shows the check, and the Worker refuses submissions without a valid token.
+   - **The usual mix-up:** the site key is a *build* variable, but the secret is a *runtime* secret. If the Turnstile dashboard says "Siteverify isn't being called", the Worker can't see `TURNSTILE_SECRET_KEY`. It's probably under Build variables; move it to **Settings → Variables and Secrets**.
+   - **What the Worker checks:** a token passes only if Cloudflare confirms it, it was solved on the same form (`action`: `intake` or `demo`), and it was issued on the same hostname as the request. Each token works once; the form gets a fresh one after any failed send.
 
 ### Step 3: email (Resend)
 

@@ -9,7 +9,7 @@ import { Checkbox, CheckboxGroup, TextField } from "@/components/ui/Field";
 import { Button } from "@/components/ui/Button";
 import { BoxedLabel } from "@/components/ui/BoxedLabel";
 import { Marker } from "@/components/ui/Marker";
-import { Turnstile } from "@/components/Turnstile";
+import { Turnstile, resetTurnstile } from "@/components/Turnstile";
 
 /**
  * ════════════════════════════════════════════════════════════════════
@@ -90,7 +90,8 @@ export function LiveDemo({
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const fd = new FormData(e.currentTarget);
+    const form = e.currentTarget;
+    const fd = new FormData(form);
     const phone = String(fd.get("phone") ?? "");
     const consent = fd.get("consent") === "yes";
     const pErr = checkField("phone", phone, {
@@ -111,6 +112,8 @@ export function LiveDemo({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phone, consent, turnstile: fd.get("cf-turnstile-response") }),
       });
+      // Single-use token: a retry (or a second run) needs a fresh one.
+      resetTurnstile(form);
       if (res.ok) {
         const data = (await res.json()) as { messages: Msg[] };
         return play(data.messages);
@@ -118,6 +121,7 @@ export function LiveDemo({
       if (DEMO_MOCK && res.status === 404) return play(mock);
       setStatus("failed");
     } catch {
+      resetTurnstile(form);
       if (DEMO_MOCK) return play(mock);
       setStatus("failed");
     }
@@ -140,7 +144,7 @@ export function LiveDemo({
         <CheckboxGroup id="demo-consent-group" legend={copy.consentLegend} error={consentError}>
           <Checkbox id="demo-consent" name="consent" value="yes" label={copy.consent} />
         </CheckboxGroup>
-        <Turnstile />
+        <Turnstile action="demo" />
         {status === "failed" && (
           <p role="alert" className="font-mono text-label uppercase tracking-label">
             {copy.failed}

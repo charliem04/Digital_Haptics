@@ -49,7 +49,15 @@ export async function handleIntake(req: Request, env: Env, ctx: ExecutionContext
   const checked = validateIntake(body, intakeOptions());
   if (!checked.ok) return json({ error: "invalid", errors: checked.errors }, 400);
 
-  const turnstile = await verifyTurnstile(env, body.turnstile, req.headers.get("CF-Connecting-IP"));
+  const turnstile = await verifyTurnstile(
+    env,
+    body.turnstile,
+    req.headers.get("CF-Connecting-IP"),
+    {
+      action: "intake",
+      hostname: new URL(req.url).hostname,
+    }
+  );
   if (turnstile === "failed") return json({ error: "turnstile" }, 403);
 
   const row: LeadRow = {
