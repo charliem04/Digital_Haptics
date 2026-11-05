@@ -36,8 +36,12 @@ export const site = {
     titleTemplate: "%s | Digital Haptics",
     defaultDescription:
       "Web design and local SEO for trades businesses in Acadiana, Louisiana. Sites built to load fast, rank locally and turn visitors into calls.",
-    /** Replaced by generated per-page OG images in Phase 5. */
-    ogImage: "/brand/og.svg",
+    /**
+     * Share image for pages that don't set their own. Per-page images
+     * are /og/<path>.png (lib/meta.ts ogImageFor), rendered at build by
+     * scripts/og.mjs from each page's own title.
+     */
+    ogImage: "/og/default.png",
   },
 
   // ── Contact ───────────────────────────────────────────────────────

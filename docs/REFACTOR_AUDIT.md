@@ -527,3 +527,24 @@ Approved in chat after Phase 0 merged. One Worker (`digitalhaptics`) serves the 
 - **Turnstile hardened against Cloudflare's integration checklist (after merge, branch `fix/turnstile-hardening`):** the widget sets `data-action` (`intake` / `demo`) and the Worker requires the matching `action`. The token's `hostname` must equal the request's own host (same-origin API, so no allowlist to maintain). siteverify has a 10 s timeout, and a non-200 fails closed. The widget is reset after any unsuccessful send, because tokens are single-use. Cloudflare's dummy test secrets skip the action and hostname checks (they only accept dummy tokens). Five new tests. The secret itself is set by you in the dashboard; this session never handles it.
 - **D1 IDs pinned:** `wrangler preview` refuses a D1 binding without `database_id`, unlike `wrangler deploy`, which provisioned production. The preview database was created in the dashboard. Both IDs (`dc861fa5…` production, `68201293…` preview) are now in `wrangler.jsonc`, which also stops a deploy from ever provisioning a second production database.
 
+## 14. Phase 5 record (supporting pages and SEO, branch `refactor/phase-5`)
+
+**Built:**
+- **About** (`data/about.ts`): live, placeholders until QUESTIONS.md §1–5, photo slot hidden until a photo exists.
+- **City template** `/areas/[city]` (`data/cities.ts`): a city is emitted in production only when `ready`. Previews show all seven as marked drafts.
+- **Blog** index and `/blog/[slug]`, with author, date, reading time, related posts, CTA and Article JSON-LD. Zero published posts; one example draft for previews.
+- **Privacy and terms:** drafted from what the site does, varying by flag (SMS section only with automations, Cal.com only once set). Placeholders for retention and venue, plus a "pending attorney review" notice.
+- **404:** on-brand, terminal-style.
+- `docs/QUESTIONS.md`: every open question for Charles in one place, with space to answer.
+
+**Decisions:**
+- **Share images and icons:** `scripts/og.mjs` runs after `next build`, reads each page's `og:image` and `og:title` from `out/`, and renders `/og/<path>.png` (1200×630, brand fonts, flare), plus `apple-touch-icon.png` and a PNG-in-ICO `favicon.ico`. `app/icon.svg` is the SVG favicon. Next's own `opengraph-image` route crashes on Windows: its bundled renderer loads a fallback font through a malformed file URL. So the script calls the same two libraries directly: `satori` 0.63.2 and `@resvg/resvg-js` 2.6.2, both pinned and at least two weeks old. The fonts are TTF conversions of the self-hosted WOFF2s (`scripts/og-fonts/`, OFL). Home and the default image carry the PLAN §5 headline rather than the site title.
+- **Same pattern as Work** for Blog and cities: the registry is `live` only when there's something to show (`hasPosts()`, `cityVisible()`), drafts appear on previews, and an empty dynamic route emits a `_` placeholder that renders the 404 page.
+- **Shared MDX renderer** (`components/page/Mdx.tsx`) for case studies and posts.
+- **JSON-LD escaping:** every `application/ld+json` block now goes through `lib/json-ld.ts`, which escapes `<` so content can never close the script tag. Flagged by the security hook on the new Article block, then applied to all four sources.
+- **Verified** under `wrangler dev`:
+  - About 200, unready city 404, unknown path 404, empty blog noindex, legal pages noindex.
+  - Favicon, touch icon and share images serve.
+  - No horizontal overflow at 375.
+  - Builds: flags off (12 images, About in the sitemap, flag scan clean), flags on (privacy gains the SMS section), and preview (7 city drafts and the example post render).
+

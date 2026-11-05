@@ -1,3 +1,4 @@
+import { jsonLd } from "@/lib/json-ld";
 import { site } from "@/site.config";
 import { flags } from "@/lib/flags";
 
@@ -45,10 +46,5 @@ export function JsonLd() {
 
   const pruned = Object.fromEntries(Object.entries(data).filter(([, v]) => isReal(v)));
 
-  return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(pruned) }}
-    />
-  );
+  return <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(pruned)} />;
 }

@@ -35,7 +35,17 @@
 /brand/*
   Cache-Control: public, max-age=86400, must-revalidate
 
-/icon.png
+/icon.svg
+  Cache-Control: public, max-age=86400, must-revalidate
+
+# Share images and icons, regenerated each build (scripts/og.mjs).
+/og/*
+  Cache-Control: public, max-age=86400, must-revalidate
+
+/favicon.ico
+  Cache-Control: public, max-age=86400, must-revalidate
+
+/apple-touch-icon.png
   Cache-Control: public, max-age=86400, must-revalidate
 
 # The Content-Security-Policy is NOT here — scripts/csp.mjs generates it

@@ -4,7 +4,7 @@ Every `[PLACEHOLDER]` (and PLAN's own bracketed placeholders like `[PRICE]`) in 
 
 Never replace a placeholder with an invented price, stat, client result, testimonial or client name.
 
-What each item needs, with examples: [docs/SETUP.md §2](docs/SETUP.md).
+What each item needs, with examples: [docs/SETUP.md §2](docs/SETUP.md). **The questions to answer are collected in [docs/QUESTIONS.md](docs/QUESTIONS.md)**: answer there or in chat, a few at a time.
 
 | Placeholder | Where | Needed from | Status |
 |---|---|---|---|
@@ -15,8 +15,8 @@ What each item needs, with examples: [docs/SETUP.md §2](docs/SETUP.md).
 | Response time | `site/site.config.ts` → `intake.responseTime` (thank-you page) | You | Done 2026-11-03: one business day |
 | Social URLs (all empty, so hidden) | `site/site.config.ts` → `socials` | You | Deferred: no accounts yet. Add each when created. |
 | Service-area city list | `site/site.config.ts` → `serviceArea` | You | Done 2026-11-03: all seven confirmed, plus remote work nationwide (structured data only). |
-| `[PLACEHOLDER: privacy policy, written in Phase 5]` | `site/app/privacy/page.tsx` | Phase 5 draft, then attorney review | Open |
-| `[PLACEHOLDER: terms of service, written in Phase 5]` | `site/app/terms/page.tsx` | Phase 5 draft, then attorney review | Open |
+| Privacy policy: drafted (Phase 5); `[PLACEHOLDER: retention period]` | `site/app/privacy/page.tsx` | You (QUESTIONS §7), then attorney review (§20) | Open |
+| Terms of service: drafted (Phase 5); `[PLACEHOLDER: parish]` | `site/app/terms/page.tsx` | You (QUESTIONS §8–9), then attorney review (§20) | Open |
 
 ## Phase 1 (design system)
 
@@ -52,7 +52,14 @@ What each item needs, with examples: [docs/SETUP.md §2](docs/SETUP.md).
 | 🚩 `[PLACEHOLDER: voice demo number]` (FEATURE_VOICE section) | `site/data/automations.ts` → `voiceCopy.number` | You, when the voice agent ships | Open |
 | Cal.com `bookingSuccessful` event name: confirm with a real booking once the event URL is set (`// OPEN:`) | `site/components/BookingEmbed.tsx` | Me, after Cal.com is set up | Open |
 
+## Phase 5 (supporting pages)
+
+| Item | Where | Needed from | Status |
+|---|---|---|---|
+| About page: name and title, intro, story, principles, local ties, optional photo (all `[PLACEHOLDER]`) | `site/data/about.ts` | You (QUESTIONS §1–5) | Open |
+| City pages: unique content per town; each stays unpublished until `ready: true` | `site/data/cities.ts` | You (QUESTIONS §6) | Open |
+| "Draft pending attorney review" notice on the legal pages: remove after review | `site/app/legal.tsx` | Attorney (QUESTIONS §20) | Open |
+| Blog: example draft post (previews only); delete when the first real post exists | `site/content/blog/example-post.mdx` | Me | Open |
+
 ## Coming in later phases (from PLAN.md, logged when the code lands)
 
-- Unique content for each city page (cities without it stay unpublished)
-- About page: founder name and background details
