@@ -5,6 +5,7 @@
  * Emits FAQPage structured data from the same array that renders the
  * list, so the two can never say different things (PLAN §8).
  */
+import { jsonLd } from "@/lib/json-ld";
 import type { Faq } from "@/content/types";
 import { Section } from "@/components/layout/Section";
 import { SectionHead } from "@/components/page/SectionHead";
@@ -56,10 +57,7 @@ export function FaqList({
           ))}
         </div>
       </div>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(data)} />
     </Section>
   );
 }

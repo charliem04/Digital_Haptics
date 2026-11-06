@@ -10,7 +10,7 @@
  *  Layout per PLAN §6:
  *    data/*.ts          typed data: services, process, pricing, FAQ, form
  *    content/work/*.mdx case studies
- *    content/blog/*.mdx blog posts (Phase 5)
+ *    content/blog/*.mdx blog posts
  *
  *  Two rules live here and nowhere else:
  *    · Flags. A flagged item (the Automations service, ACT.03, a quote
@@ -36,6 +36,8 @@ import { processSteps, startSteps } from "@/data/process";
 import { quoteFactors, quoteStatement } from "@/data/pricing";
 import { startFaq } from "@/data/faq";
 import { budgets, smsConsent, timelines, trades } from "@/data/intake";
+import { about } from "@/data/about";
+import { cities, type City } from "@/data/cities";
 import type {
   Act,
   CaseStudy,
@@ -206,4 +208,114 @@ export function getNextCase(slug: string): CaseStudy | undefined {
 /** Does this build have any case to show? Drives the Work route. */
 export function hasCases(): boolean {
   return getCases().length > 0;
+}
+
+/* ── About ───────────────────────────────────────────────────────── */
+
+export function getAbout() {
+  return about;
+}
+
+/* ── City pages ──────────────────────────────────────────────────── */
+
+const slugOf = (name: string) =>
+  name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+
+export type CityPage = City & { slug: string; draft: boolean };
+
+/**
+ * Cities this build shows: `ready` ones (unique content, PLAN §5), plus
+ * drafts on preview builds, marked, so the template can be reviewed.
+ */
+export function getCities(): CityPage[] {
+  return cities
+    .map((c) => ({ ...c, slug: slugOf(c.name), draft: !c.ready }))
+    .filter((c) => !c.draft || IS_PREVIEW);
+}
+
+export function getCity(slug: string): CityPage | undefined {
+  return getCities().find((c) => c.slug === slug);
+}
+
+/** Is this city's page emitted in this build? Drives its registry entry. */
+export function cityVisible(name: string): boolean {
+  return getCities().some((c) => c.name === name);
+}
+
+/* ── Blog ────────────────────────────────────────────────────────── */
+
+const BLOG_DIR = join(process.cwd(), "content", "blog");
+
+export type Post = {
+  slug: string;
+  title: string;
+  description: string;
+  date: string;
+  author: string;
+  tags: string[];
+  published: boolean;
+  /** Computed: shown in this build but not published. */
+  draft: boolean;
+  /** Computed: minutes at ~220 words a minute. */
+  readingMinutes: number;
+};
+
+function readPost(file: string): { meta: Post; body: string } {
+  const { data, content } = matter(readFileSync(join(BLOG_DIR, file), "utf8"));
+  const words = content.split(/\s+/).filter(Boolean).length;
+  return {
+    meta: {
+      slug: file.replace(/\.mdx$/, ""),
+      title: String(data.title ?? ""),
+      description: String(data.description ?? ""),
+      date: String(data.date ?? ""),
+      author: String(data.author ?? site.name),
+      tags: Array.isArray(data.tags) ? data.tags.map(String) : [],
+      published: data.published === true,
+      draft: data.published !== true,
+      readingMinutes: Math.max(1, Math.round(words / 220)),
+    },
+    body: content,
+  };
+}
+
+function allPosts(): { meta: Post; body: string }[] {
+  let files: string[] = [];
+  try {
+    files = readdirSync(BLOG_DIR).filter((f) => f.endsWith(".mdx"));
+  } catch {
+    return [];
+  }
+  return files.map(readPost).sort((a, b) => b.meta.date.localeCompare(a.meta.date));
+}
+
+/** Posts this build shows: published ones, plus drafts on previews. Newest first. */
+export function getPosts(): Post[] {
+  return allPosts()
+    .filter((p) => !p.meta.draft || IS_PREVIEW)
+    .map((p) => p.meta);
+}
+
+export function getPost(slug: string): { meta: Post; body: string } | undefined {
+  const p = allPosts().find((x) => x.meta.slug === slug);
+  if (!p || (p.meta.draft && !IS_PREVIEW)) return undefined;
+  return p;
+}
+
+/** Up to three other posts, sharing a tag first (PLAN §5 "related posts"). */
+export function getRelatedPosts(slug: string): Post[] {
+  const posts = getPosts();
+  const me = posts.find((p) => p.slug === slug);
+  if (!me) return [];
+  const others = posts.filter((p) => p.slug !== slug);
+  const shared = others.filter((p) => p.tags.some((t) => me.tags.includes(t)));
+  return [...shared, ...others.filter((p) => !shared.includes(p))].slice(0, 3);
+}
+
+/** Does this build have any post to show? Drives the Blog route. */
+export function hasPosts(): boolean {
+  return getPosts().length > 0;
 }

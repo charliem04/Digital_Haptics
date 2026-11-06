@@ -27,6 +27,7 @@ import { applyPreviewHeaders } from "./preview-headers.mjs";
 import { applyCsp } from "./csp.mjs";
 import { checkSeo } from "./seo.mjs";
 import { harden } from "./harden.mjs";
+import { renderOg } from "./og.mjs";
 // Same flags into the Worker as into the pages (scripts/worker-flags.mjs).
 await import("./worker-flags.mjs");
 
@@ -77,4 +78,5 @@ if (build.status !== 0) {
  * env values against the output, and handing it this script's own
  * NEXT_PUBLIC_PREVIEW would be a variable production never sees.
  */
-process.exit(applyCsp() && checkSeo() && applyPreviewHeaders() && harden() ? 0 : 1);
+const ogOk = await renderOg().catch((e) => (console.error("[og] failed:", e), false));
+process.exit(ogOk && applyCsp() && checkSeo() && applyPreviewHeaders() && harden() ? 0 : 1);

@@ -2,14 +2,13 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { MDXRemote } from "next-mdx-remote/rsc";
-import type { ComponentProps } from "react";
 import { pageMetadata } from "@/lib/meta";
 import { getCase, getCases, getNextCase } from "@/lib/content";
 import { PageHero } from "@/components/page/PageHero";
 import { Section } from "@/components/layout/Section";
 import { SectionHead } from "@/components/page/SectionHead";
 import { CtaBand } from "@/components/page/CtaBand";
+import { Mdx } from "@/components/page/Mdx";
 import { Chip } from "@/components/ui/Chip";
 import { BoxedLabel } from "@/components/ui/BoxedLabel";
 import { CutFrame } from "@/components/ui/CutFrame";
@@ -57,23 +56,6 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
     { noindex: c.meta.draft }
   );
 }
-
-/** MDX body elements in the site's type and spacing. */
-const mdx = {
-  h2: (p: ComponentProps<"h2">) => (
-    <h2 className="mt-12 font-display text-heading font-semibold first:mt-0" {...p} />
-  ),
-  h3: (p: ComponentProps<"h3">) => (
-    <h3 className="mt-8 font-display text-subheading font-semibold" {...p} />
-  ),
-  p: (p: ComponentProps<"p">) => <p className="mt-4 text-body text-steel-deep" {...p} />,
-  ul: (p: ComponentProps<"ul">) => (
-    <ul className="mt-4 list-disc space-y-2 pl-5 text-body text-steel-deep" {...p} />
-  ),
-  a: (p: ComponentProps<"a">) => (
-    <a className="text-ink underline decoration-signal decoration-2 underline-offset-4" {...p} />
-  ),
-};
 
 export default function CasePage({ params }: { params: { slug: string } }) {
   const c = getCase(params.slug);
@@ -140,7 +122,7 @@ export default function CasePage({ params }: { params: { slug: string } }) {
 
       <Section aria-label="The project">
         <article className="max-w-[720px]">
-          <MDXRemote source={body} components={mdx} />
+          <Mdx source={body} />
         </article>
       </Section>
 

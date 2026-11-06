@@ -20,7 +20,7 @@
  */
 import { site } from "@/site.config";
 import { isOn, type FlagName } from "./flags";
-import { hasCases } from "./content";
+import { cityVisible, hasCases, hasPosts } from "./content";
 
 export type RouteNode = {
   href: string;
@@ -75,20 +75,22 @@ export const nav: RouteNode[] = [
     ],
   },
   { href: "/pricing/", label: "Pricing", live: true, priority: 0.8 },
-  { href: "/about/", label: "About", live: false, priority: 0.7 },
+  { href: "/about/", label: "About", live: true, priority: 0.7 },
 ];
 
 /** Routes that exist but aren't header items. */
 export const auxRoutes: RouteNode[] = [
   { href: "/start/", label: "Start a Project", live: true, priority: 0.9 },
   { href: "/start/thanks/", label: "Thank you", live: true, noindex: true },
-  { href: "/blog/", label: "Blog", live: false, priority: 0.6 },
+  // Live only with a post to show (PLAN §5: start with 0 posts).
+  { href: "/blog/", label: "Blog", live: hasPosts(), priority: 0.6 },
   ...site.serviceArea.cities.map(
     (city): RouteNode => ({
       href: `/areas/${citySlug(city)}/`,
       label: city,
-      // Each city goes live only once it has unique content (PLAN §5).
-      live: false,
+      // Each city goes live only once it has unique content (PLAN §5):
+      // `ready` in data/cities.ts, or any city on a preview build.
+      live: cityVisible(city),
       priority: 0.7,
     })
   ),

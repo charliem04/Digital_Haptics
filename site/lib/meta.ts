@@ -19,6 +19,17 @@ export function absoluteUrl(pathOrUrl: string): string {
 }
 
 /**
+ * A page's share image path: /og/<path>.png, e.g. "/services/local-seo/"
+ * → "/og/services-local-seo.png", "/" → "/og/home.png". scripts/og.mjs
+ * reads these from the built HTML and renders each one, so there's
+ * nothing to register by hand.
+ */
+export function ogImageFor(path: string): string {
+  const slug = path.replace(/^\/|\/$/g, "").replace(/\//g, "-") || "home";
+  return `/og/${slug}.png`;
+}
+
+/**
  * Per-page <head>, built from one PageMeta so title, description,
  * canonical and OG can't disagree. The site name is appended by the
  * title template in app/layout.tsx.
@@ -38,7 +49,7 @@ export function pageMetadata(
       description: meta.description,
       url: absoluteUrl(meta.path),
       siteName: site.name,
-      images: [{ url: site.seo.ogImage, width: 1200, height: 630 }],
+      images: [{ url: ogImageFor(meta.path), width: 1200, height: 630 }],
       type: "website",
     },
   };

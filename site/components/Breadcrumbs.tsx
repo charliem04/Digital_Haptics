@@ -1,3 +1,4 @@
+import { jsonLd } from "@/lib/json-ld";
 import Link from "next/link";
 import { site } from "@/site.config";
 import { trailFor } from "@/lib/routes";
@@ -52,10 +53,7 @@ export function Breadcrumbs({ path, leafLabel }: { path: string; leafLabel?: str
           })}
         </ol>
       </nav>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(data)} />
     </>
   );
 }
