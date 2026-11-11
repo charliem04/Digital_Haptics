@@ -48,6 +48,8 @@ export type TerrainParams = {
   tileSizePx: number;
   /** Per-point brightness jitter, 0–1. */
   grain: number;
+  /** Point in the loop (0–1) held as the single reduced-motion frame. */
+  stillPhase: number;
   /**
    * Debug: freeze on the first frame of the loop ("start") or the frame
    * exactly one loop later ("end"). They should be the same picture.
@@ -83,5 +85,6 @@ export const TERRAIN_DEFAULTS: TerrainParams = {
   maxPoints: 160_000,
   tileSizePx: 1800,
   grain: 0.22,
+  stillPhase: 0.5,
   debugFrame: null,
 };

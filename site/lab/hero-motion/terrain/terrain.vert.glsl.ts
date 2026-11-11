@@ -91,7 +91,7 @@ float terrain(vec2 uv) {
   // basins stay calm instead of being scribbled over.
   float h = mix(soft, soft * 0.45 + ridged * (0.35 + 0.55 * soft), uRidgeMix);
   // Flatten the lows so basins read as bare grid.
-  return smoothstep(0.2, 0.64, h);
+  return smoothstep(0.2, 0.72, h);
 }
 
 void main() {

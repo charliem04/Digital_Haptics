@@ -126,7 +126,10 @@ export class TerrainEngine implements ParamEngine<TerrainParams> {
   update(time: number, _dt: number, still: boolean): void {
     const { loopDuration, debugFrame } = this.p;
     let phase: number;
-    if (debugFrame === "start" || still) phase = 0;
+    if (debugFrame === "start") phase = 0;
+    // Reduced motion: hold a point in the loop with a ridge in frame,
+    // rather than wherever phase 0 happens to fall.
+    else if (still) phase = this.p.stillPhase;
     // Deliberately 1, not wrapped to 0: this frame only matches the first
     // one if the shader really is periodic.
     else if (debugFrame === "end") phase = 1;
@@ -173,6 +176,31 @@ export class TerrainEngine implements ParamEngine<TerrainParams> {
       if (d > maxDiff) maxDiff = d;
     }
     return { maxDiff, differing, pixels: w * h };
+  }
+
+  /**
+   * Mean brightness (0–1) of `steps` evenly spaced frames of the loop.
+   * Debug only: it is how the lab finds a well-lit `stillPhase`.
+   */
+  scanLoop(steps = 20): number[] {
+    const gl = this.renderer.getContext();
+    const w = gl.drawingBufferWidth;
+    const h = gl.drawingBufferHeight;
+    const buffer = new Uint8Array(w * h * 4);
+    const uPhase = this.material.uniforms.uPhase;
+    const keep = uPhase.value as number;
+    const out: number[] = [];
+    for (let s = 0; s < steps; s++) {
+      uPhase.value = s / steps;
+      this.render();
+      gl.readPixels(0, 0, w, h, gl.RGBA, gl.UNSIGNED_BYTE, buffer);
+      let sum = 0;
+      for (let i = 0; i < buffer.length; i += 16) sum += buffer[i] + buffer[i + 1] + buffer[i + 2];
+      out.push(sum / ((buffer.length / 16) * 765));
+    }
+    uPhase.value = keep;
+    this.render();
+    return out;
   }
 
   /** The GPU as the browser reports it, for the bench readout. */

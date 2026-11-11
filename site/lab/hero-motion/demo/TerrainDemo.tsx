@@ -35,6 +35,7 @@ const INITIAL = {
   maxPoints: D.maxPoints,
   tileSizePx: D.tileSizePx,
   grain: D.grain,
+  stillPhase: D.stillPhase,
   paused: false,
 };
 
@@ -75,6 +76,7 @@ export function TerrainDemo({
     motion.addBinding(s, "waveAmplitude", { min: 0, max: 0.3, step: 0.005 });
     motion.addBinding(s, "waveFrequency", { min: 0, max: 10, step: 0.1 });
     motion.addBinding(s, "paused");
+    motion.addBinding(s, "stillPhase", { min: 0, max: 1, step: 0.01 });
 
     const cam = pane.addFolder({ title: "Camera" });
     cam.addBinding(s, "cameraTilt", { min: 0, max: 45, step: 0.5 });
@@ -108,6 +110,17 @@ export function TerrainDemo({
     );
   };
 
+  // Which phases are well lit? Useful for choosing `stillPhase`.
+  const scan = () => {
+    const engine = handle.current?.engine();
+    if (!engine) return;
+    const levels = engine.scanLoop(20);
+    setCheck(
+      "Brightness by phase: " +
+        levels.map((v, i) => `${(i / 20).toFixed(2)}=${(v * 100).toFixed(1)}`).join(" ")
+    );
+  };
+
   return (
     <ConceptFrame
       id="terrain"
@@ -132,6 +145,9 @@ export function TerrainDemo({
           ))}
           <button type="button" className={css.button} onClick={verify}>
             Verify loop
+          </button>
+          <button type="button" className={css.button} onClick={scan}>
+            Scan loop brightness
           </button>
         </>
       }
@@ -159,6 +175,7 @@ export function TerrainDemo({
         maxPoints={state.maxPoints}
         tileSizePx={state.tileSizePx}
         grain={state.grain}
+        stillPhase={state.stillPhase}
         debugFrame={debugFrame}
         stageOptions={bench ? { dpr: 1 } : still ? { reducedMotion: true } : undefined}
       />

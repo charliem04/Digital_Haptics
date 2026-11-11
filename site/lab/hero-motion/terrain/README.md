@@ -20,6 +20,10 @@ Geometry, camera and ramp are rebuilt only when a prop or the container size cha
 
 `scrollDirection` is therefore an integer vector, not an angle. An arbitrary angle cannot loop.
 
+## Reduced motion
+
+One frame, at `stillPhase` of the loop. "Scan loop brightness" in the lab prints the mean brightness of 20 evenly spaced frames, to help pick a well-lit one; with the default seed the loop is fairly even (6.6–9.9%) and 0.5 is the brightest.
+
 ## Constant density at any size
 
 World units are CSS pixels and the camera sits where one unit at the centre is one pixel, so `pointSpacingPx` holds at any container size. The grid is anchored to the centre: a resize slides the lattice, it does not re-flow it. `maxPoints` widens the spacing if a large container would exceed it.
@@ -32,29 +36,30 @@ The tradeoff: the loop is seamless and there is no hard edge, but a mirror line 
 
 ## Final defaults
 
-| Prop              | Default                                                     | Notes                                    |
-| ----------------- | ----------------------------------------------------------- | ---------------------------------------- |
-| `pointSpacingPx`  | `6`                                                         | CSS px between points                    |
-| `pointSize`       | `2`                                                         | CSS px                                   |
-| `pointShape`      | `"square"`                                                  | or `"round"`                             |
-| `heightScale`     | `64`                                                        | CSS px of lift at a peak                 |
-| `noiseScale`      | `3.2`                                                       | base features per tile                   |
-| `octaves`         | `5`                                                         | 1–6                                      |
-| `ridgeMix`        | `0.55`                                                      | 0 soft, 1 ridged                         |
-| `scrollDirection` | `[1, 1]`                                                    | whole tiles per loop                     |
-| `loopDuration`    | `20`                                                        | seconds                                  |
-| `waveAmplitude`   | `0.05`                                                      | fraction of full elevation               |
-| `waveFrequency`   | `2.5`                                                       | crests per 1000 px                       |
-| `cameraTilt`      | `14`                                                        | degrees off top-down                     |
-| `fov`             | `22`                                                        | degrees                                  |
-| `palette`         | `#0f5b4a` 0 · `#2fd1a6` 0.42 · `#d8f08a` 0.76 · `#8a5a33` 1 | elevation stops                          |
-| `heightmap`       | `null`                                                      | procedural terrain                       |
-| `seed`            | `7`                                                         |                                          |
-| `aspectFit`       | `"cover"`                                                   | or `"contain"`                           |
-| `maxPoints`       | `160000`                                                    |                                          |
-| `tileSizePx`      | `1800`                                                      | added: size of one terrain tile          |
-| `grain`           | `0.22`                                                      | added: per-point brightness jitter       |
-| `debugFrame`      | `null`                                                      | `"start"` / `"end"` hold a loop endpoint |
+| Prop              | Default                                                     | Notes                                       |
+| ----------------- | ----------------------------------------------------------- | ------------------------------------------- |
+| `pointSpacingPx`  | `6`                                                         | CSS px between points                       |
+| `pointSize`       | `2`                                                         | CSS px                                      |
+| `pointShape`      | `"square"`                                                  | or `"round"`                                |
+| `heightScale`     | `64`                                                        | CSS px of lift at a peak                    |
+| `noiseScale`      | `3.2`                                                       | base features per tile                      |
+| `octaves`         | `5`                                                         | 1–6                                         |
+| `ridgeMix`        | `0.55`                                                      | 0 soft, 1 ridged                            |
+| `scrollDirection` | `[1, 1]`                                                    | whole tiles per loop                        |
+| `loopDuration`    | `20`                                                        | seconds                                     |
+| `waveAmplitude`   | `0.05`                                                      | fraction of full elevation                  |
+| `waveFrequency`   | `2.5`                                                       | crests per 1000 px                          |
+| `cameraTilt`      | `14`                                                        | degrees off top-down                        |
+| `fov`             | `22`                                                        | degrees                                     |
+| `palette`         | `#0f5b4a` 0 · `#2fd1a6` 0.42 · `#d8f08a` 0.76 · `#8a5a33` 1 | elevation stops                             |
+| `heightmap`       | `null`                                                      | procedural terrain                          |
+| `seed`            | `7`                                                         |                                             |
+| `aspectFit`       | `"cover"`                                                   | or `"contain"`                              |
+| `maxPoints`       | `160000`                                                    |                                             |
+| `tileSizePx`      | `1800`                                                      | added: size of one terrain tile             |
+| `grain`           | `0.22`                                                      | added: per-point brightness jitter          |
+| `stillPhase`      | `0.5`                                                       | added: loop point held under reduced motion |
+| `debugFrame`      | `null`                                                      | `"start"` / `"end"` hold a loop endpoint    |
 
 ## The three that change the feel most
 
