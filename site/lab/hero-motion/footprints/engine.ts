@@ -2,8 +2,16 @@ import * as THREE from "three";
 import type { ParamEngine } from "../shared/useStage";
 import { clamp, hexToRgb, smoothstep } from "../shared/rng";
 import { FEET_DEFAULTS, FOOT_LENGTH, type FeetParams } from "./params";
-import { MAX_WALKERS, WalkerSim, printInk, type WalkConfig } from "./walkers";
-import { FOOT_ASPECT, createFootSprite, createHaloSprite } from "./sprites";
+import { MAX_WALKERS, WalkerSim, printInk, type WalkConfig, type Walker } from "./walkers";
+import {
+  FOOT_ASPECT,
+  LEG_SHARE,
+  PRINT_STYLES,
+  createFootSprites,
+  createHaloSprite,
+  createLegSprite,
+  createWaistSprite,
+} from "./sprites";
 import { dotsVert } from "./dots.vert.glsl";
 import { dotsFrag } from "./dots.frag.glsl";
 
@@ -34,7 +42,9 @@ export class FeetEngine implements ParamEngine<FeetParams> {
   private readonly density: HTMLCanvasElement;
   private readonly ctx: CanvasRenderingContext2D;
   private readonly texture: THREE.CanvasTexture;
-  private readonly foot = createFootSprite();
+  private readonly feet = createFootSprites();
+  private readonly leg = createLegSprite();
+  private readonly waist = createWaistSprite();
   private readonly halo = createHaloSprite();
   private readonly sim = new WalkerSim();
   private readonly cfg: WalkConfig = {
@@ -43,6 +53,8 @@ export class FeetEngine implements ParamEngine<FeetParams> {
     pivotChance: 0,
     trailLength: 0,
     footLength: FOOT_LENGTH,
+    style: -1,
+    styleCount: PRINT_STYLES.length,
   };
   private readonly pixel = new Uint8Array(4);
 
@@ -111,6 +123,7 @@ export class FeetEngine implements ParamEngine<FeetParams> {
         uFlareI: { value: 0 },
         uSecondary: { value: 0 },
         uSecondaryY: { value: 0 },
+        uBody: { value: 0.8 },
       },
     });
     const quad = new THREE.Mesh(this.geometry, this.material);
@@ -139,6 +152,10 @@ export class FeetEngine implements ParamEngine<FeetParams> {
 
   resize(width: number, height: number, dpr: number): void {
     const first = this.width === 0;
+    // Grown from next to nothing (a hidden tab, a collapsed panel): the
+    // walkers were laid out for the old box and would all be bunched in
+    // one corner of the new one. Lay them out again.
+    const outgrown = this.width * this.height < width * height * 0.25;
     this.width = width;
     this.height = height;
     this.renderer.setPixelRatio(dpr);
@@ -152,7 +169,7 @@ export class FeetEngine implements ParamEngine<FeetParams> {
       this.fx = width * 0.64;
       this.fy = height * 0.44;
     }
-    if (!this.started) {
+    if (!this.started || outgrown) {
       this.started = true;
       this.sim.reset(this.p.seed, this.p.walkers, width, height, this.cfg);
     }
@@ -268,6 +285,8 @@ export class FeetEngine implements ParamEngine<FeetParams> {
     u.uMaxR.value = p.maxDotRadius;
     u.uBaseAlpha.value = clamp(p.baseDotOpacity, 0, 1);
     u.uSecondary.value = p.secondaryLine ? 1 : 0;
+    u.uBody.value = clamp(p.bodyDensity, 0, 1);
+    this.cfg.style = (PRINT_STYLES as readonly string[]).indexOf(p.printStyle);
     hexToRgb(p.dotColor, u.uDot.value as THREE.Vector3);
     hexToRgb(p.paperColor, u.uPaper.value as THREE.Vector3);
     hexToRgb(p.haloColor, u.uHalo.value as THREE.Vector3);
@@ -279,6 +298,7 @@ export class FeetEngine implements ParamEngine<FeetParams> {
       } else if (prev.walkers !== p.walkers) {
         this.sim.setCount(p.walkers, this.cfg);
       }
+      if (prev.printStyle !== p.printStyle) this.sim.restyle(this.cfg);
     }
   }
 
@@ -327,8 +347,12 @@ export class FeetEngine implements ParamEngine<FeetParams> {
     ctx.globalCompositeOperation = "lighter";
 
     const walkers = this.sim.walkers;
+    const bodyLength = length * Math.max(0, this.p.bodyHeight);
     for (let i = 0; i < MAX_WALKERS; i++) {
-      const prints = walkers[i].prints;
+      const walker = walkers[i];
+      const foot = this.feet[walker.style] ?? this.feet[0];
+      if (bodyLength > 1 && walker.body > 0) this.drawBody(walker, bodyLength, scale);
+      const prints = walker.prints;
       for (let j = 0; j < prints.length; j++) {
         const print = prints[j];
         const ink = printInk(print, t);
@@ -347,10 +371,50 @@ export class FeetEngine implements ParamEngine<FeetParams> {
         ctx.globalAlpha = ink;
         // Mirror across the foot's long axis for the left print.
         ctx.setTransform(c * print.side, s * print.side, -s, c, x, y);
-        ctx.drawImage(this.foot, -footW / 2, -length / 2, footW, length);
+        ctx.drawImage(foot, -footW / 2, -length / 2, footW, length);
       }
     }
     this.texture.needsUpdate = true;
+  }
+
+  /**
+   * Legs and waist, drawn into the green channel.
+   *
+   * The figure stands "up the page": each leg runs from an ankle to its
+   * side of the hips, which sit a leg's length above the midpoint of the
+   * feet, and the waist carries on from there to mid-waist, where the
+   * sprite's own gradient reaches zero. Nothing is drawn above that.
+   */
+  private drawBody(walker: Walker, bodyLength: number, scale: number): void {
+    const ctx = this.ctx;
+    const legLength = bodyLength * LEG_SHARE;
+    const waistLength = bodyLength - legLength;
+    const footLength = this.cfg.footLength;
+    const legWidth = footLength * 0.46;
+    const hipHalf = footLength * 0.22;
+    const hipX = (walker.leftX + walker.rightX) / 2;
+    const hipY = (walker.leftY + walker.rightY) / 2 - legLength;
+    // Whichever ankle is further left on the page takes the left hip, so
+    // the legs never cross when the walker is heading down the page.
+    const order = walker.leftX <= walker.rightX ? 1 : -1;
+
+    ctx.globalAlpha = walker.body;
+    for (let side = -1; side <= 1; side += 2) {
+      const ankleX = side < 0 ? walker.leftX : walker.rightX;
+      const ankleY = side < 0 ? walker.leftY : walker.rightY;
+      const dx = hipX + side * order * hipHalf - ankleX;
+      const dy = hipY - ankleY;
+      const span = Math.hypot(dx, dy);
+      if (span < 1) continue;
+      // Sprite "up" runs from the ankle to the hip.
+      const c = (-dy / span) * scale;
+      const s = (dx / span) * scale;
+      ctx.setTransform(c, s, -s, c, ankleX * scale, ankleY * scale);
+      ctx.drawImage(this.leg, -legWidth / 2, -span, legWidth, span);
+    }
+    const waistWidth = hipHalf * 2 + legWidth * 0.9;
+    ctx.setTransform(scale, 0, 0, scale, hipX * scale, hipY * scale);
+    ctx.drawImage(this.waist, -waistWidth / 2, -waistLength, waistWidth, waistLength);
   }
 }
 

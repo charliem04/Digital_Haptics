@@ -19,6 +19,16 @@ Because the prints are only ever dot sizes, they stay locked to the grid as they
 - They spawn just outside a random edge heading inward and may walk out. When a walker's last print has faded it re-enters at another edge.
 - The frame is never empty: the last walker in view is turned back toward the middle before it can leave, and the simulation is run forward eight seconds before the first frame.
 
+## Print styles
+
+`printStyle` picks the shoe: `sneaker` (rounded toe box, gap, round heel), `barefoot` (five toes, ball, arch, heel), `boot` (wide square sole, block heel), `heel` (pointed forefoot, stiletto dot), `oxford` (slim almond toe, D-shaped heel) or `sandal` (one unbroken slab). The default, `mixed`, gives each walker their own, chosen from the seed, and a walker keeps it until they leave the frame. Each style is drawn once as a right foot in `sprites.ts` and mirrored for the left; adding one is a new entry in `PRINTS` and `PRINT_STYLES`, plus the `PrintStyleOption` type.
+
+## Legs and waist
+
+Each walker also has a faint silhouette standing on their two newest prints: two legs rising up the page to the hips, then the waist. It is drawn into a separate channel of the density canvas, and the shader treats that channel differently from prints. Coverage sets the dot size, and an ordered dither decides whether a cell gets a body dot at all, so as coverage falls with height the dots get both smaller and fewer. Coverage reaches zero at mid-waist, which is the top edge of the waist sprite: nothing is drawn above it.
+
+The ankles ease toward each new footfall, so a leg swings forward rather than jumping. `bodyHeight` is the distance from feet to mid-waist in print lengths (0 removes the silhouette) and `bodyDensity` is its overall strength.
+
 ## Flare
 
 - Follows the pointer over the hero container with `flareFollowLag` of smoothing; fades in over `flareFadeIn`, out over `flareFadeOut`; breathes ±15% on a 4 s period while hovering.
@@ -31,29 +41,32 @@ HTML, positioned over the canvas, driven entirely by the `labels` prop: two year
 
 ## Final defaults
 
-| Prop             | Default   | Notes                                 |
-| ---------------- | --------- | ------------------------------------- |
-| `gridSpacing`    | `9`       | CSS px between dots                   |
-| `baseDotRadius`  | `0.8`     | CSS px                                |
-| `maxDotRadius`   | `4.1`     | CSS px                                |
-| `dotColor`       | `#0b0d10` | the site's `ink`                      |
-| `paperColor`     | `#dfe9ee` |                                       |
-| `haloColor`      | `#8ea8bd` |                                       |
-| `haloBlur`       | `0.6`     | 0 removes the halo                    |
-| `walkers`        | `5`       | 1–12                                  |
-| `walkSpeed`      | `96`      | CSS px per second                     |
-| `strideLength`   | `124`     | CSS px between footfalls              |
-| `pivotChance`    | `0.07`    | per step                              |
-| `trailLength`    | `4`       | prints kept                           |
-| `footScale`      | `1`       | 1 = a print about 150 px long         |
-| `flareIntensity` | `1`       | 0 hides it                            |
-| `flareFollowLag` | `250`     | ms                                    |
-| `flareFadeIn`    | `600`     | ms                                    |
-| `flareFadeOut`   | `900`     | ms                                    |
-| `flareIdleCycle` | `9`       | seconds                               |
-| `secondaryLine`  | `true`    |                                       |
-| `seed`           | `11`      |                                       |
-| `baseDotOpacity` | `0.34`    | added: opacity of the background dots |
+| Prop             | Default   | Notes                                   |
+| ---------------- | --------- | --------------------------------------- |
+| `gridSpacing`    | `9`       | CSS px between dots                     |
+| `baseDotRadius`  | `0.8`     | CSS px                                  |
+| `maxDotRadius`   | `4.1`     | CSS px                                  |
+| `dotColor`       | `#0b0d10` | the site's `ink`                        |
+| `paperColor`     | `#dfe9ee` |                                         |
+| `haloColor`      | `#8ea8bd` |                                         |
+| `haloBlur`       | `0.6`     | 0 removes the halo                      |
+| `walkers`        | `5`       | 1–12                                    |
+| `walkSpeed`      | `96`      | CSS px per second                       |
+| `strideLength`   | `124`     | CSS px between footfalls                |
+| `pivotChance`    | `0.07`    | per step                                |
+| `trailLength`    | `4`       | prints kept                             |
+| `footScale`      | `1`       | 1 = a print about 150 px long           |
+| `flareIntensity` | `1`       | 0 hides it                              |
+| `flareFollowLag` | `250`     | ms                                      |
+| `flareFadeIn`    | `600`     | ms                                      |
+| `flareFadeOut`   | `900`     | ms                                      |
+| `flareIdleCycle` | `9`       | seconds                                 |
+| `secondaryLine`  | `true`    |                                         |
+| `seed`           | `11`      |                                         |
+| `baseDotOpacity` | `0.34`    | added: opacity of the background dots   |
+| `printStyle`     | `"mixed"` | added: which shoe, or one per walker    |
+| `bodyHeight`     | `2.1`     | added: feet to mid-waist, print lengths |
+| `bodyDensity`    | `0.8`     | added: silhouette strength, 0–1         |
 
 ## The three that change the feel most
 

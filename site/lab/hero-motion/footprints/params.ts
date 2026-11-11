@@ -1,5 +1,15 @@
 /** Props and defaults for Concept A. Plain data: safe to import anywhere. */
 
+/** Keep in step with PRINT_STYLES in sprites.ts (which needs the DOM). */
+export type PrintStyleOption =
+  | "mixed"
+  | "sneaker"
+  | "barefoot"
+  | "boot"
+  | "heel"
+  | "oxford"
+  | "sandal";
+
 export type FeetParams = {
   /** Distance between dot centres, CSS px. */
   gridSpacing: number;
@@ -39,6 +49,15 @@ export type FeetParams = {
   seed: number;
   /** Opacity of the background dots, 0–1. */
   baseDotOpacity: number;
+  /** Which shoe leaves the prints. "mixed" gives each walker their own. */
+  printStyle: PrintStyleOption;
+  /**
+   * Height of the leg-and-waist silhouette above each walker's feet, in
+   * print lengths, measured to mid-waist where it ends. 0 removes it.
+   */
+  bodyHeight: number;
+  /** How strongly the silhouette is drawn, 0–1. */
+  bodyDensity: number;
 };
 
 export const FEET_DEFAULTS: FeetParams = {
@@ -63,6 +82,9 @@ export const FEET_DEFAULTS: FeetParams = {
   secondaryLine: true,
   seed: 11,
   baseDotOpacity: 0.34,
+  printStyle: "mixed",
+  bodyHeight: 2.1,
+  bodyDensity: 0.8,
 };
 
 /** Length of a print at footScale 1, CSS px. */

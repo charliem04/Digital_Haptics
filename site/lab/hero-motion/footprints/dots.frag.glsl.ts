@@ -7,6 +7,10 @@
  *   1. Which grid cell is this fragment in? Sample the density texture
  *      (one texel per cell) at the cell's centre: .r is how much of the
  *      cell a footprint covers. The dot's radius grows with it.
+ *      .g is how much of a walker's body is over the cell. It makes
+ *      smaller dots, and through an ordered dither it also decides
+ *      whether the cell gets a body dot at all: as the value falls
+ *      toward the waist, fewer and fewer cells do.
  *   2. Sample .b at the fragment itself, bilinear, for the soft halo
  *      that tints the paper around each print.
  *   3. Lay the flare over the top.
@@ -32,6 +36,15 @@ uniform vec2 uFlare;       // CSS px
 uniform float uFlareI;
 uniform float uSecondary;  // 0 or 1
 uniform float uSecondaryY; // CSS px
+uniform float uBody;       // silhouette strength, 0–1
+
+// 4×4 ordered-dither thresholds.
+const float BAYER[16] = float[16](
+  0.0, 8.0, 2.0, 10.0,
+  12.0, 4.0, 14.0, 6.0,
+  3.0, 11.0, 1.0, 9.0,
+  15.0, 7.0, 13.0, 5.0
+);
 
 const vec3 FLARE_CORE = vec3(1.0, 0.953, 0.769);  // #fff3c4
 const vec3 FLARE_BODY = vec3(1.0, 0.478, 0.239);  // #ff7a3d
@@ -43,15 +56,24 @@ void main() {
   // ── dots ─────────────────────────────────────────────────────────
   vec2 cell = floor(px / uSpacing);
   vec2 centre = (cell + 0.5) * uSpacing;
-  float density = texture2D(uDensity, (cell + 0.5) / uGrid).r;
+  vec4 cover = texture2D(uDensity, (cell + 0.5) / uGrid);
+  float density = cover.r;
+  float body = clamp(cover.g * uBody, 0.0, 1.0);
   float halo = texture2D(uDensity, px / (uGrid * uSpacing)).b;
 
   // Square-root-ish response: a half-covered cell still gets a clearly
   // bigger dot, which is what draws the edge of the print.
   float radius = mix(uBaseR, uMaxR, pow(clamp(density, 0.0, 1.0), 0.6));
   float aa = 0.7 / uDpr;
-  float dotMask = 1.0 - smoothstep(radius - aa, radius + aa, length(px - centre));
   float ink = mix(uBaseAlpha, 1.0, smoothstep(0.0, 0.25, density));
+
+  // Body silhouette: a cell gets a dot only if its coverage beats the
+  // cell's dither threshold, and the dot is smaller the weaker it is.
+  int slot = int(mod(cell.x, 4.0)) + 4 * int(mod(cell.y, 4.0));
+  float keep = step((BAYER[slot] + 0.5) / 16.0, body);
+  radius = max(radius, mix(uBaseR, uMaxR * 0.8, sqrt(body) * keep));
+  ink = max(ink, mix(uBaseAlpha, 0.95, smoothstep(0.0, 0.3, body) * keep));
+  float dotMask = 1.0 - smoothstep(radius - aa, radius + aa, length(px - centre));
 
   vec3 color = mix(uPaper, uHalo, smoothstep(0.0, 1.0, halo) * 0.9);
   color = mix(color, uDot, dotMask * ink);

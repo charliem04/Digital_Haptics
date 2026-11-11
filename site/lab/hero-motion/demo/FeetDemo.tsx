@@ -2,11 +2,11 @@
 
 import { useRef, useState } from "react";
 import { WanderingFeet, type WanderingFeetHandle } from "../footprints/WanderingFeet";
-import { FEET_DEFAULTS } from "../footprints/params";
+import { FEET_DEFAULTS, type PrintStyleOption } from "../footprints/params";
 import { ConceptFrame, usePane } from "./kit";
 import css from "./lab.module.css";
 
-const INITIAL = { ...FEET_DEFAULTS, paused: false };
+const INITIAL = { ...FEET_DEFAULTS, printStyle: FEET_DEFAULTS.printStyle as string, paused: false };
 
 export function FeetDemo({ bench = false, still = false }: { bench?: boolean; still?: boolean }) {
   const handle = useRef<WanderingFeetHandle>(null);
@@ -31,6 +31,19 @@ export function FeetDemo({ bench = false, still = false }: { bench?: boolean; st
     walk.addBinding(s, "trailLength", { min: 1, max: 12, step: 1 });
     walk.addBinding(s, "footScale", { min: 0.4, max: 2.5, step: 0.01 });
     walk.addBinding(s, "seed", { min: 0, max: 999, step: 1 });
+    walk.addBinding(s, "printStyle", {
+      options: {
+        mixed: "mixed",
+        sneaker: "sneaker",
+        barefoot: "barefoot",
+        boot: "boot",
+        heel: "heel",
+        oxford: "oxford",
+        sandal: "sandal",
+      },
+    });
+    walk.addBinding(s, "bodyHeight", { min: 0, max: 4, step: 0.05 });
+    walk.addBinding(s, "bodyDensity", { min: 0, max: 1, step: 0.01 });
     walk.addBinding(s, "paused");
 
     const flare = pane.addFolder({ title: "Flare" });
@@ -42,7 +55,7 @@ export function FeetDemo({ bench = false, still = false }: { bench?: boolean; st
     flare.addBinding(s, "secondaryLine");
   });
 
-  const { paused, ...params } = state;
+  const { paused, printStyle, ...params } = state;
 
   return (
     <ConceptFrame
@@ -58,6 +71,7 @@ export function FeetDemo({ bench = false, still = false }: { bench?: boolean; st
         ref={handle}
         paused={paused}
         {...params}
+        printStyle={printStyle as PrintStyleOption}
         stageOptions={bench ? { dpr: 1 } : still ? { reducedMotion: true } : undefined}
       />
       <div className={css.heroCopy}>

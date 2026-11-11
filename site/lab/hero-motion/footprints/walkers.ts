@@ -61,6 +61,18 @@ export type Walker = {
   p2: number;
   head: number;
   prints: Print[];
+  /** Index into PRINT_STYLES: every walker wears one kind of shoe. */
+  style: number;
+  /**
+   * Where each ankle is right now. They ease toward the newest print on
+   * their side, so a leg swings to its next footfall instead of jumping.
+   */
+  leftX: number;
+  leftY: number;
+  rightX: number;
+  rightY: number;
+  /** 0–1: how present the body silhouette is (fades in and out). */
+  body: number;
 };
 
 export type WalkConfig = {
@@ -70,6 +82,9 @@ export type WalkConfig = {
   trailLength: number;
   /** Print length in CSS px (FOOT_LENGTH × footScale). */
   footLength: number;
+  /** A PRINT_STYLES index for everyone, or -1 to give each walker their own. */
+  style: number;
+  styleCount: number;
 };
 
 /** 0–1 ink for a print at time `t`. */
@@ -124,6 +139,12 @@ export class WalkerSim {
         p2: 0,
         head: 0,
         prints,
+        style: 0,
+        leftX: 0,
+        leftY: 0,
+        rightX: 0,
+        rightY: 0,
+        body: 0,
       });
     }
   }
@@ -149,9 +170,19 @@ export class WalkerSim {
         w.x = width * (0.15 + 0.7 * this.rng());
         w.y = height * (0.15 + 0.7 * this.rng());
         w.heading = this.rng() * Math.PI * 2;
+        w.leftX = w.rightX = w.x;
+        w.leftY = w.rightY = w.y;
       }
     }
     for (let i = 0; i < 240; i++) this.update(1 / 30, width, height, cfg);
+  }
+
+  /** Put every walker in one style (>= 0), or deal styles out again (-1). */
+  restyle(cfg: WalkConfig): void {
+    for (let i = 0; i < MAX_WALKERS; i++) {
+      const w = this.walkers[i];
+      w.style = cfg.style >= 0 ? cfg.style : (i * 5 + 2) % cfg.styleCount;
+    }
   }
 
   /** Add or retire walkers without disturbing the ones already walking. */
@@ -193,6 +224,26 @@ export class WalkerSim {
         if (!p.alive) continue;
         if (p.expire >= 0 && t - p.expire > FADE_OUT) p.alive = false;
         else alive++;
+      }
+      // The silhouette stands on the two ankles. It fades with the walker
+      // and its ankles ease toward their targets a little every frame.
+      const present = w.active && !w.exited && w.steps > 1 ? 1 : 0;
+      w.body += (present - w.body) * Math.min(1, dt * 3);
+      if (w.body < 0.002) w.body = 0;
+      const ease = Math.min(1, dt * 9);
+      for (let j = 0; j < RING; j++) {
+        const p = w.prints[j];
+        // The newest print on each side is where that ankle is heading.
+        if (!p.alive || w.steps - 1 - p.step > 1) continue;
+        const ax = p.x - Math.cos(p.angle) * cfg.footLength * 0.3;
+        const ay = p.y - Math.sin(p.angle) * cfg.footLength * 0.3;
+        if (p.side > 0) {
+          w.rightX += (ax - w.rightX) * ease;
+          w.rightY += (ay - w.rightY) * ease;
+        } else {
+          w.leftX += (ax - w.leftX) * ease;
+          w.leftY += (ay - w.leftY) * ease;
+        }
       }
       if (!w.active) continue;
 
@@ -259,6 +310,10 @@ export class WalkerSim {
     w.f2 = 0.41 + rng() * 0.3;
     w.p1 = rng() * Math.PI * 2;
     w.p2 = rng() * Math.PI * 2;
+    w.style = cfg.style >= 0 ? cfg.style : Math.floor(rng() * cfg.styleCount) % cfg.styleCount;
+    w.leftX = w.rightX = w.x;
+    w.leftY = w.rightY = w.y;
+    w.body = 0;
   }
 
   private step(w: Walker, stride: number, cfg: WalkConfig): void {
