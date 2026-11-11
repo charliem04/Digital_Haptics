@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { TerrainDemo } from "./TerrainDemo";
+import { FeetDemo } from "./FeetDemo";
 import css from "./lab.module.css";
 
 type Bench = "terrain" | "feet" | null;
@@ -15,6 +16,7 @@ type Bench = "terrain" | "feet" | null;
  */
 export function Lab() {
   const [bench, setBench] = useState<Bench | undefined>(undefined);
+  const [still, setStill] = useState(false);
 
   useEffect(() => {
     const q = new URLSearchParams(window.location.search).get("bench");
@@ -35,9 +37,24 @@ export function Lab() {
           Bench at 2560 × 1440: <a href="?bench=terrain">terrain</a> ·{" "}
           <a href="?bench=feet">feet</a> · <a href="?">both, normal</a>
         </p>
+        <p>
+          <button
+            type="button"
+            className={css.button}
+            aria-pressed={still}
+            onClick={() => setStill(!still)}
+          >
+            Preview reduced motion
+          </button>
+        </p>
       </header>
 
-      {bench !== undefined && bench !== "feet" && <TerrainDemo bench={bench === "terrain"} />}
+      {bench !== undefined && bench !== "terrain" && (
+        <FeetDemo key={`feet-${still}`} bench={bench === "feet"} still={still} />
+      )}
+      {bench !== undefined && bench !== "feet" && (
+        <TerrainDemo key={`terrain-${still}`} bench={bench === "terrain"} still={still} />
+      )}
     </div>
   );
 }

@@ -63,6 +63,8 @@ export type StageOptions = {
   /** Force a device pixel ratio (the bench uses 1 for a true 2560×1440). */
   dpr?: number;
   maxDpr?: number;
+  /** Override prefers-reduced-motion (the lab uses this to preview the still frame). */
+  reducedMotion?: boolean;
 };
 
 const RING = 240;
@@ -96,7 +98,7 @@ export class Stage {
     private readonly options: StageOptions = {}
   ) {
     this.mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    this.reduced = this.mq.matches;
+    this.reduced = options.reducedMotion ?? this.mq.matches;
     this.mq.addEventListener("change", this.onMotionPref);
     document.addEventListener("visibilitychange", this.onVisibility);
 
@@ -293,7 +295,7 @@ export class Stage {
   private readonly onVisibility = (): void => this.sync();
 
   private readonly onMotionPref = (): void => {
-    this.reduced = this.mq.matches;
+    this.reduced = this.options.reducedMotion ?? this.mq.matches;
     this.sync();
   };
 }

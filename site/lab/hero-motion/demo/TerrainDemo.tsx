@@ -38,7 +38,13 @@ const INITIAL = {
   paused: false,
 };
 
-export function TerrainDemo({ bench = false }: { bench?: boolean }) {
+export function TerrainDemo({
+  bench = false,
+  still = false,
+}: {
+  bench?: boolean;
+  still?: boolean;
+}) {
   const handle = useRef<TopoTerrainHandle>(null);
   const [debugFrame, setDebugFrame] = useState<"start" | "end" | null>(null);
   const [check, setCheck] = useState("");
@@ -154,7 +160,7 @@ export function TerrainDemo({ bench = false }: { bench?: boolean }) {
         tileSizePx={state.tileSizePx}
         grain={state.grain}
         debugFrame={debugFrame}
-        stageOptions={bench ? { dpr: 1 } : undefined}
+        stageOptions={bench ? { dpr: 1 } : still ? { reducedMotion: true } : undefined}
       />
       {check && (
         <p
