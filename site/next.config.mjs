@@ -22,6 +22,16 @@ const nextConfig = {
     unoptimized: true,
   },
   trailingSlash: true,
+  // Dev-only routes: a `page.lab.tsx` is a page under `next dev` and is
+  // not a route file at all in `next build`, so /lab (and the three.js
+  // it pulls in) can never reach ./out. See lab/hero-motion/README.md.
+  pageExtensions: [
+    ...(process.env.NODE_ENV === "development" ? ["lab.tsx"] : []),
+    "tsx",
+    "ts",
+    "jsx",
+    "js",
+  ],
   env: {
     FEATURE_AUTOMATIONS: flag("FEATURE_AUTOMATIONS"),
     FEATURE_AUTOMATIONS_DEMO: flag("FEATURE_AUTOMATIONS_DEMO"),

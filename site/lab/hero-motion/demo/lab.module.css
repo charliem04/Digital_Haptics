@@ -1,0 +1,171 @@
+/* /lab demo chrome. Uses the site's tokens (app/globals.css) so the lab
+   reads as part of the same system; nothing here leaks out of the lab. */
+
+.lab {
+  display: flex;
+  flex-direction: column;
+  gap: 72px;
+  padding: 48px 20px 96px;
+  max-width: 1760px;
+  margin: 0 auto;
+  font-family: var(--font-body), system-ui, sans-serif;
+  color: rgb(var(--ink));
+}
+
+.intro {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 760px;
+}
+
+.kicker,
+.readout,
+.button {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 12px;
+  line-height: 1.6;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.kicker {
+  color: rgb(var(--steel));
+}
+
+.title {
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-weight: 600;
+  font-size: clamp(2.5rem, 4.86vw, 4.375rem);
+  line-height: 0.9;
+  text-transform: uppercase;
+}
+
+.concept {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border-top: 1px solid rgb(var(--ink));
+  padding-top: 32px;
+}
+
+.conceptHead {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 760px;
+}
+
+.conceptTitle {
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-weight: 600;
+  font-size: clamp(1.75rem, 2.5vw, 2.25rem);
+  line-height: 1.1;
+}
+
+.blurb,
+.intro p {
+  font-size: 16px;
+  line-height: 1.55;
+  color: rgb(var(--steel-deep));
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.button {
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid rgb(var(--ink));
+  background: rgb(var(--white));
+  color: rgb(var(--ink));
+  cursor: pointer;
+}
+
+.button:hover {
+  background: rgb(var(--frost));
+}
+
+.button[aria-pressed="true"] {
+  background: rgb(var(--ink));
+  color: rgb(var(--ice));
+}
+
+.button:focus-visible {
+  outline: 2px solid rgb(var(--signal));
+  outline-offset: 2px;
+}
+
+.readout {
+  text-transform: none;
+  letter-spacing: 0.02em;
+  color: rgb(var(--steel));
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.row {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.scroller {
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: auto;
+}
+
+/* The stage is the "hero container": positioned, sized by the preset,
+   and draggable from its corner to prove the canvas follows it. */
+.stage {
+  position: relative;
+  /* The preset sizes are the canvas size; the border sits outside it. */
+  box-sizing: content-box;
+  overflow: hidden;
+  resize: both;
+  min-width: 160px;
+  min-height: 120px;
+  max-width: none;
+  border: 1px solid rgb(var(--ink));
+}
+
+.panel {
+  flex: 0 0 300px;
+  position: sticky;
+  top: 16px;
+  max-height: calc(100dvh - 32px);
+  overflow: auto;
+}
+
+/* Stand-in hero content above Concept A, to show clicks pass through. */
+.heroCopy {
+  position: absolute;
+  left: clamp(20px, 5%, 64px);
+  bottom: clamp(20px, 9%, 72px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+@media (max-width: 1100px) {
+  .row {
+    flex-direction: column;
+  }
+
+  .scroller {
+    width: 100%;
+    flex: none;
+  }
+
+  .panel {
+    position: static;
+    flex: none;
+    width: 100%;
+    max-height: none;
+  }
+}
