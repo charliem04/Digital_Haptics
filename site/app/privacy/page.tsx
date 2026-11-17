@@ -25,8 +25,9 @@ export const metadata: Metadata = {
  *    · 🚩 FEATURE_AUTOMATIONS only: SMS and the lead webhook
  *  If something is added or switched on, add it here.
  *
- *  Placeholders: retention period (QUESTIONS.md §7). Not legal advice:
- *  an attorney reviews before launch (QUESTIONS.md §20).
+ *  Retention: 12 months (QUESTIONS.md §7). Charles chose to skip an
+ *  attorney review (§20); if the business or its data handling grows,
+ *  that's worth revisiting.
  * ════════════════════════════════════════════════════════════════════
  */
 const calUrl: string = site.booking.calUrl;
@@ -34,7 +35,7 @@ const contactEmail: string = site.email;
 
 export default function PrivacyPage() {
   return (
-    <LegalPage title="Privacy Policy" path="/privacy/" updated="2026-11-04">
+    <LegalPage title="Privacy Policy" path="/privacy/" updated="2026-11-17">
       <p>
         This policy explains what information {site.name} ({site.legalName}) collects through{" "}
         {site.url.replace("https://", "")}, why, and what happens to it. The short version: we
@@ -100,9 +101,8 @@ export default function PrivacyPage() {
 
       <h2>How long we keep it</h2>
       <p>
-        We keep form submissions for [PLACEHOLDER: retention period, e.g. 24 months] after we last
-        hear from you, then delete them. Anonymous action counts don&rsquo;t identify anyone and are
-        kept in aggregate.
+        We keep form submissions for 12 months after we last hear from you, then delete them.
+        Anonymous action counts don&rsquo;t identify anyone and are kept in aggregate.
       </p>
 
       <h2>Your choices</h2>

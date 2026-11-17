@@ -17,15 +17,14 @@ import { Marker } from "@/components/ui/Marker";
  *  ABOUT (PLAN §5): who runs Digital Haptics, the construction
  *  background, how the agency works, local focus, CTA.
  *
- *  Copy lives in data/about.ts. It's [PLACEHOLDER] until Charles answers
- *  docs/QUESTIONS.md §1–5. The photo slot is hidden until there's a
- *  photo.
+ *  Copy lives in data/about.ts, written from Charles's answers. The
+ *  photo slot is hidden until there's a photo.
  * ════════════════════════════════════════════════════════════════════
  */
 export const metadata = pageMetadata({
   title: "About",
   description:
-    "Digital Haptics builds websites and local SEO for trades businesses in Acadiana, run by someone who has worked construction alongside family.",
+    "Charles Meyers grew up working jobs with his tradesman father. Now he builds websites and local SEO for trades businesses across Louisiana.",
   path: "/about/",
 });
 
@@ -102,7 +101,7 @@ export default function AboutPage() {
               {site.serviceArea.label}
             </span>
           </div>
-          <SectionHead id="local" label="Acadiana" title="Here, for here" lede={about.local} />
+          <SectionHead id="local" label="Acadiana" title="Local, and remote" lede={about.local} />
           <ul className="flex flex-wrap gap-2">
             {site.serviceArea.cities.map((c) => (
               <li key={c}>

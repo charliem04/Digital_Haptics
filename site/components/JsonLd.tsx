@@ -38,6 +38,8 @@ export function JsonLd() {
         "@type": "City",
         name: `${city}, ${site.location.state}`,
       })),
+      // Remote work statewide and beyond (QUESTIONS.md §6).
+      { "@type": "State", name: "Louisiana" },
       { "@type": "Country", name: site.serviceArea.remoteCountry },
     ],
     knowsAbout: services,

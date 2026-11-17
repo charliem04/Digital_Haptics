@@ -20,7 +20,7 @@ export const startFaq: Faq[] = [
   },
   {
     q: "Do you only work in Acadiana?",
-    a: "We are based in Acadiana and that is where we focus, but we take remote projects anywhere in the US.",
+    a: "No. We're based in Lafayette, but the work is remote, so we serve all of Louisiana and beyond. Meeting in person is easy anywhere around Acadiana.",
   },
   {
     q: "Can I just call instead?",
