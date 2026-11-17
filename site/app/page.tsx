@@ -113,8 +113,8 @@ export default function Home() {
             id="area"
             index={next()}
             label="Local"
-            title="Built in Acadiana, for Acadiana"
-            lede="We work with trades businesses across the parishes around Lafayette, and we know what people here search for when the AC quits in August."
+            title="Based in Acadiana, working statewide"
+            lede="Digital Haptics is based in Lafayette and grew up in Acadiana. The work is remote, so we take on projects across Louisiana and beyond, and meet in person anywhere around here."
           />
           <ul className="flex flex-wrap gap-2">
             {site.serviceArea.cities.map((city) => {

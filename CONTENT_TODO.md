@@ -15,8 +15,8 @@ What each item needs, with examples: [docs/SETUP.md §2](docs/SETUP.md). **The q
 | Response time | `site/site.config.ts` → `intake.responseTime` (thank-you page) | You | Done 2026-11-03: one business day |
 | Social URLs (all empty, so hidden) | `site/site.config.ts` → `socials` | You | Deferred: no accounts yet. Add each when created. |
 | Service-area city list | `site/site.config.ts` → `serviceArea` | You | Done 2026-11-03: all seven confirmed, plus remote work nationwide (structured data only). |
-| Privacy policy: drafted (Phase 5); `[PLACEHOLDER: retention period]` | `site/app/privacy/page.tsx` | You (QUESTIONS §7), then attorney review (§20) | Open |
-| Terms of service: drafted (Phase 5); `[PLACEHOLDER: parish]` | `site/app/terms/page.tsx` | You (QUESTIONS §8–9), then attorney review (§20) | Open |
+| Privacy policy: drafted (Phase 5); `[PLACEHOLDER: retention period]` | `site/app/privacy/page.tsx` | You (QUESTIONS §7), then attorney review (§20) | Done 2026-11-17: 12 months; attorney review skipped (Charles) |
+| Terms of service: drafted (Phase 5); `[PLACEHOLDER: parish]` | `site/app/terms/page.tsx` | You (QUESTIONS §8–9), then attorney review (§20) | Done 2026-11-17: Lafayette Parish |
 
 ## Phase 1 (design system)
 
@@ -29,13 +29,13 @@ What each item needs, with examples: [docs/SETUP.md §2](docs/SETUP.md). **The q
 
 | Item | Where | Needed from | Status |
 |---|---|---|---|
-| `[PRICE]` ×2 (×3 with 🚩): "Websites from [PRICE]", "Local SEO from [PRICE]/mo", 🚩 "Automations from [PRICE]/mo" | `site/data/services.ts` → `price` | You | Open |
-| Budget ranges for the intake form (the field stays hidden until set) | `site/data/intake.ts` → `budgets` | You | Open |
-| Timeline options: defaults in place, `// OPEN:` | `site/data/intake.ts` → `timelines` | You: confirm or edit | Open |
-| Case studies, all five drafts: `location`, `systems`, `summary`, `results` (`[RESULT]`), body sections, screenshots, `liveUrl`. **Then client permission** (`permission: true`) and `published: true`. Until permission, drafts render on previews as `/work/draft-N/` with no name, live link or screenshot: **keep the client name out of the body text until then too.** | `site/content/work/*.mdx` | You and each client | Open |
-| DRAFT copy to review: service leads, "What you get", "A good fit if", service FAQs | `site/data/services.ts` | You | Open |
-| DRAFT copy to review: process steps, /start steps, /start FAQ, thank-you next steps | `site/data/process.ts`, `site/data/faq.ts`, `site/app/start/thanks/page.tsx` | You | Open |
-| DRAFT copy to review: home service-area lede ("…when the AC quits in August"), CTA band headings | `site/app/page.tsx` and each page's `CtaBand` | You | Open |
+| `[PRICE]` ×2 (×3 with 🚩): "Websites from [PRICE]", "Local SEO from [PRICE]/mo", 🚩 "Automations from [PRICE]/mo" | `site/data/services.ts` → `price` | You | Done 2026-11-17: $1,000 / $100/mo / 🚩 $500/mo |
+| Budget ranges for the intake form (the field stays hidden until set) | `site/data/intake.ts` → `budgets` | You | Done 2026-11-17: five ranges, field now shown |
+| Timeline options: defaults in place, `// OPEN:` | `site/data/intake.ts` → `timelines` | You: confirm or edit | Done 2026-11-17: Charles's five options |
+| Case studies, all five drafts: `location`, `systems`, `summary`, `results` (`[RESULT]`), body sections, screenshots, `liveUrl`. **Then client permission** (`permission: true`) and `published: true`. Until permission, drafts render on previews as `/work/draft-N/` with no name, live link or screenshot: **keep the client name out of the body text until then too.** | `site/content/work/*.mdx` | You and each client | Partly: permission + towns for CTL, Coastal, DA Plumbing (2026-11-17); write-ups still open (QUESTIONS A). Douet A/C, Stan's stay hidden. |
+| DRAFT copy to review: service leads, "What you get", "A good fit if", service FAQs | `site/data/services.ts` | You | Approved for now (2026-11-17) |
+| DRAFT copy to review: process steps, /start steps, /start FAQ, thank-you next steps | `site/data/process.ts`, `site/data/faq.ts`, `site/app/start/thanks/page.tsx` | You | Approved for now (2026-11-17) |
+| DRAFT copy to review: home service-area lede ("…when the AC quits in August"), CTA band headings | `site/app/page.tsx` and each page's `CtaBand` | You | Rewritten with the remote-work line (2026-11-17) |
 | 🚩 SMS consent wording: check against your SMS provider's and carrier rules before Phase 7 | `site/data/intake.ts` → `smsConsent` | You (and provider) | Open |
 | 🚩 Live systems teaser copy (home, flag on) | `site/app/page.tsx` | You | Open |
 
@@ -56,9 +56,9 @@ What each item needs, with examples: [docs/SETUP.md §2](docs/SETUP.md). **The q
 
 | Item | Where | Needed from | Status |
 |---|---|---|---|
-| About page: name and title, intro, story, principles, local ties, optional photo (all `[PLACEHOLDER]`) | `site/data/about.ts` | You (QUESTIONS §1–5) | Open |
+| About page: name and title, intro, story, principles, local ties, optional photo (all `[PLACEHOLDER]`) | `site/data/about.ts` | You (QUESTIONS §1–5) | Done 2026-11-17, except the photo (QUESTIONS E) |
 | City pages: unique content per town; each stays unpublished until `ready: true` | `site/data/cities.ts` | You (QUESTIONS §6) | Open |
-| "Draft pending attorney review" notice on the legal pages: remove after review | `site/app/legal.tsx` | Attorney (QUESTIONS §20) | Open |
+| "Draft pending attorney review" notice on the legal pages: remove after review | `site/app/legal.tsx` | Attorney (QUESTIONS §20) | Removed 2026-11-17 (no attorney review, Charles's call) |
 | Blog: example draft post (previews only); delete when the first real post exists | `site/content/blog/example-post.mdx` | Me | Open |
 
 ## Coming in later phases (from PLAN.md, logged when the code lands)
