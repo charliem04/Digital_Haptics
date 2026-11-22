@@ -3,10 +3,11 @@
 import { useEffect, useState } from "react";
 import { TerrainDemo } from "./TerrainDemo";
 import { FeetDemo } from "./FeetDemo";
+import { LiquidDemo } from "./LiquidDemo";
 import { installLabDebug } from "./debug";
 import css from "./lab.module.css";
 
-type Bench = "terrain" | "feet" | null;
+type Bench = "terrain" | "feet" | "liquid" | null;
 
 /**
  * /lab — both hero backgrounds with their control panels.
@@ -22,7 +23,7 @@ export function Lab() {
   useEffect(() => {
     installLabDebug();
     const q = new URLSearchParams(window.location.search).get("bench");
-    setBench(q === "terrain" || q === "feet" ? q : null);
+    setBench(q === "terrain" || q === "feet" || q === "liquid" ? q : null);
   }, []);
 
   return (
@@ -31,13 +32,14 @@ export function Lab() {
         <p className={css.kicker}>Lab · dev only · not in production builds</p>
         <h1 className={css.title}>Hero motion</h1>
         <p>
-          Two interchangeable real-time backgrounds. Both fill whatever container they are put in,
+          Three interchangeable real-time backgrounds. All fill whatever container they are put in,
           stop when they are offscreen or the tab is hidden, and hold one still frame under reduced
           motion. Pick one; nothing here is wired into the live hero.
         </p>
         <p className={css.kicker}>
           Bench at 2560 × 1440: <a href="?bench=terrain">terrain</a> ·{" "}
-          <a href="?bench=feet">feet</a> · <a href="?">both, normal</a>
+          <a href="?bench=feet">feet</a> · <a href="?bench=liquid">liquid</a> ·{" "}
+          <a href="?">all, normal</a>
         </p>
         <p>
           <button
@@ -51,10 +53,13 @@ export function Lab() {
         </p>
       </header>
 
-      {bench !== undefined && bench !== "terrain" && (
+      {bench !== undefined && (bench === null || bench === "feet") && (
         <FeetDemo key={`feet-${still}`} bench={bench === "feet"} still={still} />
       )}
-      {bench !== undefined && bench !== "feet" && (
+      {bench !== undefined && (bench === null || bench === "liquid") && (
+        <LiquidDemo key={`liquid-${still}`} bench={bench === "liquid"} still={still} />
+      )}
+      {bench !== undefined && (bench === null || bench === "terrain") && (
         <TerrainDemo key={`terrain-${still}`} bench={bench === "terrain"} still={still} />
       )}
     </div>
