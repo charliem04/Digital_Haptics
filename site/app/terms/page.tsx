@@ -15,15 +15,15 @@ export const metadata: Metadata = {
  * ════════════════════════════════════════════════════════════════════
  *  TERMS OF SERVICE. DRAFT (Phase 5). Covers using the website only.
  *  Client projects are governed by their own signed agreement, and
- *  nothing here speaks for them (assumption logged as QUESTIONS.md §9).
+ *  nothing here speaks for them (QUESTIONS.md §9).
  *
- *  Placeholders: parish / venue (QUESTIONS.md §8). Not legal advice:
- *  an attorney reviews before launch (QUESTIONS.md §20).
+ *  Venue: Lafayette Parish (QUESTIONS.md §8). Client contracts are
+ *  signed separately (§9, confirmed). No attorney review (§20).
  * ════════════════════════════════════════════════════════════════════
  */
 export default function TermsPage() {
   return (
-    <LegalPage title="Terms of Service" path="/terms/" updated="2026-11-04">
+    <LegalPage title="Terms of Service" path="/terms/" updated="2026-11-17">
       <p>
         These terms cover your use of {site.url.replace("https://", "")}, run by {site.name} (
         {site.legalName}). By using the site, you agree to them.
@@ -78,7 +78,7 @@ export default function TermsPage() {
       <h2>Law</h2>
       <p>
         These terms are governed by the laws of the State of Louisiana. Any dispute about them is
-        handled in the courts of [PLACEHOLDER: parish] Parish, Louisiana.
+        handled in the courts of Lafayette Parish, Louisiana.
       </p>
 
       <h2>Changes</h2>

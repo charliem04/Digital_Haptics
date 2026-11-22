@@ -51,7 +51,7 @@ Notes:
    - The home page shows "Websites that book the job." in the new fonts on the dotted ice background.
    - `/services/automations/` returns the 404 page.
 2. Push a branch and open its preview URL (shown on the build, or under **Deployments**). `/robots.txt` should say `Disallow: /`.
-3. **Leave the custom domain for now.** Attaching `digitalhaptics.dev` is a Phase 6 launch task (`docs/CUTOVER.md` gets rewritten for it).
+3. **Custom domain:** `digitalhaptics.dev` is attached. The remaining launch steps are in `docs/CUTOVER.md`.
 4. **Clean-up:** once the Worker builds, delete the old Pages project (`digitalhaptics`) so pushes stop building twice.
 
 ---

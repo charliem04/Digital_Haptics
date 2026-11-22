@@ -94,20 +94,29 @@ const SECRET_PATTERNS = [
  * their values are "true"/"false", which the length floor already
  * skips, so they need no entry.
  */
-const PUBLIC_BUILD_VARS = new Set([
-  // Build metadata that Cloudflare sets on every build. The Worker's
-  // name is "digitalhaptics", which is also in every canonical URL
-  // (https://digitalhaptics.dev), so without these the check fails on
-  // the site's own domain. Listed by exact name rather than by prefix:
-  // Workers Builds also injects CLOUDFLARE_API_TOKEN, which must stay
-  // checked.
-  "WRANGLER_CI_OVERRIDE_NAME",
-  "WORKERS_CI_BRANCH",
-  "WORKERS_CI_COMMIT_SHA",
-  "WORKERS_CI_BUILD_UUID",
-  "CF_PAGES_BRANCH",
-  "CF_PAGES_COMMIT_SHA",
-]);
+const PUBLIC_BUILD_VARS = new Set([]);
+
+/**
+ * Build metadata Cloudflare sets on every build: the Worker's name, the
+ * branch, the commit. The name is "digitalhaptics", which is also in
+ * every canonical URL (https://digitalhaptics.dev), so without this the
+ * check fails on the site's own domain.
+ *
+ * Matched by prefix, because Cloudflare adds and renames these (first
+ * WRANGLER_CI_OVERRIDE_NAME, later CLOUDFLARE_CI_OVERRIDE_WORKER_NAME),
+ * and an exact list broke the build each time. Anything whose NAME
+ * looks secret is still checked even under these prefixes, and
+ * CLOUDFLARE_API_TOKEN, which Workers Builds also injects, is never
+ * exempt (MUST_STAY_SECRET).
+ */
+const CI_METADATA = /^(WORKERS_CI|WRANGLER_CI|CLOUDFLARE_CI|CF_PAGES)(_|$)/;
+const SECRET_SHAPED_NAME = /(TOKEN|SECRET|KEY|PASSWORD|PASS|AUTH|CREDENTIAL)/i;
+
+export function isCiMetadata(name) {
+  return (
+    CI_METADATA.test(name) && !SECRET_SHAPED_NAME.test(name) && !MUST_STAY_SECRET.includes(name)
+  );
+}
 
 /** Secrets of this stack. Adding one to PUBLIC_BUILD_VARS fails loudly. */
 const MUST_STAY_SECRET = [
@@ -142,6 +151,7 @@ function leakedEnvValues(env) {
   for (const [name, value] of Object.entries(env)) {
     if (name.startsWith("NEXT_PUBLIC_")) continue;
     if (PUBLIC_BUILD_VARS.has(name)) continue;
+    if (isCiMetadata(name)) continue;
     if (typeof value !== "string" || value.length < 12) continue;
     // Paths and the usual shell furniture are not secrets and appear in
     // output legitimately.

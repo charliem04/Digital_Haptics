@@ -9,7 +9,7 @@ import type { Service } from "@/content/types";
  *  DRAFT COPY: written in Phase 3 from what PLAN says each service is,
  *  for your review (CONTENT_TODO.md). It describes the work only: no
  *  prices, numbers, results or guarantees. `short` lines are the Hybrid
- *  mockup's, as in data/acts.ts. Prices stay [PRICE] (PLAN §5 Pricing).
+ *  mockup's, as in data/acts.ts. Prices are Charles's (QUESTIONS.md §10).
  * ════════════════════════════════════════════════════════════════════
  */
 export const services: (Service & { flag?: FlagName })[] = [
@@ -42,7 +42,7 @@ export const services: (Service & { flag?: FlagName })[] = [
         a: "We look at it before our first call. Sometimes it makes sense to keep the domain and rebuild, sometimes to start over. We tell you which, and why.",
       },
     ],
-    price: "Websites from [PRICE]",
+    price: "Websites from $1,000",
     system: "Site",
   },
   {
@@ -73,7 +73,7 @@ export const services: (Service & { flag?: FlagName })[] = [
         a: "Not always. If your current site is sound, we work with it. If it is holding you back, we say so.",
       },
     ],
-    price: "Local SEO from [PRICE]/mo",
+    price: "Local SEO from $100/mo",
     system: "SEO",
   },
   {
@@ -97,7 +97,7 @@ export const services: (Service & { flag?: FlagName })[] = [
       "Businesses losing leads to whoever calls back first",
     ],
     faq: [],
-    price: "Automations from [PRICE]/mo",
+    price: "Automations from $500/mo",
     system: "SMS",
     flag: "automations",
   },

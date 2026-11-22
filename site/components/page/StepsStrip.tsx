@@ -9,14 +9,21 @@ import { Marker } from "@/components/ui/Marker";
  * column on phones and a row from lg, joined by an ink rule with a
  * marker at each step.
  */
-export function StepsStrip({ steps }: { steps: ProcessStep[] }) {
+export function StepsStrip({
+  steps,
+  headingAs: Heading = "h3",
+}: {
+  steps: ProcessStep[];
+  /** h2 when the strip sits directly under the page's h1. */
+  headingAs?: "h2" | "h3";
+}) {
   return (
     <ol className="grid gap-8 border-t border-ink pt-8 md:grid-cols-2 lg:grid-flow-col lg:grid-cols-none lg:auto-cols-fr lg:gap-10">
       {steps.map((s, i) => (
         <li key={s.name} className="relative flex flex-col gap-3">
           <Marker className="absolute -top-[36px] left-0" />
           <BoxedLabel>Step.{pad2(i + 1)}</BoxedLabel>
-          <h3 className="font-display text-subheading font-semibold">{s.name}</h3>
+          <Heading className="font-display text-subheading font-semibold">{s.name}</Heading>
           <p className="max-w-[40ch] text-body-sm text-steel-deep">{s.body}</p>
         </li>
       ))}

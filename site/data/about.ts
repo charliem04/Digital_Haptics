@@ -4,29 +4,26 @@ import type { Photo } from "@/content/types";
  * About page (PLAN §5 About): who runs Digital Haptics, the
  * construction background, how the agency works, local focus.
  *
- * Placeholders until Charles answers docs/QUESTIONS.md §1–5. PLAN
- * supplies one fact (worked construction alongside family); nothing
- * else here is invented.
+ * Written from Charles's answers (docs/QUESTIONS.md §1–5, 2026-11-17),
+ * in his voice. Nothing added beyond what he said. Automations work is
+ * left out while FEATURE_AUTOMATIONS is off (PLAN §2.1).
  */
 export const about = {
-  /** Q3: how Charles is named, and any title. */
-  name: "[PLACEHOLDER: name as shown, e.g. Charles Meyers]",
-  role: "[PLACEHOLDER: title, e.g. Founder]",
-  /** Q1, Q2: one-line introduction under the page title. */
-  lead: "[PLACEHOLDER: one-sentence introduction in Charles's words]",
-  /** Q1: the story. Paragraphs. */
+  name: "Charles Meyers",
+  role: "Founder",
+  lead: "I'm Charles Meyers: a web developer from New Iberia, a computer science senior at UL Lafayette, and the son of a tradesman.",
   story: [
-    "[PLACEHOLDER: how working construction alongside family led to building websites for the trades]",
-    "[PLACEHOLDER: what that background means for clients]",
+    "My father worked as a freelance tradesman, and I worked jobs alongside him. I know how a job is structured, how much a good lead is worth, and how often the phone pulls you off the work in front of you.",
+    "Now I build websites for trades businesses, along with larger sites for clients of all kinds. Digital Haptics is how I'm making my name in this field, one solid project at a time.",
   ],
-  /** Q2: what working with Digital Haptics is like. Short lines. */
   principles: [
-    "[PLACEHOLDER: e.g. how you communicate]",
-    "[PLACEHOLDER: e.g. how you handle a project]",
-    "[PLACEHOLDER: e.g. what you won't do]",
+    "No mystery. You'll know what you're paying for, and why, before you pay for it.",
+    "Talk to me however suits you: a call, a video meeting or in person. I put my face behind my work.",
+    "I handle the technical side: your domain, hosting, maintenance and uptime monitoring.",
+    "Every service you pay for stays active and working. That's on me, not you.",
   ],
-  /** Q5: local ties. */
-  local: "[PLACEHOLDER: where you're based in Acadiana and your ties to the area]",
-  /** Q4: optional. Undefined hides the photo slot. */
+  local:
+    "Based in Lafayette, Acadiana born and raised. I work remotely too, so I take on projects across Louisiana and beyond.",
+  /** QUESTIONS.md §4: Charles will supply it. Undefined hides the slot. */
   photo: undefined as Photo | undefined,
 };

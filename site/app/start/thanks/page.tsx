@@ -60,6 +60,7 @@ export default function ThanksPage() {
       <div className="flex flex-col gap-8">
         <SectionLabel>What happens next</SectionLabel>
         <StepsStrip
+          headingAs="h2"
           steps={[
             { name: "We read it", body: "Every submission is read by a person, not filed." },
             {

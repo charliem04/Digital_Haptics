@@ -41,7 +41,7 @@ export default function StartPage() {
         lead={`One short form. We read every one and reach out within ${site.intake.responseTime}.`}
       >
         <div className="pt-6">
-          <StepsStrip steps={getStartSteps()} />
+          <StepsStrip steps={getStartSteps()} headingAs="h2" />
         </div>
       </PageHero>
 
