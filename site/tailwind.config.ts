@@ -43,6 +43,18 @@ const config: Config = {
       // Mockup extras, not listed in PLAN §4.1:
       "steel-deep": rgb("steel-deep"), // hero subline, sidebar copy
       "flare-core": rgb("flare-core"), // flare node centre (decorative)
+      // Molten Room (docs/VISUAL_GUIDE.md §2). New names on purpose: the
+      // old tokens above stay valid until the migration ends in R6.
+      room: rgb("room"),
+      surface: rgb("surface"),
+      raised: rgb("raised"),
+      line: rgb("line"), // decorative dividers only
+      text: rgb("text"),
+      muted: rgb("muted"),
+      amber: rgb("amber"),
+      "amber-hover": rgb("amber-hover"),
+      "on-amber": rgb("on-amber"),
+      error: rgb("error"),
     },
     borderRadius: {
       none: "0",
@@ -50,6 +62,11 @@ const config: Config = {
       // The flare node is the one round element (decision D4). It is
       // decorative and aria-hidden; nothing interactive uses this.
       flare: "9999px",
+      // Molten Room shape language (VISUAL_GUIDE §4).
+      panel: "28px",
+      field: "12px",
+      notice: "10px",
+      control: "9999px",
     },
     boxShadow: {
       none: "none",
@@ -62,6 +79,8 @@ const config: Config = {
       display: ["var(--font-display)", "system-ui", "sans-serif"],
       body: ["var(--font-body)", "system-ui", "sans-serif"],
       mono: ["var(--font-mono)", "ui-monospace", "monospace"],
+      // Molten Room uses Chakra Petch for the logo only.
+      logo: ["var(--font-display)", "system-ui", "sans-serif"],
     },
     extend: {
       fontSize: {
@@ -86,6 +105,32 @@ const config: Config = {
         label: ["0.75rem", { lineHeight: "1.6" }], // 12: nav, section label, rows
         "label-sm": ["0.6875rem", { lineHeight: "1.7" }], // 11: boxed labels, panels
         logo: ["1.125rem", { lineHeight: "1", letterSpacing: "0.12em" }], // 18
+        // Molten Room type scale (VISUAL_GUIDE §3). Manrope throughout.
+        "room-display": [
+          "clamp(3rem, 6.6vw, 6.5rem)",
+          { lineHeight: "1", letterSpacing: "-0.035em", fontWeight: "500" },
+        ],
+        "room-title": [
+          "clamp(2.7rem, 6vw, 5.6rem)",
+          { lineHeight: "0.98", letterSpacing: "-0.035em", fontWeight: "500" },
+        ],
+        "room-cta": [
+          "clamp(2rem, 3.6vw, 3.25rem)",
+          { lineHeight: "1.02", letterSpacing: "-0.03em", fontWeight: "500" },
+        ],
+        "room-section": [
+          "clamp(1.9rem, 3vw, 2.9rem)",
+          { lineHeight: "1.08", letterSpacing: "-0.025em", fontWeight: "500" },
+        ],
+        "room-form": ["1.875rem", { lineHeight: "1.1", fontWeight: "500" }], // 30
+        "room-card": ["1.625rem", { lineHeight: "1.1", fontWeight: "500" }], // 26
+        "room-step": ["1.3125rem", { lineHeight: "1.6", fontWeight: "500" }], // 21
+        "room-price": ["1.25rem", { lineHeight: "1.6", fontWeight: "500" }], // 20
+        "room-lede": ["1.1875rem", { lineHeight: "1.6" }], // 19
+        "room-body": ["1.0625rem", { lineHeight: "1.6" }], // 17
+        "room-small": ["0.9375rem", { lineHeight: "1.6" }], // 15
+        "room-caption": ["0.875rem", { lineHeight: "1.6" }], // 14, the minimum
+        "room-logo": ["1.125rem", { lineHeight: "1", fontWeight: "700" }], // 18
       },
       letterSpacing: {
         tight: "-0.01em",
@@ -106,6 +151,9 @@ const config: Config = {
         "cut-md": "var(--cut-md)",
         "cut-lg": "var(--cut-lg)",
         "cut-xl": "var(--cut-xl)",
+        // Molten Room section padding (VISUAL_GUIDE §4).
+        "room-section": "104px",
+        "room-section-sm": "56px",
       },
       maxWidth: {
         page: "1440px",
