@@ -28,12 +28,19 @@ export function Footer() {
 }
 
 const LINK =
-  "inline-flex min-h-touch items-center text-ice no-underline transition-colors duration-[250ms] ease-brand hover:text-signal active:text-ice/70";
+  "inline-flex min-h-touch items-center text-ice no-underline transition-colors duration-[250ms] ease-brand hover:text-signal active:text-ice/70 room:text-text room:duration-[160ms] room:hover:text-amber room:active:text-muted";
+
+const ROOM_CAPTION =
+  "room:font-body room:text-room-caption room:normal-case room:tracking-normal room:text-muted";
 
 function Column({ title, children }: { title: string; children: ReactNode }) {
   return (
     <div className="flex flex-col gap-3">
-      <h2 className="font-mono text-label-sm uppercase tracking-label-lg text-ice/70">{title}</h2>
+      <h2
+        className={`font-mono text-label-sm uppercase tracking-label-lg text-ice/70 room:font-medium ${ROOM_CAPTION}`}
+      >
+        {title}
+      </h2>
       <ul className="flex flex-col">{children}</ul>
     </div>
   );
@@ -49,12 +56,14 @@ export function FooterView({
   const { contact } = data;
 
   return (
-    <footer className="bg-ink text-ice">
-      <Container className="flex flex-col gap-12 py-section-sm lg:py-section">
-        <div className="flex flex-col justify-between gap-8 border-b border-ice/20 pb-10 lg:flex-row lg:items-end">
+    <footer className="bg-ink text-ice room:bg-surface room:text-text room:[background-image:var(--grain)]">
+      <Container className="flex flex-col gap-12 py-section-sm lg:py-section room:py-room-section-sm room:lg:py-room-section">
+        <div className="flex flex-col justify-between gap-8 border-b border-ice/20 pb-10 lg:flex-row lg:items-end room:border-line">
           <div className="flex max-w-[560px] flex-col gap-4">
             <Logo tone="ice" className="self-start" />
-            <p className="text-body-sm text-ice/70">{site.seo.defaultDescription}</p>
+            <p className="text-body-sm text-ice/70 room:text-muted">
+              {site.seo.defaultDescription}
+            </p>
           </div>
           {cta && (
             <Button href={cta.href} className="self-start lg:self-auto">
@@ -96,7 +105,9 @@ export function FooterView({
                     {a.label}
                   </Link>
                 ) : (
-                  <span className="inline-flex items-center py-1.5 text-ice/70">{a.label}</span>
+                  <span className="inline-flex items-center py-1.5 text-ice/70 room:text-muted">
+                    {a.label}
+                  </span>
                 )}
               </li>
             ))}
@@ -124,7 +135,9 @@ export function FooterView({
           )}
         </div>
 
-        <div className="flex flex-col gap-4 border-t border-ice/20 pt-6 font-mono text-label uppercase tracking-label text-ice/70 lg:flex-row lg:items-center lg:justify-between">
+        <div
+          className={`flex flex-col gap-4 border-t border-ice/20 pt-6 font-mono text-label uppercase tracking-label text-ice/70 lg:flex-row lg:items-center lg:justify-between room:border-line ${ROOM_CAPTION}`}
+        >
           <p>{data.copyright}</p>
           <div className="flex flex-wrap items-center gap-x-8 gap-y-2">
             {data.legal.length > 0 && (

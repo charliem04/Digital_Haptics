@@ -17,6 +17,14 @@ import {
 import { CaseCard } from "@/components/CaseCard";
 import { LeadFlowPanel } from "@/components/LeadFlowPanel";
 import { ChipDemo } from "@/components/styleguide/ChipDemo";
+import { HeaderView } from "@/components/layout/Header";
+import { FooterView } from "@/components/layout/Footer";
+import { StickyBar } from "@/components/layout/StickyCta";
+import { Section } from "@/components/layout/Section";
+import { contactLinks, footerData, type NavLink } from "@/lib/nav";
+import { isOn } from "@/lib/flags";
+import { nav } from "@/lib/routes";
+import { site } from "@/site.config";
 
 /**
  * ════════════════════════════════════════════════════════════════════
@@ -27,8 +35,9 @@ import { ChipDemo } from "@/components/styleguide/ChipDemo";
  *  flag-off build shows flagged components in their off state only.
  *
  *  Sample values are bracketed placeholders (PLAN: never invent client
- *  names or results). Trades are PLAN §1's list. The header, menu and
- *  footer rejoin this page when they migrate in R3.
+ *  names or results). Trades are PLAN §1's list. The site's real header
+ *  and footer around this page keep the old look until the pages
+ *  migrate; the layout shell section below shows the new ones.
  * ════════════════════════════════════════════════════════════════════
  */
 export const metadata = pageMetadata(
@@ -41,6 +50,22 @@ export const metadata = pageMetadata(
 );
 
 const TRADES = ["Roofing", "Plumbing", "HVAC", "Contractors", "Dirt work"];
+
+/**
+ * The full nav as it looks once every page is live, with flagged items
+ * still filtered by this build's flags. Every href is "/" because the
+ * build fails on dead links. Styleguide only.
+ */
+const DEMO_LINKS: NavLink[] = nav
+  .filter((n) => isOn(n.flag))
+  .map((n) => ({
+    href: "/",
+    label: n.label,
+    children: (n.children ?? [])
+      .filter((c) => isOn(c.flag))
+      .map((c) => ({ href: "/", label: c.label })),
+  }));
+const DEMO_CTA = { href: "/", label: site.cta.label };
 
 const COLORS: { token: string; hex: string; use: string; note: string; swatch: string }[] = [
   { token: "room", hex: "#12161A", use: "Page ground", note: "text 15.97", swatch: "bg-room" },
@@ -430,7 +455,58 @@ export default function StyleguidePage() {
         <Specimen id="sg-logo" title="Logo">
           <Logo />
         </Specimen>
+
+        <Specimen
+          id="sg-sticky"
+          title="Sticky call to action"
+          note="Pinned to the bottom on phones, on every page except /start. Hidden from 1024px up."
+        >
+          <div className="-mx-gutter-sm lg:mx-0">
+            <StickyBar cta={DEMO_CTA} />
+          </div>
+        </Specimen>
       </div>
+
+      <section aria-labelledby="sg-sections" className="flex flex-col">
+        <div className="page-x border-t border-line pt-10">
+          <h2 id="sg-sections" className="text-room-section">
+            Section tones
+          </h2>
+        </div>
+        <Section aria-label="Default section">
+          <p className="text-room-card">Default: room</p>
+        </Section>
+        <Section tone="frost" aria-label="Surface section">
+          <p className="text-room-card">Alternate: surface</p>
+        </Section>
+        <Section tone="steel-panel" spacing="tight" aria-label="Raised section">
+          <p className="text-room-card">Band: raised, tight spacing</p>
+        </Section>
+      </section>
+
+      <section aria-labelledby="sg-shell" className="flex flex-col gap-8 pt-room-section-sm">
+        <div className="page-x flex flex-col gap-3 border-t border-line pt-10">
+          <h2 id="sg-shell" className="text-room-section">
+            Header, menu and footer
+          </h2>
+          <p className="max-w-[40em] text-room-small text-muted">
+            With every nav item, as it will look once the pages exist (these demo links all go
+            home). Below 1024px the demo header&rsquo;s menu button opens the full-screen menu, and
+            Escape closes it.
+          </p>
+        </div>
+        <div className="border-y border-line">
+          <HeaderView links={DEMO_LINKS} cta={DEMO_CTA} contact={contactLinks()} />
+        </div>
+        <FooterView
+          data={{
+            ...footerData(),
+            site: [...DEMO_LINKS.map(({ label }) => ({ href: "/", label })), DEMO_CTA],
+            services: DEMO_LINKS.flatMap((l) => l.children ?? []),
+          }}
+          cta={DEMO_CTA}
+        />
+      </section>
     </div>
   );
 }

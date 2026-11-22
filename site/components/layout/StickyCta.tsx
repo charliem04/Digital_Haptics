@@ -1,6 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
+import { cn } from "@/lib/cn";
 import { Button } from "@/components/ui/Button";
 
 /**
@@ -19,15 +20,34 @@ export function StickyCta({ cta }: { cta: { href: string; label: string } | null
 
   return (
     <>
-      <div aria-hidden className="h-[calc(57px+env(safe-area-inset-bottom))] bg-ink lg:hidden" />
       <div
-        data-track-loc="sticky"
-        className="fixed inset-x-0 bottom-0 z-40 border-t border-ink bg-signal pb-[env(safe-area-inset-bottom)] lg:hidden"
-      >
-        <Button href={cta.href} block className="!min-h-[56px] !px-gutter-sm">
-          {cta.label}
-        </Button>
-      </div>
+        aria-hidden
+        className="h-[calc(57px+env(safe-area-inset-bottom))] bg-ink lg:hidden room:bg-surface"
+      />
+      <StickyBar cta={cta} className="fixed inset-x-0 bottom-0 z-40" />
     </>
+  );
+}
+
+/** The bar itself, also shown in place on /styleguide. */
+export function StickyBar({
+  cta,
+  className,
+}: {
+  cta: { href: string; label: string };
+  className?: string;
+}) {
+  return (
+    <div
+      data-track-loc="sticky"
+      className={cn(
+        "border-t border-ink bg-signal pb-[env(safe-area-inset-bottom)] lg:hidden room:border-line room:bg-amber",
+        className
+      )}
+    >
+      <Button href={cta.href} block className="!min-h-[56px] !px-gutter-sm room:!rounded-none">
+        {cta.label}
+      </Button>
+    </div>
   );
 }

@@ -37,13 +37,14 @@ export function HeaderView({
   contact: ContactLinks;
 }) {
   return (
-    <header className="relative z-30">
+    <header className="relative z-30 room:bg-room room:[background-image:var(--grain)]">
       <Container>
         {/* On the home page at xl the hero rail occupies the top-right
-            320px (mockup: nav padding-right 384 = rail + gutter). */}
+            320px (mockup: nav padding-right 384 = rail + gutter). Molten
+            Room has no rail, so `.room` undoes both home-page rules. */}
         <OnHome
-          home="xl:pr-sidebar"
-          className="flex h-[var(--header-h)] items-center justify-between gap-6"
+          home="xl:pr-sidebar room:xl:pr-0"
+          className="flex h-[var(--header-h)] items-center justify-between gap-6 room:h-20"
         >
           <Logo />
           {links.length > 0 && (
@@ -54,7 +55,7 @@ export function HeaderView({
           <div className="flex items-center gap-3">
             {cta && (
               // The rail carries the CTA on the home page at xl.
-              <OnHome home="xl:hidden" className="hidden lg:block">
+              <OnHome home="xl:hidden room:xl:block" className="hidden lg:block">
                 <Button href={cta.href} size="sm">
                   {cta.label}
                 </Button>

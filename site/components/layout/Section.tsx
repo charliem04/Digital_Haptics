@@ -13,15 +13,17 @@ import { Container } from "./Container";
  * Give it `aria-labelledby` pointing at the section heading's id, so it
  * is announced as a named region.
  */
+const GRAIN = "room:[background-image:var(--grain)]";
+
 const TONES = {
   none: "",
-  frost: "bg-frost",
-  "steel-panel": "bg-steel-panel",
-  ink: "bg-ink text-ice",
+  frost: `bg-frost room:bg-surface ${GRAIN}`,
+  "steel-panel": `bg-steel-panel room:bg-raised ${GRAIN}`,
+  ink: `bg-ink text-ice room:bg-surface room:text-text ${GRAIN}`,
 } as const;
 
 const SPACING = {
-  default: "py-section-sm lg:py-section",
+  default: "py-section-sm lg:py-section room:py-room-section-sm room:lg:py-room-section",
   tight: "py-10 lg:py-16",
   none: "",
 } as const;
