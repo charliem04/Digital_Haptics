@@ -22,7 +22,7 @@ export function NavLinks({ links }: { links: NavLink[] }) {
             <Link
               href={l.href}
               aria-current={current ? "page" : undefined}
-              className="relative inline-flex min-h-touch items-center text-ink no-underline after:absolute after:inset-x-0 after:bottom-2 after:h-[2px] after:origin-left after:scale-x-0 after:bg-signal after:transition-transform after:duration-[250ms] after:ease-brand hover:after:scale-x-100 active:text-steel-deep aria-[current=page]:after:scale-x-100"
+              className="relative inline-flex min-h-touch min-w-[44px] items-center justify-center text-ink no-underline after:absolute after:inset-x-0 after:bottom-2 after:h-[2px] after:origin-left after:scale-x-0 after:bg-signal after:transition-transform after:duration-[250ms] after:ease-brand hover:after:scale-x-100 active:text-steel-deep aria-[current=page]:after:scale-x-100"
             >
               {l.label}
             </Link>

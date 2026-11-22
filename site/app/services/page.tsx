@@ -28,7 +28,7 @@ export default function ServicesPage() {
         >
           {services.map((s) => (
             <li key={s.slug}>
-              <ServiceCard service={s} highlight={s.slug === "automations"} />
+              <ServiceCard service={s} highlight={s.slug === "automations"} headingAs="h2" />
             </li>
           ))}
         </ul>

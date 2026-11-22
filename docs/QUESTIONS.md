@@ -23,7 +23,7 @@ Until then they show on preview links only. The Work page, the home proof strip 
 >
 > **Answer:**
 
-**B. 🔴 DMARC record.** One DNS line. Step by step in `docs/SETUP.md` §3 Step 5 (and in chat). Tell me once it's added.
+**B. 🔴 Launch checks.** `docs/CUTOVER.md` lists what's left: set up `www`, test the form and email on the real domain, and connect Search Console.
 
 > **Answer:**
 
