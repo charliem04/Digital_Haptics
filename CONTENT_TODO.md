@@ -1,6 +1,6 @@
 # Content TODO
 
-Every `[PLACEHOLDER]` (and PLAN's own bracketed placeholders like `[PRICE]`) in the codebase is listed here. Nothing ships to Production with an entry still open: fill it, or hide the section it belongs to (PLAN §9, Phase 6).
+Every `[PLACEHOLDER]` (and PLAN's own bracketed placeholders like `[PRICE]`) in the codebase is listed here. Nothing ships to Production with an entry still open: fill it, or hide the section it belongs to (PLAN §9, Phase 6). `scripts/placeholders.mjs` enforces this by failing a production build if a placeholder reaches a public page. Open items below are hidden from production.
 
 Never replace a placeholder with an invented price, stat, client result, testimonial or client name.
 
@@ -10,7 +10,7 @@ What each item needs, with examples: [docs/SETUP.md §2](docs/SETUP.md). **The q
 |---|---|---|---|
 | Legal entity name | `site/site.config.ts` → `legalName` | You | Done 2026-11-03: `Charles Meyers` (sole proprietor). **Change to `Digital Haptics LLC` once the LLC is filed.** |
 | Agency phone | `site/site.config.ts` → `phone` | You | Done 2026-11-03: (337) 412-5714 |
-| Agency email | `site/site.config.ts` → `email` | You | Done 2026-11-03: `charles@digitalhaptics.dev`. **Before launch:** set up a mailbox or Cloudflare Email Routing for it, or mail to it bounces. |
+| Agency email | `site/site.config.ts` → `email` | You | Done 2026-11-03: `charles@digitalhaptics.dev`. Cloudflare Email Routing is live (MX confirmed 2026-11-22). |
 | Cal.com event URL (`booking.calUrl`) | `site/site.config.ts` | You | Done 2026-11-22: `cal.com/charlie-meyers-xhr6cy/intro-call`, embedded on /start/. |
 | Response time | `site/site.config.ts` → `intake.responseTime` (thank-you page) | You | Done 2026-11-03: one business day |
 | Social URLs (empty ones stay hidden) | `site/site.config.ts` → `socials` | You | Google Business Profile done 2026-11-22. Facebook, Instagram and LinkedIn open: add each when created. |
@@ -22,7 +22,7 @@ What each item needs, with examples: [docs/SETUP.md §2](docs/SETUP.md). **The q
 
 | Item | Where | Needed from | Status |
 |---|---|---|---|
-| Hero sidebar blurbs, taken verbatim from the Hybrid mockup: "Sites that look like the work you do: solid, square, built right." / "Found first when someone nearby searches for your trade." / 🚩 "Every form and missed call gets a reply in seconds." | `site/data/acts.ts` | You: approve or rewrite | Open |
+| Hero sidebar blurbs, taken verbatim from the Hybrid mockup: "Sites that look like the work you do: solid, square, built right." / "Found first when someone nearby searches for your trade." / 🚩 "Every form and missed call gets a reply in seconds." | `site/data/acts.ts` | You: approve or rewrite | Approved for now (2026-11-17) |
 | Styleguide sample values `[Client name]`, `[RESULT]`, `[Timeline options]` | `site/app/styleguide/page.tsx` | Nobody: they're demo placeholders on a hidden page and stay bracketed | n/a |
 
 ## Phase 3 (core pages)
@@ -43,10 +43,10 @@ What each item needs, with examples: [docs/SETUP.md §2](docs/SETUP.md). **The q
 
 | Item | Where | Needed from | Status |
 |---|---|---|---|
-| Turnstile widget + keys, Resend domain + API key: the form stores leads without them but sends no email and skips the spam check | Cloudflare / Resend dashboards ([docs/SETUP.md §3](docs/SETUP.md)) | You | Open |
-| Confirm lead email addresses (`LEAD_NOTIFY_TO` charles@, `LEAD_NOTIFY_FROM` leads@digitalhaptics.dev) | `site/wrangler.jsonc` → `vars` | You | Open |
-| Reply as charles@digitalhaptics.dev: Gmail "Send mail as" via Resend SMTP (Option A, chosen 2026-11-04) | Resend + Gmail ([docs/SETUP.md §3 Step 3b](docs/SETUP.md)) | You | Open |
-| **Phase 6, before launch:** DMARC TXT record `_dmarc` → `v=DMARC1; p=none; rua=mailto:charles@digitalhaptics.dev` | Cloudflare DNS ([docs/SETUP.md §3 Step 5](docs/SETUP.md)) | You | Open |
+| Turnstile widget + keys, Resend domain + API key: the form stores leads without them but sends no email and skips the spam check | Cloudflare / Resend dashboards ([docs/SETUP.md §3](docs/SETUP.md)) | You | Done: keys set and real submissions tested |
+| Confirm lead email addresses (`LEAD_NOTIFY_TO` charles@, `LEAD_NOTIFY_FROM` leads@digitalhaptics.dev) | `site/wrangler.jsonc` → `vars` | You | Done |
+| Reply as charles@digitalhaptics.dev: Gmail "Send mail as" via Resend SMTP (Option A, chosen 2026-11-04) | Resend + Gmail ([docs/SETUP.md §3 Step 3b](docs/SETUP.md)) | You | Set up. Final two-way test is in [docs/CUTOVER.md](docs/CUTOVER.md). |
+| DMARC TXT record `_dmarc` → `v=DMARC1; p=none; rua=mailto:charles@digitalhaptics.dev` | Cloudflare DNS ([docs/SETUP.md §3 Step 5](docs/SETUP.md)) | You | Done: live in DNS (confirmed 2026-11-22) |
 | 🚩 Automations page DRAFT copy: problem, modules, add-on | `site/data/automations.ts` | You | Open |
 | 🚩 Demo copy and message sequence (Demo Plumbing Co., fictional) | `site/data/automations.ts`, `site/data/demo.ts` | You | Open |
 | 🚩 `[PLACEHOLDER: voice demo number]` (FEATURE_VOICE section) | `site/data/automations.ts` → `voiceCopy.number` | You, when the voice agent ships | Open |

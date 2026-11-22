@@ -8,7 +8,16 @@ import { Arrow } from "@/components/ui/Arrow";
  * A service block (PLAN §5: boxed ACT label, linking to its page). The
  * whole card is the link; the ring follows the cut.
  */
-export function ServiceCard({ service, highlight }: { service: Service; highlight?: boolean }) {
+export function ServiceCard({
+  service,
+  highlight,
+  headingAs: Heading = "h3",
+}: {
+  service: Service;
+  highlight?: boolean;
+  /** h2 when the card sits directly under the page's h1. */
+  headingAs?: "h2" | "h3";
+}) {
   return (
     <CutFrame
       as={Link}
@@ -22,7 +31,7 @@ export function ServiceCard({ service, highlight }: { service: Service; highligh
       <BoxedLabel active={highlight}>
         {service.code} — {service.name}
       </BoxedLabel>
-      <h3 className="font-display text-subheading font-semibold">{service.name}</h3>
+      <Heading className="font-display text-subheading font-semibold">{service.name}</Heading>
       <p className="text-body text-steel-deep">{service.short}</p>
       <span className="mt-auto inline-flex items-center gap-2 pt-2 font-mono text-label uppercase tracking-label">
         About {service.name}

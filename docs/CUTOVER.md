@@ -1,170 +1,80 @@
-# Cutover runbook — moving example.com to the new site
+# Launch runbook: digitalhaptics.dev
 
-`README-DEPLOY.md` covers Pages setup and the pre-launch verification list,
-and it covers them well. This file is the part it does not: the DNS mechanics,
-the email-survival check, the order of operations, and how to get back if
-something goes wrong.
+The production Worker already serves `https://digitalhaptics.dev`, and search engines are allowed to index it. There is no old site to migrate, so launch means closing the items below.
 
-The old example.com is live and DNS still points at it. Nothing in sections
-T-14 through T-48h touches it.
+## Status (checked 2026-11-22)
 
----
+| Check | Status |
+|---|---|
+| Domain serves the production build over HTTPS | Done |
+| Security headers, including HSTS and CSP | Done |
+| Flagged routes return 404, automation flags off | Done |
+| Sitemap (7 pages) and robots.txt | Done |
+| Email DNS: Cloudflare MX, SPF, Resend DKIM, DMARC | Done |
+| Build blocks leftover placeholders | Done |
+| Accessibility and layout audit | Done, with the site's own browser checks |
+| `www.digitalhaptics.dev` | **Not set up: does not resolve** |
+| Real form submission on `digitalhaptics.dev` | **To do** |
+| Real Cal.com booking | **To do** |
+| Lighthouse / PageSpeed score | **To do** |
+| Search Console | **To do** |
 
-## The two failure modes this runbook exists to prevent
+## Before you announce the site
 
-**1. Company email stops.** Moving nameservers to Cloudflare replaces the
-authoritative zone. Anything not recreated in Cloudflare first — MX, SPF,
-DKIM, DMARC, vendor CNAMEs — simply ceases to resolve. Mail silently stops
-arriving and nobody notices for hours. This is the single most likely way to
-make a launch day go badly.
+### 1. Set up www
 
-**2. Ranking thrown away.** The old site has URLs indexed by Google and linked
-from Facebook. Every one that has no equivalent here returns 404 the moment
-DNS moves. `public/_redirects` ships with **no live rules** — only commented
-examples of likely shapes. Building the real list requires crawling the old
-site, which is only possible while it is still up.
+1. Cloudflare → `digitalhaptics.dev` → **DNS** → **Add record**: type `AAAA`, name `www`, IPv6 `100::`, Proxied on.
+2. **Rules** → **Create rule** → **Redirect Rule** → use the template **Redirect from WWW to root**. It should be a 301 that keeps the path and query string.
+3. Check that `https://www.digitalhaptics.dev/pricing/` lands on `https://digitalhaptics.dev/pricing/`.
 
-Both are cheap to prevent and expensive to fix. Everything below is ordered
-around them.
+### 2. Confirm HTTPS is forced
 
----
+Cloudflare → **SSL/TLS** → **Edge Certificates** → **Always Use HTTPS** on. Leave Cloudflare's own HSTS setting off, because the site already sends the header.
 
-## T-14 days
+### 3. Test the form on the real domain
 
-- [ ] **Crawl example.com.** Screaming Frog's free tier covers 500 URLs, which
-      is more than enough. Export every URL it finds. If the old Search
-      Console is accessible, pull the top pages by clicks as well — those are
-      the ones whose redirects actually matter.
-- [ ] **Fill in `public/_redirects`** from that crawl, mapping each old URL to
-      its nearest equivalent. The file's header documents the format. One rule
-      per line, 301.
-- [ ] **Export the full DNS zone** from the current host. Every record type,
-      not just A and CNAME. Save it somewhere durable.
-- [ ] **Start the attorney review.** At minimum: terms, privacy, and the
-      application questions in `content/careers.ts`.
-      Add anything on the site that describes REGULATED ACTIVITY, and read
-      it hard. This is the item most likely to be skipped and the most
-      expensive to get wrong. Two examples from the build this template
-      came from: describing what the business does with an insurance claim
-      can cross into public adjusting, which is licensed in most US states;
-      anything a finance band implies
-      about credit terms is regulated separately again. Whatever the
-      vertical is, find its equivalent, and budget days — reviews are not
-      same-day.
-- [ ] **Decide `www` vs apex** as the canonical hostname, and set `siteUrl` in
-      `client.config.ts` to match.
+1. Confirm the Turnstile widget's hostnames include `digitalhaptics.dev`.
+2. Submit `/start/` from your phone with the business name `TEST LEAD - delete me`.
+3. Confirm you land on the thank-you page and the lead email arrives.
 
-## T-7 days
+### 4. Test booking
 
-- [ ] Cloudflare Pages project connected — **root directory `site`**,
-      build `npm run build`, output `out`, production branch `main`.
-- [ ] All environment variables set for **Production and Preview both**
-      (`docs/LAUNCH-CREDENTIALS.md` §4).
-- [ ] `wrangler d1 create client-leads`, real `database_id` pasted into
-      `workers/lead-relay/wrangler.toml`, `npm run schema`, secrets set,
-      deployed.
-- [ ] careers-upload Worker resolved per the decision taken — if it stays:
-      `TURNSTILE_SECRET`, `NOTIFY_WEBHOOK`, `RELAY_INGEST_SECRET`,
-      `IP_HASH_SALT`, deployed, **and `npm run retention` run against the real
-      bucket**. Without that lifecycle rule the twelve-month retention the
-      privacy policy promises is not true.
-- [ ] **Remove the preview origin (`https://client-preview.pages.dev`) from
-      `ALLOWED_ORIGINS`** in both `workers/lead-relay/wrangler.toml` and
-      `workers/careers-upload/wrangler.toml` if you added it, and redeploy
-      both. It is added so the terminal preview can post to them before
-      production exists; afterwards it is a third origin allowed to submit to
-      the real relay for no reason. Do this after the preview verification below, not before, or
-      the verification is what breaks.
-- [ ] Confirm `ALLOW_INSECURE_NO_CAPTCHA` is absent from the deployed Worker
-      config. It belongs to `[env.dev.vars]` only. It is the one value where a
-      copy-paste turns a gated endpoint into an open one.
-- [ ] Confirm the R2 bucket is private — no custom domain, no r2.dev URL.
-- [ ] Full preview verification per `README-DEPLOY.md` §9, including the check
-      most people skip: **submit the contact form with a deliberately wrong
-      key and confirm the visitor sees the failure and the phone number, not a
-      false success.**
+Book a call through `/start/`, confirm the calendar invite arrives, then cancel it. Tell me when it's done so I can check the booking event and close the `// OPEN:` note in `BookingEmbed.tsx`.
 
-## T-48 hours
+### 5. Test email both ways
 
-- [ ] **Lower TTLs to 300s** on the existing DNS records at the current host.
-      This is what makes rollback fast, and it has to happen before the move,
-      not during it.
-- [ ] **Recreate every non-web record in Cloudflare DNS** — MX, SPF, DKIM,
-      DMARC, vendor CNAMEs — from the T-14 export.
-- [ ] Verify them against the export, record by record, before going further.
-- [ ] Final `npm run build` clean, `npm run check` at 0 errors,
-      `grep -rn "TODO(client)"` returning nothing.
+Send a message to `charles@digitalhaptics.dev` from another account, then reply from Gmail as that address. Confirm the reply arrives and isn't in spam.
 
-## Cutover
+### 6. Tap every contact link
 
-- [ ] Pages → Custom domains → add the domain.
-- [ ] Move the nameservers.
-- [ ] Cloudflare SSL/TLS mode → **Full (strict)**.
-- [ ] Set the apex ↔ www redirect for whichever hostname lost the canonical
-      decision.
-- [ ] **Send and receive a test email on the domain.** Do not declare success
-      before this passes.
-- [ ] Confirm HSTS is arriving: `curl -sI https://<domain>/ | grep -i strict`.
-      It ships in `public/_headers` (`max-age=31536000`, one year), so it
-      goes live with the first HTTPS response — which is why SSL must be
-      Full (strict) and working before this point. Leave the Cloudflare
-      dashboard's own HSTS setting off so the header has one source, and
-      leave `includeSubDomains` and `preload` off for the reasons documented
-      at length in `public/_headers`.
-- [ ] Add the **WAF rate-limiting rules** on both Worker routes.
+From a phone: the call button, the email link and the Google icon in the footer.
 
-## T+1 day
+### 7. Delete test leads
 
-- [ ] Submit `{siteUrl}/sitemap.xml` in Google Search Console.
-- [ ] Spot-check the old site's top URLs — they should 301, not 404.
-- [ ] Update the website URL on the Google Business Profile. Confirm the name,
-      address and phone there match the site exactly; if call tracking was
-      adopted, the GBP number must stay the real one.
-- [ ] Rich Results Test on the LocalBusiness, `Service`, `FAQPage` and
-      `BreadcrumbList` JSON-LD.
-- [ ] Lighthouse mobile ≥ 90.
-- [ ] Both phone numbers and the text link, from an actual phone.
-- [ ] Cookie banner: decline → no Plausible request in the Network tab;
-      accept → the script loads.
-- [ ] **Real end-to-end lead test.** Submit the contact form and, if the
-      careers path is live, a real application. Then confirm both landed:
+Run this on both `digitalhaptics-leads` and `digitalhaptics-leads-preview` in Cloudflare → **D1** → **Console**. It permanently deletes only rows with that test name.
 
-      curl -H "Authorization: Bearer $EXPORT_TOKEN" https://<relay>/export.csv
-
-      Two rows. The application should also have an object in R2.
-
-## T+7 days
-
-- [ ] Check Search Console for crawl errors and 404s the redirect map missed.
-- [ ] Confirm the retry sweep is delivering to the CRM — anything stuck reads
-      `crm_status='failed'` with the CRM's own error text in `crm_error`:
-
-      SELECT id, kind, name, crm_attempts, crm_error
-        FROM leads WHERE crm_status = 'failed' ORDER BY received_at;
-
----
-
-## Rollback
-
-Keep the old host paid up for **at least 30 days**. Rollback is moving the
-nameservers back, which is why TTLs come down at T-48h — with 300s TTLs the
-internet catches up in minutes rather than a day.
-
-Rollback restores the old site and the old DNS zone together. It does not
-restore anything captured in the meantime, so if leads have already arrived
-through the new forms, export them first:
-
-```bash
-curl -H "Authorization: Bearer $EXPORT_TOKEN" https://<relay>/export.csv -o leads.csv
+```sql
+DELETE FROM leads WHERE business = 'TEST LEAD - delete me';
 ```
 
----
+## Launch day
 
-## After it is done
+1. **Search Console:** add a **Domain** property for `digitalhaptics.dev`, verify it with the DNS record, and submit `https://digitalhaptics.dev/sitemap.xml`.
+2. **Google Business Profile:** set the website to `https://digitalhaptics.dev`. Make sure the name and phone match the site exactly.
+3. **PageSpeed Insights:** run the home page and `/start/` on mobile at <https://pagespeed.web.dev>. The target is 90 or higher.
+4. **Rich Results Test:** run the home page and a service page at <https://search.google.com/test/rich-results>.
+5. **Cloudflare Web Analytics:** turn it on for the domain if it isn't on yet.
 
-- Hand over: walk the client through where leads arrive and how to pull the
-  CSV — and, if a Sanity studio was set up (`docs/GALLERY-CMS.md`), how their
-  gallery editor publishes at `<hostname>.sanity.studio`. A short screen
-  recording is worth more here than a document.
-- Schedule a recurring `export.csv` pull as a backup. Gallery content is
-  already safe in git; the lead book is not.
+## One week after
+
+- Check Search Console for crawl errors and pages not indexed.
+- Check the Worker's logs for failed lead emails.
+- Check your DMARC reports for mail failing SPF or DKIM. Tighten the policy only after the reports are clean.
+
+## If something breaks
+
+Cloudflare → Worker → **Deployments** → pick the last good version → **Rollback**. This restores the site in seconds and does not touch the lead database.
+
+## Can follow after launch
+
+Case studies, your photo, city pages, other social profiles, and the LLC name. Each one appears on the site when its content is added. Automations stay off until Phase 7.
