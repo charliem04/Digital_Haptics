@@ -20,7 +20,7 @@
 
 **Principles:**
 - Robust where it matters, simple to navigate. A visitor should never be more than one click from "Start a Project."
-- Cybercore aesthetic in the framing (hero, dividers, frames, hover states). Plain, highly legible content (case studies, pricing, forms).
+- Molten, low-gravity liquid in the framing (Home hero and final CTA). Plain, highly legible content (case studies, pricing, forms).
 - Mobile first. The primary buyer is on a phone.
 
 ---
@@ -95,75 +95,43 @@ The AI voice receptionist and SMS auto-response are **not implemented yet**. Eve
 
 ## 4. Design system
 
-Reference: the Round 2 "Hybrid" artboards (desktop + mobile). This combines Direction A's ground and color, Direction B's type and buttons, and Direction C's cut-corner frames.
+**The design system is `docs/VISUAL_GUIDE.md` (Molten Room).** It is the source of truth for colour, type, surfaces, the liquid, grain, motion and every component. The Round 2 "Hybrid" mockup in `docs/design-reference/` is historical.
 
-### 4.1 Color tokens
-| Token | Hex | Use |
-|---|---|---|
-| `ice` | `#E4EEF4` | Page background, with the dot grid |
-| `frost` | `#F4F8FB` | Panels, section frames |
-| `white` | `#FFFFFF` | Cards, inputs |
-| `steel-panel` | `#CFDAE2` | Hero sidebar, secondary bands |
-| `hairline` | `#C9D5DE` | Row dividers inside cards |
-| `ink` | `#0B0D10` | Text, borders, accent fills |
-| `steel` | `#4A5560` | Secondary text, labels |
-| `signal` | `#FF5A1F` | Primary actions, flare lines, markers |
+These rules always hold:
 
-**Contrast rule:** `signal` orange is never used for text on light backgrounds (it fails contrast). Use it for fills, lines, markers, and button backgrounds with `ink` text. All text must meet WCAG AA (4.5:1 body, 3:1 at 24px+).
+### 4.1 Color
+Dark room palette, tokens and measured contrast in VISUAL_GUIDE §2. All text must meet WCAG AA (4.5:1 body, 3:1 at 24px+). Text never sits on the liquid.
 
 ### 4.2 Typography
-| Role | Font | Weight | Size (desktop → mobile) | Notes |
-|---|---|---|---|---|
-| Display | Chakra Petch | 600 | 112px → 54px (use `clamp`) | Uppercase, line-height 0.9 |
-| Display small | Chakra Petch | 600 | 70px → 40px | Uppercase |
-| Heading | Chakra Petch | 600 | 36px → 28px | Sentence case |
-| Subheading | Chakra Petch | 600 | 24px → 20px | |
-| Body | Manrope | 400/500 | 17–19px → 16–17px | line-height 1.55 |
-| Label | JetBrains Mono | 500 | 11–13px | Uppercase, tracking 0.1–0.16em |
-
-Load fonts with `next/font/google`. Fallback stacks: `system-ui, sans-serif` and `ui-monospace, monospace`.
+Manrope for all text; Chakra Petch 700 for the logo only. Sentence case. Scale in VISUAL_GUIDE §3.
 
 ### 4.3 Layout and spacing
 - 4px base spacing scale
-- 12-column grid, max width 1440px, 64px side margins on desktop, 20px on mobile
-- Section vertical padding: 96–120px desktop, 48–64px mobile
-- Border radius: **0 everywhere**. Shape language comes from cut corners, not rounding.
+- Max width 1440px, 64px side margins on desktop, 20px on mobile
+- Section vertical padding: 104px desktop, 56px mobile
+- Radius: 28px panels, 12px fields, fully round controls
 
 ### 4.4 Signature visual elements
-- **Dot grid:** `radial-gradient(rgba(11,13,16,0.2) 1px, transparent 1.4px)` at 16px (14px mobile) on the `ice` background
-- **Flare crosshair (hero only):** a 2px vertical and 1px horizontal `signal` line with a soft glow (`box-shadow`), and a glowing node where they cross. Decorative: `aria-hidden`, and no animation if reduced motion is on.
-- **Cut corners:** 45° clipped corners via `clip-path`. Build a `<CutFrame>` component that takes `size` (`sm` 10px, `md` 16px, `lg` 24px), `corners` (which corners to cut), `fill`, and `border` (renders a 1px ink border with the wrapper technique: outer ink layer, inner fill layer with the same clip). Use it for section frames, case cards, the lead-flow panel, and inputs.
-- **Marker squares:** 8px `signal` squares placed at line intersections and cut-corner ends, sparingly
-- **Boxed labels:** mono uppercase labels in a 1px ink box (e.g., `ACT.01 — DESIGN`). The active or highlighted one gets a `signal` fill.
-- **Section numbering:** mono micro-labels like `( 01 ) — WEB DESIGN · LOCAL SEO · AUTOMATIONS`
+- **Liquid:** one live WebGL canvas, on Home only, seen through the hero and final CTA. Loaded lazily after first paint, with a static poster and full fallbacks (VISUAL_GUIDE §6, §10). Decorative and `aria-hidden`.
+- **Film grain:** a static CSS layer on solid surfaces (VISUAL_GUIDE §5). Decorative and `aria-hidden`.
 
 ### 4.5 Components
-- **Button / Primary:** `signal` fill, `ink` text, mono label, trailing `↘` arrow, min height 52px
-- **Button / Accent:** `ink` fill, `ice` text, `signal` arrow
-- **Button / Ghost:** transparent, 1px `ink` border, `ink` text, no arrow. Use it for the secondary action next to a primary button (e.g., hero "See the Work").
-- **Input:** white fill, 1px ink border, top-left cut corner (`sm`), label above in mono caps, min height 48px. Visible focus ring in `signal`.
-- **Chip:** mono caps in a 1px ink box; active chip is ink-filled
-- **Case card:** cut-corner frame (`md`). Header strip (`CASE.01` + `● LIVE SITE`), screenshot area, key/value rows (CLIENT / TRADE / SYSTEMS / RESULT), and a black "Read case study ↘" footer bar. White background.
-- **Lead-flow panel 🚩 FLAGGED:** only renders when `FEATURE_AUTOMATIONS` is on. A small frost cut-corner panel (hero, Automations page, thank-you page) listing `01 FORM RECEIVED / 02 TEXT SENT / 03 OWNER ALERTED / 04 JOB BOOKED`, with the last row highlighted in `signal`. Optionally animate the rows in sequence.
-- **Hero sidebar (desktop):** a 320px `steel-panel` column on the right side of the hero with a 1px ink left edge and a cut bottom-left corner ending in a marker square. It contains the primary CTA and the ACT service items. **Flag off:** two items (ACT.01 — DESIGN, ACT.02 — LOCAL SEO) and the footer line `( SEARCH ) → ( SITE ) → ( CALL )`. **Flag on:** adds ACT.03 — AUTOMATE (signal-filled) and switches the footer line to `( FORM ) → ( SMS ) → ( BOOKED )`. **OPEN:** decide whether it stays sticky while scrolling the hero; default is not sticky.
-- **Header:** logo (ink square + "DIGITAL HAPTICS" in Chakra Petch 700), mono nav links, primary CTA
-- **Mobile header:** logo + 48px ink menu button opening a full-screen menu
-- **Mobile sticky CTA:** a bottom-pinned "Start a Project ↘" bar on every page except `/start`
-- **Mobile hero sidebar:** becomes a full-width band under the hero with the ACT list. **OPEN:** band color, `ink` or `steel-panel`; default `steel-panel` to match desktop.
+Specs and all interactive states are in VISUAL_GUIDE §8. The lead-flow panel stays 🚩 FLAGGED and only renders when `FEATURE_AUTOMATIONS` is on. The mobile sticky CTA appears on every page except `/start`.
 
 ### 4.6 Motion
-- Subtle and purposeful: fade/slide-in on scroll (8–16px), flare glow pulse, lead-flow rows sequencing in, button hover arrow nudge
+- Subtle and purposeful: the liquid, button feedback, and responses to what the visitor does
 - No scroll-jacking, no parallax on content, nothing that delays reading
-- Everything disabled or reduced under `prefers-reduced-motion`
+- The hero headline is the LCP element and never waits for, or is animated by, WebGL
+- Under `prefers-reduced-motion`: one composed still frame, no loop
 
 ---
 
 ## 5. Page specs
 
 ### Home `/`
-1. **Hero:** section label, arrow block + display headline "Websites that book the job.", Primary "Start a Project ↘" + Ghost "See the Work", flare crosshair, desktop sidebar
-   - **Flag off:** section label `( 01 ) — WEB DESIGN · LOCAL SEO — ACADIANA, LA`; subline "Design and local SEO for trades businesses. Built to load fast, rank locally and turn visitors into calls."; no lead-flow panel (the flare crosshair stands alone)
-   - **Flag on:** label adds `· AUTOMATIONS`; subline "Design, local SEO and lead automations for trades businesses. Built to load fast, rank locally and follow up with every lead automatically."; lead-flow panel appears at the flare intersection
+1. **Hero:** section label, display headline "Websites that book the job.", Primary "Start a Project ↘" + Ghost "See the Work", live liquid hero
+   - **Flag off:** section label `( 01 ) — WEB DESIGN · LOCAL SEO — ACADIANA, LA`; subline "Design and local SEO for trades businesses. Built to load fast, rank locally and turn visitors into calls."; no lead-flow panel
+   - **Flag on:** label adds `· AUTOMATIONS`; subline "Design, local SEO and lead automations for trades businesses. Built to load fast, rank locally and follow up with every lead automatically."; lead-flow panel appears in the hero copy column
 2. **Proof strip:** 2–3 featured case cards linking to `/work/[slug]`
 3. **Services:** blocks with boxed ACT labels, each linking to its service page. **Flag off:** two blocks (Design / Local SEO). **Flag on:** adds Automations.
 4. **Live systems teaser 🚩 FLAGGED:** short explanation that this site runs the same lead system clients get, linking to `/services/automations`. **Flag off:** section not rendered.
@@ -218,7 +186,7 @@ Load fonts with `next/font/google`. Fallback stacks: `system-ui, sans-serif` and
 - Start with 0 posts; build the template only
 
 ### 404
-- On-brand error screen (terminal-style "NOT_FOUND" label in the cut-corner frame), links back to Home / Work / Start
+- On-brand error screen, links back to Home / Work / Start
 
 ---
 
