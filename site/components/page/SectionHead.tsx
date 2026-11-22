@@ -29,13 +29,16 @@ export function SectionHead({
       <SectionLabel index={index} tone={tone === "dark" ? "ice" : "steel"}>
         {label}
       </SectionLabel>
-      <h2 id={id} className="max-w-[24ch] font-display text-heading font-semibold">
+      <h2
+        id={id}
+        className="max-w-[24ch] font-display text-heading font-semibold room:font-body room:text-room-section room:font-medium"
+      >
         {title}
       </h2>
       {lede && (
         <p
           className={cn(
-            "max-w-[640px] text-body",
+            "max-w-[640px] text-body room:text-room-body room:text-muted",
             tone === "dark" ? "text-ice/70" : "text-steel-deep"
           )}
         >

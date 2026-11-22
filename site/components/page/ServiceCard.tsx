@@ -25,15 +25,19 @@ export function ServiceCard({
       size="md"
       fill="frost"
       ring
-      className="block h-full text-ink no-underline"
+      className="block h-full text-ink no-underline room:text-text"
       innerClassName="flex h-full flex-col gap-5 p-6 lg:p-8"
     >
-      <BoxedLabel active={highlight}>
+      <BoxedLabel active={highlight} className="room:hidden">
         {service.code} — {service.name}
       </BoxedLabel>
-      <Heading className="font-display text-subheading font-semibold">{service.name}</Heading>
-      <p className="text-body text-steel-deep">{service.short}</p>
-      <span className="mt-auto inline-flex items-center gap-2 pt-2 font-mono text-label uppercase tracking-label">
+      <Heading className="font-display text-subheading font-semibold room:font-body room:text-room-card room:font-medium">
+        {service.name}
+      </Heading>
+      <p className="text-body text-steel-deep room:text-room-body room:text-muted">
+        {service.short}
+      </p>
+      <span className="mt-auto inline-flex items-center gap-2 pt-2 font-mono text-label uppercase tracking-label room:font-body room:text-room-small room:font-medium room:normal-case room:tracking-normal room:text-text room:underline room:underline-offset-[5px] room:group-hover/cut:decoration-2">
         About {service.name}
         <Arrow className="size-3.5 transition-transform duration-[250ms] ease-brand group-hover/cut:translate-x-0.5 group-hover/cut:translate-y-0.5" />
       </span>

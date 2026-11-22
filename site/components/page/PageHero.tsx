@@ -25,14 +25,18 @@ export function PageHero({
   children?: ReactNode;
 }) {
   return (
-    <Container className="flex flex-col gap-6 pb-section-sm pt-6 lg:pb-16 lg:pt-10">
+    <Container className="flex flex-col gap-6 pb-section-sm pt-6 lg:pb-16 lg:pt-10 room:pb-10 room:pt-8 room:lg:pb-14 room:lg:pt-12">
       <Breadcrumbs path={path} leafLabel={leafLabel} />
       <div className="flex flex-col gap-5">
         <SectionLabel>{label}</SectionLabel>
-        <h1 className="max-w-[18ch] font-display text-display-sm font-semibold uppercase">
+        <h1 className="max-w-[18ch] font-display text-display-sm font-semibold uppercase room:max-w-[16ch] room:font-body room:text-room-title room:font-medium room:normal-case">
           {title}
         </h1>
-        {lead && <p className="max-w-[640px] text-body-lg text-steel-deep">{lead}</p>}
+        {lead && (
+          <p className="max-w-[640px] text-body-lg text-steel-deep room:text-room-lede room:text-muted">
+            {lead}
+          </p>
+        )}
       </div>
       {children}
     </Container>

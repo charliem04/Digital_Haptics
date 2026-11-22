@@ -38,8 +38,7 @@
   --error: 255 157 138; /* #FF9D8A  error text and field border */
 
   /* Film grain (VISUAL_GUIDE §5): a 128px tile with its 0.08 strength
-     built into the alpha channel, painted as a surface background so it
-     sits under the text and needs no extra compositor layer. */
+     built into the alpha channel, used as a mask by .room-grain. */
   --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 .128 -.024'/%3E%3C/filter%3E%3Crect width='128' height='128' filter='url(%23n)'/%3E%3C/svg%3E");
 
   /* Cut corners (PLAN §4.4). xl is the hero sidebar's cut (mockup). */
@@ -118,7 +117,6 @@ a {
    a utility such as `text-amber` on a link still wins. */
 .room {
   background-color: rgb(var(--room));
-  background-image: var(--grain);
   color: rgb(var(--text));
   font-family: var(--font-body), system-ui, sans-serif;
   font-size: 1.0625rem;
@@ -126,15 +124,42 @@ a {
   scrollbar-color: rgb(var(--muted)) rgb(var(--surface));
 }
 
+/* While any page is in the room, so are the scrollbar and overscroll. */
+html:has(.room) {
+  scrollbar-color: rgb(var(--muted)) rgb(var(--surface));
+}
+
+body:has(.room) {
+  background-color: rgb(var(--room));
+  background-image: none;
+}
+
+/* One decorative layer over the page. A mask on a solid fill, not a
+   background image: browsers count a textured background on a card as
+   the page's main content, and LCP would then measure the grain. */
+.room-grain {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  background-color: rgb(128 128 128);
+  -webkit-mask-image: var(--grain);
+  mask-image: var(--grain);
+}
+
+@media print {
+  .room-grain {
+    display: none;
+  }
+}
+
 /* A surface inside the room, with the same grain. */
 .room-surface {
   background-color: rgb(var(--surface));
-  background-image: var(--grain);
 }
 
 .room-raised {
   background-color: rgb(var(--raised));
-  background-image: var(--grain);
 }
 
 :where(.room) a {

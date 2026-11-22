@@ -41,7 +41,7 @@ export function MoreLink({
   return (
     <Link
       href={href}
-      className={`group inline-flex min-h-touch items-center gap-2 font-mono text-label uppercase tracking-label no-underline ${colors} ${
+      className={`group inline-flex min-h-touch items-center gap-2 font-mono text-label uppercase tracking-label no-underline room:font-body room:text-room-small room:font-medium room:normal-case room:tracking-normal room:text-text room:underline room:underline-offset-[5px] room:hover:decoration-2 ${colors} ${
         className ?? ""
       }`}
     >

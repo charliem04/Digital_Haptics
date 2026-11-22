@@ -38,14 +38,14 @@ The liquid keeps its own 11-stop ramp (§6.1). Those colours are not UI tokens.
 
 ### 2.2 Measured contrast (WCAG)
 
-Each cell shows the flat ratio, then the ratio against the brightest grain speck on that surface (+12 levels). AA for body text is 4.5:1.
+Each cell shows the flat ratio, then the worst case under the grain layer, where its strongest speck (11% grey) covers both the text and its surface. AA for body text is 4.5:1.
 
 | Text | on `room` | on `surface` | on `raised` |
 |---|---|---|---|
-| `text` | 15.97 / 14.06 | 14.45 / 12.41 | 12.51 / 10.53 |
-| `muted` | 8.60 / 7.58 | 7.78 / 6.68 | 6.74 / 5.67 |
-| `amber` | 8.81 / 7.76 | 7.97 / 6.84 | 6.90 / 5.81 |
-| `error` | 9.04 / 7.96 | 8.18 / 7.02 | 7.08 / 5.96 |
+| `text` | 15.97 / 12.61 | 14.45 / 11.30 | 12.51 / 9.79 |
+| `muted` | 8.60 / 7.14 | 7.78 / 6.39 | 6.74 / 5.54 |
+| `amber` | 8.81 / 7.26 | 7.97 / 6.50 | 6.90 / 5.63 |
+| `error` | 9.04 / 7.43 | 8.18 / 6.65 | 7.08 / 5.76 |
 
 | Other pair | Ratio | Result |
 |---|---|---|
@@ -100,10 +100,11 @@ Numbers stay only where the content is a real sequence, such as process steps.
 
 Static surfaces carry the film grain, so the identity continues where the liquid does not.
 
-- **Method:** one inline SVG `feTurbulence` tile, 128×128, painted as the background image of each solid surface (`.room`, `.room-surface`, `.room-raised`). It sits under the text and needs no fixed overlay or extra compositor layer. It is about 460 bytes and decoded and rasterised in about 3 ms on the development machine.
+- **Method:** one inline SVG `feTurbulence` tile, 128×128, used as the CSS **mask** of a single fixed, `aria-hidden`, `pointer-events: none` layer (`.room-grain`). It is about 460 bytes and decoded and rasterised in about 3 ms on the development machine.
+- **Why a mask:** R2–R4 painted the tile as each surface's background image. In R5 Lighthouse then treated a textured card as Pricing's main content and reported a 2.0s LCP. A mask on a solid fill is not a content image, and the same page returned to about 770 ms.
 - **Rejected:** a pre-rendered noise image. Random noise barely compresses: 26 KB as WebP and 29 KB as PNG at the same size.
 - **Strength on content surfaces:** `0.08`, built into the tile's alpha channel, normal blending. Measured standard deviation 2.55/255, brightest speck +12 levels. The contrast table above includes that speck.
-- **Strength around the liquid:** the canvas draws its own grain (6.5/255). Do not stack the CSS layer over it.
+- **Around the liquid:** the canvas draws its own grain (6.5/255). The page layer also passes over it, adding about 0.5/255 in combination, which is not visible.
 - **Do not** use `overlay` blending on these dark surfaces. It measured 0.15/255 at the same opacity, which is invisible.
 - The layer does not animate. Check scroll performance on a real phone in R1, and drop it from phones if it costs frames.
 
@@ -171,7 +172,7 @@ Every interactive element has a visible focus state: a **3px `text` outline with
 | Field error | 2px `error` border plus the existing `Error —` line in `error` | n/a | n/a | n/a | Never colour alone. Keeps existing wording and error summary |
 | Checkbox | 22px, `amber` accent, 44px row | n/a | n/a | Native | |
 | Chip | 1px `line` border, pill, 15px | `raised` fill if a link | 1px down | n/a | Static city chips do not react |
-| Service card | `raised`, 28px radius, 28px padding | Link only | n/a | n/a | Name, price, short line, link |
+| Service card | `surface`, 28px radius | Link underline | n/a | n/a | Name, short line, link. Prices stay on Pricing, as they do today |
 | Case card | `raised`, image area, key/value rows, footer link | Footer underline | 1px down | n/a | Draft and anonymised rules unchanged |
 | Header | Solid `room`, 80px, logo with round amber mark | Nav underline in `amber` | n/a | n/a | Inset logic for the old hero rail is removed |
 | Mobile menu | Keeps native `<dialog>`, `surface`, 22px links, 52px rows | n/a | n/a | n/a | Keyboard behaviour unchanged |
@@ -233,6 +234,7 @@ The canvas has fixed, reserved dimensions, so it cannot cause layout shift. The 
 |---|---|---|
 | Reduced motion | `prefers-reduced-motion` | Poster or one composed still, no loop |
 | No WebGL2 or shader failure | Context or compile error | Poster stays, no error shown |
+| No hardware GPU | Renderer reports SwiftShader, llvmpipe or similar | Poster stays. Software rendering cost 638 ms of blocking time in Lighthouse |
 | Data saver | `navigator.connection.saveData` or `prefers-reduced-data` | Poster, renderer not downloaded |
 | Low-power device | `deviceMemory` below 4 or `hardwareConcurrency` of 4 or fewer | Poster, renderer not downloaded |
 | Struggling at runtime | Average frame interval over 24ms across 90 frames | Drop to scale 0.20. Freeze on a still only if it then averages over 40ms, so a steady 30 fps low-power mode keeps moving |
@@ -276,7 +278,9 @@ Measured on the production build, flags off, in headless Edge on the development
 
 **Still to prove:** sustained frame rate in a normal browser and on real phones, and the governor on a genuinely slow device.
 
-**Placement until R5:** the canvas is confined to the hero, because Home's lower sections are not solid yet. R5 makes them solid, then extends it to the fixed layer and the final CTA opening in §6.2. On phones the canvas covers only the band above the copy, which halves its pixels.
+**Placement from R5:** one fixed canvas sits behind Home and shows through the hero and final CTA, as in §6.2. It stops drawing whenever neither opening is on screen.
+
+**What Lighthouse does and does not measure:** its test browser has no GPU, so it now scores Home's poster path. Its scores do not show the cost of the live canvas on a real device.
 
 ### 10.7 Performance baseline (before R1)
 

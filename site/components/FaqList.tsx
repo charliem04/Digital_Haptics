@@ -39,20 +39,26 @@ export function FaqList({
     <Section aria-labelledby={id}>
       <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:gap-16">
         <SectionHead id={id} index={index} label="FAQ" title={heading} lede={lede} />
-        <div className="border-t border-ink">
+        <div className="border-t border-ink room:border-line">
           {faqs.map((f, i) => (
-            <details key={f.q} open={i === 0} className="group border-b border-ink">
-              <summary className="flex min-h-[64px] cursor-pointer list-none items-center justify-between gap-6 py-4 font-display text-subheading font-semibold text-ink [&::-webkit-details-marker]:hidden">
+            <details
+              key={f.q}
+              open={i === 0}
+              className="group border-b border-ink room:border-line"
+            >
+              <summary className="flex min-h-[64px] cursor-pointer list-none items-center justify-between gap-6 py-4 font-display text-subheading font-semibold text-ink [&::-webkit-details-marker]:hidden room:min-h-14 room:font-body room:text-room-step room:font-medium room:text-text">
                 {f.q}
                 <span
                   aria-hidden
-                  className="flex size-8 shrink-0 items-center justify-center border border-ink font-mono text-label transition-colors duration-[250ms] group-open:bg-ink group-open:text-ice"
+                  className="flex size-8 shrink-0 items-center justify-center border border-ink font-mono text-label transition-colors duration-[250ms] group-open:bg-ink group-open:text-ice room:rounded-control room:border-line room:font-body room:text-[1rem] room:group-open:bg-raised room:group-open:text-text"
                 >
                   <span className="group-open:hidden">+</span>
                   <span className="hidden group-open:inline">−</span>
                 </span>
               </summary>
-              <p className="max-w-[68ch] pb-6 text-body text-steel-deep">{f.a}</p>
+              <p className="max-w-[68ch] pb-6 text-body text-steel-deep room:text-room-body room:text-muted">
+                {f.a}
+              </p>
             </details>
           ))}
         </div>

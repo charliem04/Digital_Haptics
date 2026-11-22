@@ -11,8 +11,9 @@ import { LiquidBackdrop } from "./liquid/LiquidBackdrop";
  *  HOME HERO (PLAN §5 Home 1, docs/VISUAL_GUIDE.md §6, §10). Copy is
  *  PLAN §5 verbatim, both flag states.
  *
- *  Text never sits on the liquid. On phones the liquid is a band under
- *  the header and the copy starts where it has faded to solid `room`.
+ *  The hero is an opening onto the page's fixed liquid layer. Text never
+ *  sits on it: on phones the liquid shows as a band under the header
+ *  and the copy starts where it has faded to solid `room`.
  *  From 1024px the copy holds the left column, capped so it always ends
  *  inside the solid part of the gradient (56% of the width).
  *
@@ -40,9 +41,10 @@ export function Hero() {
     <section
       aria-labelledby="hero-title"
       data-track-loc="hero"
-      className="room relative overflow-hidden"
+      data-liquid-opening
+      className="relative overflow-hidden"
     >
-      <LiquidBackdrop className="inset-x-0 top-0 h-[45svh] lg:inset-0 lg:h-auto" />
+      <LiquidBackdrop />
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,transparent_0,transparent_32svh,rgb(var(--room))_45svh)] lg:bg-[linear-gradient(90deg,rgb(var(--room))_0,rgb(var(--room))_56%,transparent_80%)]"

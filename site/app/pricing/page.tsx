@@ -53,11 +53,15 @@ export default function PricingPage() {
                 <BoxedLabel active={s.slug === "automations"}>
                   {s.code} — {s.name}
                 </BoxedLabel>
-                <p className="font-display text-heading font-semibold">{s.price}</p>
-                <p className="text-body-sm text-steel-deep">{s.short}</p>
+                <p className="font-display text-heading font-semibold room:font-body room:text-room-card room:font-medium">
+                  {s.price}
+                </p>
+                <p className="text-body-sm text-steel-deep room:text-room-small room:text-muted">
+                  {s.short}
+                </p>
                 <Link
                   href={`/services/${s.slug}/`}
-                  className="mt-auto inline-flex min-h-touch items-center gap-2 font-mono text-label uppercase tracking-label text-ink no-underline hover:underline hover:decoration-signal hover:decoration-2 hover:underline-offset-4 active:text-steel-deep"
+                  className="mt-auto inline-flex min-h-touch items-center gap-2 font-mono text-label uppercase tracking-label text-ink no-underline hover:underline hover:decoration-signal hover:decoration-2 hover:underline-offset-4 active:text-steel-deep room:font-body room:text-room-small room:font-medium room:normal-case room:tracking-normal room:text-text room:underline room:underline-offset-[5px] room:hover:decoration-amber room:active:text-muted"
                 >
                   What&rsquo;s included
                   <Arrow className="size-3.5" />
@@ -68,7 +72,11 @@ export default function PricingPage() {
         </ul>
       </Section>
 
-      <Section tone="frost" className="border-y border-ink" aria-labelledby="quote-factors">
+      <Section
+        tone="frost"
+        className="border-y border-ink room:border-line"
+        aria-labelledby="quote-factors"
+      >
         <div className="grid gap-10 lg:grid-cols-2 lg:gap-16">
           <SectionHead
             id="quote-factors"
@@ -76,11 +84,11 @@ export default function PricingPage() {
             title="What affects your quote"
             lede={statement}
           />
-          <ul className="flex flex-col border-t border-ink">
+          <ul className="flex flex-col border-t border-ink room:border-line">
             {getQuoteFactors().map((f) => (
               <li
                 key={f}
-                className="flex items-start gap-3 border-b border-hairline py-4 text-body"
+                className="flex items-start gap-3 border-b border-hairline py-4 text-body room:border-line"
               >
                 <Marker size="dot" className="mt-2.5" />
                 {f}

@@ -29,6 +29,8 @@ export type LiquidEvents = {
 export async function runLiquid(
   canvas: HTMLCanvasElement,
   root: HTMLElement,
+  /** The parts of the page the liquid shows through. */
+  openings: Element[],
   events: LiquidEvents
 ): Promise<() => void> {
   const phone = window.matchMedia("(max-width: 640px)").matches;
@@ -37,6 +39,7 @@ export async function runLiquid(
   let raf = 0;
   let last = 0;
   let onscreen = true;
+  const visible = new Set<Element>(openings);
   let stopped = false;
   let frozen = false;
   let steppedDown = false;
@@ -89,7 +92,11 @@ export async function runLiquid(
 
   const resizer = new ResizeObserver(layout);
   const viewer = new IntersectionObserver((entries) => {
-    onscreen = entries[entries.length - 1].isIntersecting;
+    for (const entry of entries) {
+      if (entry.isIntersecting) visible.add(entry.target);
+      else visible.delete(entry.target);
+    }
+    onscreen = visible.size > 0;
     sync();
   });
   const onLost = (event: Event) => {
@@ -113,7 +120,7 @@ export async function runLiquid(
   document.addEventListener("visibilitychange", sync);
   layout();
   resizer.observe(root);
-  viewer.observe(root);
+  openings.forEach((opening) => viewer.observe(opening));
   events.onReady();
   sync();
 

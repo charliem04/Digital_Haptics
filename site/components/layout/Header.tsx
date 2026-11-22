@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/Button";
 import { Container } from "./Container";
 import { NavLinks } from "./NavLinks";
 import { MobileMenu } from "./MobileMenu";
-import { OnHome } from "./OnHome";
 
 /**
  * ════════════════════════════════════════════════════════════════════
@@ -37,31 +36,27 @@ export function HeaderView({
   contact: ContactLinks;
 }) {
   return (
-    // Home has moved to Molten Room, so its header joins the `.room`
-    // scope. Other pages join as they migrate (R5, R6).
-    <OnHome home="room" className="relative z-30">
-      <header className="relative z-30 room:bg-room room:[background-image:var(--grain)]">
-        <Container>
-          <div className="flex h-[var(--header-h)] items-center justify-between gap-6 room:h-20">
-            <Logo />
-            {links.length > 0 && (
-              <nav aria-label="Main" className="hidden lg:ml-auto lg:block">
-                <NavLinks links={links} />
-              </nav>
+    <header className="relative z-30 room:bg-room">
+      <Container>
+        <div className="flex h-[var(--header-h)] items-center justify-between gap-6 room:h-20">
+          <Logo />
+          {links.length > 0 && (
+            <nav aria-label="Main" className="hidden lg:ml-auto lg:block">
+              <NavLinks links={links} />
+            </nav>
+          )}
+          <div className="flex items-center gap-3">
+            {cta && (
+              <div className="hidden lg:block">
+                <Button href={cta.href} size="sm">
+                  {cta.label}
+                </Button>
+              </div>
             )}
-            <div className="flex items-center gap-3">
-              {cta && (
-                <div className="hidden lg:block">
-                  <Button href={cta.href} size="sm">
-                    {cta.label}
-                  </Button>
-                </div>
-              )}
-              <MobileMenu links={links} cta={cta} contact={contact} />
-            </div>
+            <MobileMenu links={links} cta={cta} contact={contact} />
           </div>
-        </Container>
-      </header>
-    </OnHome>
+        </div>
+      </Container>
+    </header>
   );
 }

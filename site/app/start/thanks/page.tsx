@@ -35,20 +35,20 @@ export default function ThanksPage() {
   return (
     <Container className="flex flex-col gap-section-sm py-section-sm lg:py-section">
       <CutFrame size="lg" fill="frost" innerClassName="flex flex-col gap-8 p-6 lg:p-12">
-        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-ink pb-5">
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-ink pb-5 room:border-line">
           <BoxedLabel tone="ink">Received</BoxedLabel>
           <SectionLabel>Start a project — done</SectionLabel>
         </div>
         <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:justify-between">
           <div className="flex max-w-[640px] flex-col gap-5">
-            <h1 className="font-display text-display-sm font-semibold uppercase">
+            <h1 className="font-display text-display-sm font-semibold uppercase room:max-w-[16ch] room:font-body room:text-room-title room:font-medium room:normal-case">
               Thanks. It&rsquo;s in.
             </h1>
-            <p className="text-body-lg text-steel-deep">
+            <p className="text-body-lg text-steel-deep room:text-room-lede room:text-muted">
               We&rsquo;ll reach out within {site.intake.responseTime}.
             </p>
             {flags.automations && (
-              <p className="text-body-lg text-ink">
+              <p className="text-body-lg text-ink room:text-room-lede room:text-text">
                 That text you just got? That&rsquo;s the same system we build for clients.
               </p>
             )}

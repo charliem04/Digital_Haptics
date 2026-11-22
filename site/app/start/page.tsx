@@ -48,13 +48,16 @@ export default function StartPage() {
       <Section spacing="tight" aria-labelledby="intake" className="pb-section-sm lg:pb-section">
         <div className="grid gap-12 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] lg:gap-16">
           <CutFrame size="lg" fill="frost" innerClassName="flex flex-col gap-8 p-5 sm:p-8 lg:p-12">
-            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-ink pb-5">
+            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-ink pb-5 room:border-line">
               <BoxedLabel tone="ink">Intake</BoxedLabel>
-              <span className="font-mono text-label uppercase tracking-label text-steel">
+              <span className="font-mono text-label uppercase tracking-label text-steel room:normal-case room:tracking-normal room:text-muted room:font-body room:text-room-small room:normal-case room:tracking-normal room:text-muted">
                 All fields required unless marked
               </span>
             </div>
-            <h2 id="intake" className="font-display text-heading font-semibold">
+            <h2
+              id="intake"
+              className="font-display text-heading font-semibold room:font-body room:text-room-form room:font-medium"
+            >
               Project details
             </h2>
             <IntakeForm
@@ -79,25 +82,27 @@ export default function StartPage() {
                   : "Same conversation, no form."
               }
             />
-            <ul className="flex flex-col border-t border-ink font-mono text-label uppercase tracking-label">
+            <ul className="flex flex-col border-t border-ink font-mono text-label uppercase tracking-label room:border-line room:font-body room:text-room-body room:normal-case room:tracking-normal">
               {contact.phone && (
-                <li className="border-b border-hairline">
+                <li className="border-b border-hairline room:border-line">
                   <a
                     href={contact.phone.href}
-                    className="flex min-h-[56px] items-center justify-between gap-4 text-ink no-underline hover:underline active:text-steel-deep"
+                    className="flex min-h-[56px] items-center justify-between gap-4 text-ink no-underline hover:underline active:text-steel-deep room:text-text room:active:text-muted"
                   >
-                    <span className="text-steel">Phone</span>
+                    <span className="text-steel room:text-muted">Phone</span>
                     {contact.phone.display}
                   </a>
                 </li>
               )}
               {contact.email && (
-                <li className="border-b border-hairline">
+                <li className="border-b border-hairline room:border-line">
                   <a
                     href={contact.email.href}
-                    className="flex min-h-[56px] items-center justify-between gap-4 normal-case tracking-normal text-ink no-underline hover:underline active:text-steel-deep"
+                    className="flex min-h-[56px] items-center justify-between gap-4 normal-case tracking-normal text-ink no-underline hover:underline active:text-steel-deep room:text-text room:active:text-muted"
                   >
-                    <span className="uppercase tracking-label text-steel">Email</span>
+                    <span className="uppercase tracking-label text-steel room:normal-case room:tracking-normal room:text-muted">
+                      Email
+                    </span>
                     <span className="break-all">{contact.email.display}</span>
                   </a>
                 </li>

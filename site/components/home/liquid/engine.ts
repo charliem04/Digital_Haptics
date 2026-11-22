@@ -172,6 +172,13 @@ export class LiquidEngine {
       powerPreference: "low-power",
     });
     if (!gl) throw new Error("WebGL2 is not available");
+    // Without a real GPU the browser draws this on the CPU, which would
+    // block the page. Those visitors keep the poster.
+    const debug = gl.getExtension("WEBGL_debug_renderer_info");
+    const renderer = debug ? String(gl.getParameter(debug.UNMASKED_RENDERER_WEBGL)) : "";
+    if (/swiftshader|llvmpipe|software|basic render/i.test(renderer)) {
+      throw new Error("No hardware GPU");
+    }
     const marchProgram = startProgram(gl, marchFrag);
     const presentProgram = startProgram(gl, presentFrag);
     await whenLinked(gl, [marchProgram, presentProgram]);

@@ -8,23 +8,43 @@ import type { ComponentProps } from "react";
  */
 const components = {
   h2: (p: ComponentProps<"h2">) => (
-    <h2 className="mt-12 font-display text-heading font-semibold first:mt-0" {...p} />
+    <h2
+      className="mt-12 font-display text-heading font-semibold first:mt-0 room:font-body room:text-room-section room:font-medium"
+      {...p}
+    />
   ),
   h3: (p: ComponentProps<"h3">) => (
-    <h3 className="mt-8 font-display text-subheading font-semibold" {...p} />
+    <h3
+      className="mt-8 font-display text-subheading font-semibold room:font-body room:text-room-card room:font-medium"
+      {...p}
+    />
   ),
-  p: (p: ComponentProps<"p">) => <p className="mt-4 text-body text-steel-deep" {...p} />,
+  p: (p: ComponentProps<"p">) => (
+    <p className="mt-4 text-body text-steel-deep room:text-room-body room:text-muted" {...p} />
+  ),
   ul: (p: ComponentProps<"ul">) => (
-    <ul className="mt-4 list-disc space-y-2 pl-5 text-body text-steel-deep" {...p} />
+    <ul
+      className="mt-4 list-disc space-y-2 pl-5 text-body text-steel-deep room:text-room-body room:text-muted"
+      {...p}
+    />
   ),
   ol: (p: ComponentProps<"ol">) => (
-    <ol className="mt-4 list-decimal space-y-2 pl-5 text-body text-steel-deep" {...p} />
+    <ol
+      className="mt-4 list-decimal space-y-2 pl-5 text-body text-steel-deep room:text-room-body room:text-muted"
+      {...p}
+    />
   ),
   a: (p: ComponentProps<"a">) => (
-    <a className="text-ink underline decoration-signal decoration-2 underline-offset-4" {...p} />
+    <a
+      className="text-ink underline decoration-signal decoration-2 underline-offset-4 room:text-text room:decoration-amber"
+      {...p}
+    />
   ),
   blockquote: (p: ComponentProps<"blockquote">) => (
-    <blockquote className="mt-6 border-l-4 border-ink pl-4 text-body-lg text-ink" {...p} />
+    <blockquote
+      className="mt-6 border-l-4 border-ink pl-4 text-body-lg text-ink room:border-amber room:text-room-lede room:text-text"
+      {...p}
+    />
   ),
 };
 

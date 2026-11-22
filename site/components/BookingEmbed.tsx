@@ -136,8 +136,11 @@ export function BookingEmbed() {
 
   if (!allowed) {
     return (
-      <div ref={boxRef} className="border border-dashed border-ink bg-frost p-8 text-center">
-        <p className="font-mono text-label uppercase tracking-label-lg text-steel">
+      <div
+        ref={boxRef}
+        className="border border-dashed border-ink bg-frost p-8 text-center room:rounded-panel room:border-line room:bg-raised"
+      >
+        <p className="font-mono text-label uppercase tracking-label-lg text-steel room:font-body room:text-room-small room:normal-case room:tracking-normal room:text-muted">
           Booking calendar
         </p>
         {/* Named, not "a scheduling service": agreeing to a third party
@@ -181,7 +184,7 @@ export function BookingEmbed() {
   return (
     <div
       ref={boxRef}
-      className="relative h-[760px] w-full overflow-hidden border border-ink bg-white md:h-[700px]"
+      className="relative h-[760px] w-full overflow-hidden border border-ink bg-white md:h-[700px] room:rounded-panel room:border-line room:bg-raised"
     >
       {/* ── The wait ────────────────────────────────────────────────
           The box is drawn at full size before anything arrives in it,
@@ -206,17 +209,17 @@ export function BookingEmbed() {
               in flight, and it stops when the calendar lands.
               deliberate-ignore decorative-motion */}
           <div className="animate-pulse" aria-hidden>
-            <div className="h-3 w-40 bg-hairline" />
+            <div className="h-3 w-40 bg-hairline room:bg-line" />
             <div className="mt-8 grid grid-cols-7 gap-2">
               {Array.from({ length: 7 }, (_, i) => (
-                <div key={`d${i}`} className="h-2 bg-hairline/60" />
+                <div key={`d${i}`} className="h-2 bg-hairline/60 room:bg-line/60" />
               ))}
               {Array.from({ length: 35 }, (_, i) => (
-                <div key={i} className="aspect-square bg-hairline/40" />
+                <div key={i} className="aspect-square bg-hairline/40 room:bg-line/40" />
               ))}
             </div>
           </div>
-          <p className="mt-8 text-center font-mono text-label-sm uppercase tracking-label text-steel">
+          <p className="mt-8 text-center font-mono text-label-sm uppercase tracking-label text-steel room:font-body room:text-room-small room:normal-case room:tracking-normal room:text-muted">
             Loading the booking calendar…
           </p>
         </div>

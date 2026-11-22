@@ -27,25 +27,25 @@ export function Breadcrumbs({ path, leafLabel }: { path: string; leafLabel?: str
     <>
       <nav aria-label="Breadcrumb">
         {/* -my-3 absorbs the 44px link height so the trail keeps its spacing. */}
-        <ol className="-my-3 flex flex-wrap items-center gap-x-2 p-0 font-mono text-label uppercase tracking-label text-steel">
+        <ol className="-my-3 flex flex-wrap items-center gap-x-2 p-0 font-mono text-label uppercase tracking-label text-steel room:font-body room:text-room-small room:normal-case room:tracking-normal room:text-muted">
           {trail.map((t, i) => {
             const last = i === trail.length - 1;
             return (
               <li key={t.href} className="flex items-center gap-2">
                 {last ? (
-                  <span aria-current="page" className="text-ink">
+                  <span aria-current="page" className="text-ink room:text-text">
                     {t.label}
                   </span>
                 ) : (
                   <Link
                     href={t.href}
-                    className="inline-flex min-h-touch min-w-[44px] items-center no-underline underline-offset-4 hover:text-ink hover:underline active:text-steel-deep"
+                    className="inline-flex min-h-touch min-w-[44px] items-center no-underline underline-offset-4 hover:text-ink hover:underline active:text-steel-deep room:hover:text-text room:active:text-text"
                   >
                     {t.label}
                   </Link>
                 )}
                 {!last && (
-                  <span aria-hidden className="text-steel">
+                  <span aria-hidden className="text-steel room:text-muted">
                     /
                   </span>
                 )}

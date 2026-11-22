@@ -8,6 +8,7 @@ import { SkipLink } from "@/components/layout/SkipLink";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { StickyCta } from "@/components/layout/StickyCta";
+import { RoomScope } from "@/components/layout/RoomScope";
 import { ctaLink } from "@/lib/nav";
 import { CTA_HREF } from "@/lib/routes";
 import { InteractionTracking } from "@/components/InteractionTracking";
@@ -100,15 +101,17 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             }}
           />
         </noscript>
-        <SkipLink />
-        <Header />
-        {/* tabIndex -1: the skip link's target must take focus. No ring: it's
+        <RoomScope>
+          <SkipLink />
+          <Header />
+          {/* tabIndex -1: the skip link's target must take focus. No ring: it's
             the whole page, focused only by the skip link. deliberate-ignore outline-none */}
-        <main id="main" tabIndex={-1} className="flex-1 focus:shadow-none focus:outline-none">
-          {children}
-        </main>
-        <Footer />
-        <StickyCta cta={ctaLink()} />
+          <main id="main" tabIndex={-1} className="flex-1 focus:shadow-none focus:outline-none">
+            {children}
+          </main>
+          <Footer />
+          <StickyCta cta={ctaLink()} />
+        </RoomScope>
         <InteractionTracking ctaHref={CTA_HREF} />
         <JsonLd />
       </body>

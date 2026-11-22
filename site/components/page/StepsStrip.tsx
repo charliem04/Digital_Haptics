@@ -18,13 +18,20 @@ export function StepsStrip({
   headingAs?: "h2" | "h3";
 }) {
   return (
-    <ol className="grid gap-8 border-t border-ink pt-8 md:grid-cols-2 lg:grid-flow-col lg:grid-cols-none lg:auto-cols-fr lg:gap-10">
+    <ol className="grid gap-8 border-t border-ink pt-8 md:grid-cols-2 lg:grid-flow-col lg:grid-cols-none lg:auto-cols-fr lg:gap-10 room:border-t-0 room:pt-0">
       {steps.map((s, i) => (
-        <li key={s.name} className="relative flex flex-col gap-3">
+        <li
+          key={s.name}
+          className="relative flex flex-col gap-3 room:gap-2 room:border-l-2 room:border-amber room:pl-5"
+        >
           <Marker className="absolute -top-[36px] left-0" />
           <BoxedLabel>Step.{pad2(i + 1)}</BoxedLabel>
-          <Heading className="font-display text-subheading font-semibold">{s.name}</Heading>
-          <p className="max-w-[40ch] text-body-sm text-steel-deep">{s.body}</p>
+          <Heading className="font-display text-subheading font-semibold room:font-body room:text-room-step room:font-medium">
+            {s.name}
+          </Heading>
+          <p className="max-w-[40ch] text-body-sm text-steel-deep room:text-room-small room:text-muted">
+            {s.body}
+          </p>
         </li>
       ))}
     </ol>

@@ -54,15 +54,19 @@ export default function ServicePage({ params }: { params: { slug: string } }) {
         lead={s.lead}
       />
 
-      <Section tone="frost" className="border-y border-ink" aria-labelledby="included">
+      <Section
+        tone="frost"
+        className="border-y border-ink room:border-line"
+        aria-labelledby="included"
+      >
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
           <div className="flex flex-col gap-6">
             <SectionHead id="included" label="Included" title="What you get" />
-            <ul className="flex flex-col border-t border-ink">
+            <ul className="flex flex-col border-t border-ink room:border-line">
               {s.included.map((item) => (
                 <li
                   key={item}
-                  className="flex items-start gap-3 border-b border-hairline py-3 text-body"
+                  className="flex items-start gap-3 border-b border-hairline py-3 text-body room:border-line"
                 >
                   <Marker size="dot" className="mt-2.5" />
                   {item}
@@ -72,11 +76,11 @@ export default function ServicePage({ params }: { params: { slug: string } }) {
           </div>
           <div className="flex flex-col gap-6">
             <SectionHead id="for-who" label="Who it's for" title="A good fit if" />
-            <ul className="flex flex-col border-t border-ink">
+            <ul className="flex flex-col border-t border-ink room:border-line">
               {s.forWho.map((item) => (
                 <li
                   key={item}
-                  className="flex items-start gap-3 border-b border-hairline py-3 text-body"
+                  className="flex items-start gap-3 border-b border-hairline py-3 text-body room:border-line"
                 >
                   <Marker size="dot" className="mt-2.5" />
                   {item}

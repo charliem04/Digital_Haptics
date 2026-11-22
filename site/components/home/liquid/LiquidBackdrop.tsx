@@ -50,7 +50,7 @@ function afterLoadAndIdle(run: () => void): () => void {
   };
 }
 
-export function LiquidBackdrop({ className }: { className?: string }) {
+export function LiquidBackdrop() {
   const rootRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [live, setLive] = useState(false);
@@ -66,7 +66,8 @@ export function LiquidBackdrop({ className }: { className?: string }) {
       try {
         const { runLiquid } = await import("./runLiquid");
         if (dead) return;
-        const dispose = await runLiquid(canvas, root, {
+        const openings = Array.from(document.querySelectorAll("[data-liquid-opening]"));
+        const dispose = await runLiquid(canvas, root, openings, {
           onReady: () => setLive(true),
           onLost: () => setLive(false),
         });
@@ -92,8 +93,8 @@ export function LiquidBackdrop({ className }: { className?: string }) {
       data-liquid={live ? "live" : "poster"}
       className={cn(
         // Where the poster's mass sits: matched to the canvas's opening frame.
-        "pointer-events-none absolute overflow-hidden [--lh:50%] [--lw:38%] [--lx:44%] [--ly:50%] lg:[--lh:40%] lg:[--lw:14%] lg:[--lx:81%] lg:[--ly:84%]",
-        className
+        // lvh, so a phone's collapsing address bar never resizes the canvas.
+        "pointer-events-none fixed inset-x-0 top-0 z-0 h-[100lvh] overflow-hidden [--lh:22%] [--lw:38%] [--lx:44%] [--ly:27%] lg:[--lh:36%] lg:[--lw:14%] lg:[--lx:81%] lg:[--ly:85%]"
       )}
       style={{
         backgroundColor: "#181c21",

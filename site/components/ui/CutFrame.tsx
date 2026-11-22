@@ -24,18 +24,16 @@ export type Corner = "tl" | "tr" | "br" | "bl";
 /** Top-left + bottom-right: the mockup's default pair. */
 export const DEFAULT_CORNERS: readonly Corner[] = ["tl", "br"];
 
-const GRAIN = "room:[background-image:var(--grain)]";
-
 /**
  * Inside `.room` a frame is a solid rounded panel: no cut, no ink border
  * (VISUAL_GUIDE §4). `field` is the input fill.
  */
 const FILLS = {
-  frost: `bg-frost room:bg-surface ${GRAIN}`,
-  white: `bg-white room:bg-raised ${GRAIN}`,
-  ice: `bg-ice room:bg-room ${GRAIN}`,
-  "steel-panel": `bg-steel-panel room:bg-raised ${GRAIN}`,
-  ink: `bg-ink room:bg-surface ${GRAIN}`,
+  frost: `bg-frost room:bg-surface`,
+  white: `bg-white room:bg-raised`,
+  ice: `bg-ice room:bg-room`,
+  "steel-panel": `bg-steel-panel room:bg-raised`,
+  ink: `bg-ink room:bg-surface`,
   signal: "bg-signal room:bg-amber",
   field: "bg-white room:bg-room",
 } as const;

@@ -98,8 +98,10 @@ export function MobileMenu({
         id={id}
         aria-label="Menu"
         onClose={() => setOpen(false)}
-        className="fixed inset-0 m-0 h-dvh max-h-none w-screen max-w-none overflow-y-auto bg-ice bg-dots bg-dot-pitch p-0 text-ink backdrop:bg-ink/40 open:flex open:flex-col motion-safe:open:animate-menu-in room:bg-surface room:bg-auto room:text-text room:[background-image:var(--grain)]"
+        className="fixed inset-0 m-0 h-dvh max-h-none w-screen max-w-none overflow-y-auto bg-ice bg-dots bg-dot-pitch p-0 text-ink backdrop:bg-ink/40 open:flex open:flex-col motion-safe:open:animate-menu-in room:bg-surface room:bg-auto room:text-text room:bg-none"
       >
+        {/* The dialog is in the top layer, above the page's grain. */}
+        <div aria-hidden className="room-grain hidden room:block" />
         {/* Same row geometry as the header, so the close button lands
             exactly where the menu button was. */}
         <div className="page-x flex min-h-[88px] items-center justify-between gap-6 py-5 room:min-h-20 room:py-4">

@@ -56,7 +56,7 @@ export function FooterView({
   const { contact } = data;
 
   return (
-    <footer className="bg-ink text-ice room:bg-surface room:text-text room:[background-image:var(--grain)]">
+    <footer className="bg-ink text-ice room:relative room:z-10 room:border-t room:border-line room:bg-surface room:text-text">
       <Container className="flex flex-col gap-12 py-section-sm lg:py-section room:py-room-section-sm room:lg:py-room-section">
         <div className="flex flex-col justify-between gap-8 border-b border-ice/20 pb-10 lg:flex-row lg:items-end room:border-line">
           <div className="flex max-w-[560px] flex-col gap-4">

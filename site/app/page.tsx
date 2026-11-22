@@ -43,102 +43,110 @@ export default function Home() {
     <>
       <Hero />
 
-      {featured.length > 0 && (
-        <Section aria-labelledby="proof">
-          <div className="flex flex-col gap-10">
-            <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
-              <SectionHead id="proof" index={next()} label="Work" title="Recent work" />
-              <MoreLink href="/work/">All case studies</MoreLink>
+      {/* Solid, in front of the fixed liquid layer. */}
+      <div className="relative z-10 bg-room">
+        {featured.length > 0 && (
+          <Section aria-labelledby="proof">
+            <div className="flex flex-col gap-10">
+              <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
+                <SectionHead id="proof" index={next()} label="Work" title="Recent work" />
+                <MoreLink href="/work/">All case studies</MoreLink>
+              </div>
+              <CaseGrid cases={featured} />
             </div>
-            <CaseGrid cases={featured} />
-          </div>
-        </Section>
-      )}
+          </Section>
+        )}
 
-      <Section aria-labelledby="services">
-        <div className="flex flex-col gap-10">
-          <SectionHead
-            id="services"
-            index={next()}
-            label="Services"
-            title="What we do"
-            lede={getCombineNote()}
-          />
-          <ul
-            className={
-              services.length > 2 ? "grid gap-6 md:grid-cols-3" : "grid gap-6 md:grid-cols-2"
-            }
-          >
-            {services.map((s) => (
-              <li key={s.slug}>
-                <ServiceCard service={s} highlight={s.slug === "automations"} />
-              </li>
-            ))}
-          </ul>
-        </div>
-      </Section>
-
-      {/* 🚩 Live systems teaser (PLAN §5 Home 4). Flag off: not rendered. */}
-      {flags.automations && automations && (
-        <Section aria-labelledby="live-systems" tone="frost" className="border-y border-ink">
-          <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+        <Section aria-labelledby="services">
+          <div className="flex flex-col gap-10">
             <SectionHead
-              id="live-systems"
+              id="services"
               index={next()}
-              label="Live systems"
-              title="This site runs the same lead system you'd get"
-              lede="Send the form on this site and you'll see it work: the instant reply, the owner alert, the follow-up. It's the system we build for clients."
+              label="Services"
+              title="What we do"
+              lede={getCombineNote()}
             />
-            <MoreLink href="/services/automations/">How automations work</MoreLink>
+            <ul
+              className={
+                services.length > 2 ? "grid gap-6 md:grid-cols-3" : "grid gap-6 md:grid-cols-2"
+              }
+            >
+              {services.map((s) => (
+                <li key={s.slug}>
+                  <ServiceCard service={s} highlight={s.slug === "automations"} />
+                </li>
+              ))}
+            </ul>
           </div>
         </Section>
-      )}
 
-      <Section aria-labelledby="process">
-        <div className="flex flex-col gap-12">
-          <SectionHead id="process" index={next()} label="Process" title="How a project runs" />
-          <StepsStrip steps={getProcessSteps()} />
-        </div>
-      </Section>
+        {/* 🚩 Live systems teaser (PLAN §5 Home 4). Flag off: not rendered. */}
+        {flags.automations && automations && (
+          <Section
+            aria-labelledby="live-systems"
+            tone="frost"
+            className="border-y border-ink room:border-line"
+          >
+            <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+              <SectionHead
+                id="live-systems"
+                index={next()}
+                label="Live systems"
+                title="This site runs the same lead system you'd get"
+                lede="Send the form on this site and you'll see it work: the instant reply, the owner alert, the follow-up. It's the system we build for clients."
+              />
+              <MoreLink href="/services/automations/">How automations work</MoreLink>
+            </div>
+          </Section>
+        )}
 
-      <Section aria-labelledby="area">
-        <CutFrame size="lg" fill="frost" innerClassName="flex flex-col gap-8 p-6 lg:p-12">
-          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-ink pb-5">
-            <BoxedLabel tone="ink">Service area</BoxedLabel>
-            <span className="font-mono text-label uppercase tracking-label text-steel">
-              {site.serviceArea.label}
-            </span>
+        <Section aria-labelledby="process">
+          <div className="flex flex-col gap-12">
+            <SectionHead id="process" index={next()} label="Process" title="How a project runs" />
+            <StepsStrip steps={getProcessSteps()} />
           </div>
-          <SectionHead
-            id="area"
-            index={next()}
-            label="Local"
-            title="Based in Acadiana, working statewide"
-            lede="Digital Haptics is based in Lafayette and grew up in Acadiana. The work is remote, so we take on projects across Louisiana and beyond, and meet in person anywhere around here."
-          />
-          <ul className="flex flex-wrap gap-2">
-            {site.serviceArea.cities.map((city) => {
-              const href = `/areas/${citySlug(city)}/`;
-              return (
-                <li key={city}>
-                  {isLive(href) ? (
-                    <Link
-                      href={href}
-                      className="inline-flex min-h-touch items-center border border-ink px-3 font-mono text-label-sm uppercase tracking-label text-ink no-underline hover:bg-ink hover:text-ice active:translate-y-px"
-                    >
-                      {city}
-                    </Link>
-                  ) : (
-                    <Chip>{city}</Chip>
-                  )}
-                </li>
-              );
-            })}
-          </ul>
-        </CutFrame>
-      </Section>
+        </Section>
+
+        <Section aria-labelledby="area">
+          <CutFrame size="lg" fill="frost" innerClassName="flex flex-col gap-8 p-6 lg:p-12">
+            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-ink pb-5 room:border-line">
+              <BoxedLabel tone="ink">Service area</BoxedLabel>
+              <span className="font-mono text-label uppercase tracking-label text-steel room:font-body room:text-room-small room:normal-case room:tracking-normal room:text-muted">
+                {site.serviceArea.label}
+              </span>
+            </div>
+            <SectionHead
+              id="area"
+              index={next()}
+              label="Local"
+              title="Based in Acadiana, working statewide"
+              lede="Digital Haptics is based in Lafayette and grew up in Acadiana. The work is remote, so we take on projects across Louisiana and beyond, and meet in person anywhere around here."
+            />
+            <ul className="flex flex-wrap gap-2">
+              {site.serviceArea.cities.map((city) => {
+                const href = `/areas/${citySlug(city)}/`;
+                return (
+                  <li key={city}>
+                    {isLive(href) ? (
+                      <Link
+                        href={href}
+                        className="inline-flex min-h-touch items-center border border-ink px-3 font-mono text-label-sm uppercase tracking-label text-ink no-underline hover:bg-ink hover:text-ice active:translate-y-px room:rounded-control room:border-line room:px-4 room:font-body room:text-room-small room:normal-case room:tracking-normal room:text-text room:hover:bg-raised room:hover:text-text"
+                      >
+                        {city}
+                      </Link>
+                    ) : (
+                      <Chip>{city}</Chip>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          </CutFrame>
+        </Section>
+      </div>
 
       <CtaBand
+        opening
         copy={{
           heading: "Tell us about the job.",
           body: `One short form. We'll reach out within ${site.intake.responseTime}.`,
