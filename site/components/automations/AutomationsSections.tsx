@@ -33,7 +33,11 @@ export function AutomationsSections() {
         </div>
       </Section>
 
-      <Section tone="frost" className="border-y border-ink" aria-labelledby="auto-modules">
+      <Section
+        tone="frost"
+        className="border-y border-ink room:border-line"
+        aria-labelledby="auto-modules"
+      >
         <div className="flex flex-col gap-10">
           <SectionHead id="auto-modules" label="Modules" title="What it can run" />
           <ul className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -46,10 +50,14 @@ export function AutomationsSections() {
                   innerClassName="flex h-full flex-col gap-3 p-6"
                 >
                   <div className="flex flex-wrap items-center gap-3">
-                    <h3 className="font-display text-subheading font-semibold">{m.name}</h3>
+                    <h3 className="font-display text-subheading font-semibold room:font-body room:text-room-card room:font-medium">
+                      {m.name}
+                    </h3>
                     {m.soon && <BoxedLabel>Coming soon</BoxedLabel>}
                   </div>
-                  <p className="text-body-sm text-steel-deep">{m.body}</p>
+                  <p className="text-body-sm text-steel-deep room:text-room-small room:text-muted">
+                    {m.body}
+                  </p>
                 </CutFrame>
               </li>
             ))}
@@ -81,7 +89,9 @@ export function AutomationsSections() {
               title={voiceCopy.title}
               lede={voiceCopy.body}
             />
-            <p className="font-display text-display-sm font-semibold">{voiceCopy.number}</p>
+            <p className="font-display text-display-sm font-semibold room:font-body room:text-room-cta room:font-medium">
+              {voiceCopy.number}
+            </p>
           </div>
         </Section>
       )}

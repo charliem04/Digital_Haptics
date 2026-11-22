@@ -208,7 +208,7 @@ export default function StyleguidePage() {
   const flagState = flags.automations ? "on" : "off";
 
   return (
-    <div className="room">
+    <div>
       <div className="page-x flex flex-col gap-room-section-sm py-room-section-sm lg:gap-room-section lg:py-room-section">
         <header className="flex flex-col gap-5">
           <p className="text-room-small text-muted">Flags {flagState}</p>

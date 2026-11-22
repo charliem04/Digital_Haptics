@@ -69,15 +69,15 @@ export default function PostPage({ params }: { params: { slug: string } }) {
         title={meta.title}
         lead={meta.description}
       >
-        <p className="flex flex-wrap gap-x-3 font-mono text-label uppercase tracking-label text-steel">
-          <span className="text-ink">{meta.author}</span>
+        <p className="flex flex-wrap gap-x-3 font-mono text-label uppercase tracking-label text-steel room:font-body room:text-room-small room:normal-case room:tracking-normal room:text-muted">
+          <span className="text-ink room:text-text">{meta.author}</span>
           <span aria-hidden>·</span>
           <time dateTime={meta.date}>{formatDate(meta.date)}</time>
           <span aria-hidden>·</span>
           <span>{meta.readingMinutes} min read</span>
         </p>
         {meta.draft && (
-          <p className="self-start border border-ink bg-frost px-3 py-2 font-mono text-label uppercase tracking-label">
+          <p className="self-start border border-ink bg-frost px-3 py-2 font-mono text-label uppercase tracking-label room:rounded-notice room:border-line room:bg-surface room:font-body room:text-room-small room:normal-case room:tracking-normal">
             Draft: not published. Shown on preview builds only.
           </p>
         )}
@@ -90,7 +90,11 @@ export default function PostPage({ params }: { params: { slug: string } }) {
       </Section>
 
       {related.length > 0 && (
-        <Section tone="frost" className="border-y border-ink" aria-labelledby="related">
+        <Section
+          tone="frost"
+          className="border-y border-ink room:border-line"
+          aria-labelledby="related"
+        >
           <div className="flex flex-col gap-10">
             <SectionHead id="related" label="Keep reading" title="Related posts" />
             <ul className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">

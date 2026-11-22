@@ -8,7 +8,6 @@ import { SkipLink } from "@/components/layout/SkipLink";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { StickyCta } from "@/components/layout/StickyCta";
-import { RoomScope } from "@/components/layout/RoomScope";
 import { ctaLink } from "@/lib/nav";
 import { CTA_HREF } from "@/lib/routes";
 import { InteractionTracking } from "@/components/InteractionTracking";
@@ -85,7 +84,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${display.variable} ${body.variable} ${mono.variable}`}>
-      <body className="flex min-h-dvh flex-col">
+      <body className="room flex min-h-dvh flex-col">
         {/*
           Framer serialises each entrance's starting state into the HTML
           as style="opacity:0". With JavaScript off or failed, that would
@@ -101,17 +100,16 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             }}
           />
         </noscript>
-        <RoomScope>
-          <SkipLink />
-          <Header />
-          {/* tabIndex -1: the skip link's target must take focus. No ring: it's
+        <SkipLink />
+        <Header />
+        {/* tabIndex -1: the skip link's target must take focus. No ring: it's
             the whole page, focused only by the skip link. deliberate-ignore outline-none */}
-          <main id="main" tabIndex={-1} className="flex-1 focus:shadow-none focus:outline-none">
-            {children}
-          </main>
-          <Footer />
-          <StickyCta cta={ctaLink()} />
-        </RoomScope>
+        <main id="main" tabIndex={-1} className="flex-1 focus:shadow-none focus:outline-none">
+          {children}
+        </main>
+        <Footer />
+        <StickyCta cta={ctaLink()} />
+        <div aria-hidden className="room-grain" />
         <InteractionTracking ctaHref={CTA_HREF} />
         <JsonLd />
       </body>

@@ -131,7 +131,9 @@ export function LiveDemo({
     <div className="grid gap-10 lg:grid-cols-2 lg:gap-16">
       <form onSubmit={onSubmit} noValidate className="flex flex-col gap-6">
         <BoxedLabel active>{copy.label}</BoxedLabel>
-        <p className="border-l-4 border-ink bg-white p-4 text-body-sm">{copy.notice}</p>
+        <p className="border-l-4 border-ink bg-white p-4 text-body-sm room:rounded-field room:border-amber room:bg-raised room:text-room-small room:text-text">
+          {copy.notice}
+        </p>
         <TextField
           id="demo-phone"
           name="phone"
@@ -146,7 +148,10 @@ export function LiveDemo({
         </CheckboxGroup>
         <Turnstile action="demo" />
         {status === "failed" && (
-          <p role="alert" className="font-mono text-label uppercase tracking-label">
+          <p
+            role="alert"
+            className="font-mono text-label uppercase tracking-label room:font-body room:text-room-small room:normal-case room:tracking-normal room:font-medium room:text-error"
+          >
             {copy.failed}
           </p>
         )}
@@ -158,21 +163,24 @@ export function LiveDemo({
       </form>
 
       {/* The timeline: announced politely as each message arrives. */}
-      <ol aria-live="polite" className="flex flex-col gap-4 border-t border-ink pt-6">
+      <ol
+        aria-live="polite"
+        className="flex flex-col gap-4 border-t border-ink pt-6 room:border-line"
+      >
         {shown.map((m, i) => (
           <li
             key={i}
             className={
               m.to === "owner"
-                ? "ml-8 flex flex-col gap-2 bg-ink p-4 text-ice"
-                : "mr-8 flex flex-col gap-2 border border-ink bg-white p-4"
+                ? "ml-8 flex flex-col gap-2 bg-ink p-4 text-ice room:rounded-field room:bg-raised room:text-text"
+                : "mr-8 flex flex-col gap-2 border border-ink bg-white p-4 room:rounded-field room:border-line room:bg-surface room:text-text"
             }
           >
             <span
               className={
                 m.to === "owner"
-                  ? "flex items-center gap-2 font-mono text-label-sm uppercase tracking-label text-ice/70"
-                  : "flex items-center gap-2 font-mono text-label-sm uppercase tracking-label text-steel"
+                  ? "flex items-center gap-2 font-mono text-label-sm uppercase tracking-label text-ice/70 room:font-body room:text-room-small room:normal-case room:tracking-normal room:text-muted"
+                  : "flex items-center gap-2 font-mono text-label-sm uppercase tracking-label text-steel room:font-body room:text-room-small room:normal-case room:tracking-normal room:text-muted"
               }
             >
               <Marker size="dot" />
@@ -181,7 +189,11 @@ export function LiveDemo({
             <span className="text-body-sm">{m.body}</span>
           </li>
         ))}
-        {status === "done" && <li className="text-body-sm text-steel-deep">{copy.done}</li>}
+        {status === "done" && (
+          <li className="text-body-sm text-steel-deep room:text-room-small room:text-muted">
+            {copy.done}
+          </li>
+        )}
       </ol>
     </div>
   );

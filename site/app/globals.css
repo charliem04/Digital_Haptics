@@ -117,6 +117,7 @@ a {
    a utility such as `text-amber` on a link still wins. */
 .room {
   background-color: rgb(var(--room));
+  background-image: none;
   color: rgb(var(--text));
   font-family: var(--font-body), system-ui, sans-serif;
   font-size: 1.0625rem;
@@ -127,11 +128,6 @@ a {
 /* While any page is in the room, so are the scrollbar and overscroll. */
 html:has(.room) {
   scrollbar-color: rgb(var(--muted)) rgb(var(--surface));
-}
-
-body:has(.room) {
-  background-color: rgb(var(--room));
-  background-image: none;
 }
 
 /* One decorative layer over the page. A mask on a solid fill, not a

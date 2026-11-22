@@ -12,18 +12,22 @@ export function PostCard({ post }: { post: Post }) {
       size="md"
       fill="white"
       ring
-      className="block h-full text-ink no-underline"
+      className="block h-full text-ink no-underline room:text-text"
       innerClassName="flex h-full flex-col gap-4 p-6"
     >
-      <p className="flex flex-wrap gap-x-3 font-mono text-label-sm uppercase tracking-label text-steel">
+      <p className="flex flex-wrap gap-x-3 font-mono text-label-sm uppercase tracking-label text-steel room:font-body room:text-room-small room:normal-case room:tracking-normal room:text-muted">
         <time dateTime={post.date}>{formatDate(post.date)}</time>
         <span aria-hidden>·</span>
         <span>{post.readingMinutes} min read</span>
-        {post.draft && <span className="text-ink">· Draft</span>}
+        {post.draft && <span className="text-ink room:text-text">· Draft</span>}
       </p>
-      <h3 className="font-display text-subheading font-semibold">{post.title}</h3>
-      <p className="text-body-sm text-steel-deep">{post.description}</p>
-      <span className="mt-auto inline-flex items-center gap-2 pt-2 font-mono text-label uppercase tracking-label">
+      <h3 className="font-display text-subheading font-semibold room:font-body room:text-room-card room:font-medium">
+        {post.title}
+      </h3>
+      <p className="text-body-sm text-steel-deep room:text-room-small room:text-muted">
+        {post.description}
+      </p>
+      <span className="mt-auto inline-flex items-center gap-2 pt-2 font-mono text-label uppercase tracking-label room:font-body room:text-room-small room:normal-case room:tracking-normal room:font-medium room:text-text room:underline room:underline-offset-[5px] room:group-hover/cut:decoration-2">
         Read
         <Arrow className="size-3.5 transition-transform duration-[250ms] ease-brand group-hover/cut:translate-x-0.5 group-hover/cut:translate-y-0.5" />
       </span>
