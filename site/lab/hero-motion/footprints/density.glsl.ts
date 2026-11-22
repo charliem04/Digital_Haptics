@@ -21,7 +21,7 @@
 export const densityVert = /* glsl */ `
 attribute vec4 aA; // capsule: a.xy, b.xy          print: centre.xy, toe direction
 attribute vec4 aR; // capsule: ra, rb, blur a, b   print: length, width, seed, bleed
-attribute vec4 aO; // capsule: opacity a, b, -, -  print: lo, hi, pressed, residue
+attribute vec4 aO; // capsule: opacity a, b, hem, folds  print: lo, hi, pressed, residue
 attribute vec4 aM; // rgb: channel mask            a: 0 capsule, 1 print
 attribute vec2 aS; // print: style index, side (+1 right, -1 left)
 
@@ -99,18 +99,33 @@ void main() {
   if (vM.a < 0.5) {
     // ── capsule ────────────────────────────────────────────────────
     vec2 ab = vA.zw - vA.xy;
-    float t = clamp(dot(vP - vA.xy, ab) / max(dot(ab, ab), 1e-4), 0.0, 1.0);
+    float span = max(length(ab), 1e-2);
+    float raw = dot(vP - vA.xy, ab) / (span * span);
+    float t = clamp(raw, 0.0, 1.0);
     float d = length(vP - (vA.xy + ab * t));
     float r = mix(vR.x, vR.y, t);
     float blur = mix(vR.z, vR.w, t);
     float opacity = mix(vO.x, vO.y, t);
+
+    // A trouser leg ends in a straight hem instead of a round cap.
+    float cut = 1.0;
+    if (vO.z > 0.0) cut = 1.0 - smoothstep(-vO.z, vO.z, (raw - 1.0) * span);
+
+    // Slanted folds where the cloth gathers above the hem.
+    float folds = 1.0;
+    if (vO.w > 0.0) {
+      vec2 axis = ab / span;
+      float across = dot(vP - vA.xy, vec2(-axis.y, axis.x));
+      float wave = sin((raw * span + across * 0.55) * 6.6 / max(r, 1.0));
+      folds = 1.0 - vO.w * smoothstep(0.4, 0.95, t) * (0.5 + 0.5 * wave);
+    }
     // When the blur is wider than the limb, the smoothstep never reaches
     // 1 at the centre: a far-off limb casts a paler shadow, not just a
     // softer one, with no extra term.
     float shadow = 1.0 - smoothstep(r - blur, r + blur, d);
     float wide = blur * uHaze + 3.0;
     float haze = 1.0 - smoothstep(r - wide, r + wide, d);
-    o = vec3(0.0, opacity * shadow, sqrt(opacity) * haze);
+    o = vec3(0.0, opacity * shadow * cut * folds, sqrt(opacity) * haze * mix(1.0, cut, 0.7));
   } else {
     // ── print ──────────────────────────────────────────────────────
     vec2 cell = clamp(vUv, 0.012, 0.988);

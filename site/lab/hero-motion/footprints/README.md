@@ -88,6 +88,9 @@ HTML, positioned over the canvas, driven by the `labels` prop: two year fragment
 | `shadowLength`   | `1.6`     | cap on `k`                                      |
 | `penumbra`       | `0.13`    | blur per px of height                           |
 | `shadowOpacity`  | `0.85`    |                                                 |
+| `pantsWidth`     | `1`       | 1 is a relaxed straight leg                     |
+| `pantsHem`       | `1.05`    | hem against knee; below 1 tapers, above flares  |
+| `pantsDrape`     | `1`       | how far the hem trails, and the folds above it  |
 | `flareIntensity` | `1`       |                                                 |
 | `flareFollowLag` | `250`     | ms                                              |
 | `flareFadeIn`    | `600`     | ms                                              |

@@ -52,6 +52,10 @@ export function FeetDemo({ bench = false, still = false }: { bench?: boolean; st
     body.addBinding(s, "shadowLength", { min: 0, max: 4, step: 0.05 });
     body.addBinding(s, "penumbra", { min: 0, max: 0.4, step: 0.005 });
     body.addBinding(s, "shadowOpacity", { min: 0, max: 1, step: 0.01 });
+    const pants = pane.addFolder({ title: "Pants" });
+    pants.addBinding(s, "pantsWidth", { min: 0.5, max: 1.8, step: 0.01 });
+    pants.addBinding(s, "pantsHem", { min: 0.6, max: 1.6, step: 0.01 });
+    pants.addBinding(s, "pantsDrape", { min: 0, max: 2, step: 0.01 });
     walk.addBinding(s, "paused");
 
     const flare = pane.addFolder({ title: "Flare" });

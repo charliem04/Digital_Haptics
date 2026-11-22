@@ -45,6 +45,9 @@ const CAPACITY = 640;
 const SUPERSAMPLE = 2;
 /** How much wider the paper haze is than the dot shadow. */
 const HAZE = 2.6;
+/** The trouser hem's spring: a slight, quickly settling overshoot. */
+const CLOTH_K = 680;
+const CLOTH_C = 24;
 
 export class FeetEngine implements ParamEngine<FeetParams> {
   readonly renderer: THREE.WebGLRenderer;
@@ -86,6 +89,9 @@ export class FeetEngine implements ParamEngine<FeetParams> {
   private readonly pixel = new Uint8Array(4);
   /** Joints of the walker being drawn, cast onto the glass: x, y, spread. */
   private readonly cast = new Float32Array(J.count * 3);
+  /** Each trouser hem: x, y, vx, vy, per walker and side. */
+  private readonly cloth = new Float32Array(MAX_WALKERS * 2 * 4);
+  private frameDt = 0;
 
   private p: FeetParams = { ...FEET_DEFAULTS };
   private width = 0;
@@ -249,6 +255,7 @@ export class FeetEngine implements ParamEngine<FeetParams> {
     const p = this.p;
     const w = this.width;
     const h = this.height;
+    this.frameDt = Math.min(dt, 1 / 20);
 
     if (dt > 0) {
       this.sim.update(dt, w, h, this.cfg);
@@ -491,7 +498,7 @@ export class FeetEngine implements ParamEngine<FeetParams> {
           if (p.haloBlur > 0.01) this.halo(f.x, f.y, f.yaw, F, haloR, haloBlur, 0.75 * press);
         }
       }
-      if (w.presence > 0) this.body(w, w.presence);
+      if (w.presence > 0) this.body(w, i, w.presence);
     }
 
     this.instances.instanceCount = this.count;
@@ -509,7 +516,7 @@ export class FeetEngine implements ParamEngine<FeetParams> {
    * (× 1 + k), the higher it is. Blur grows with height too. Opacity
    * falls with height and is exactly zero at mid-waist.
    */
-  private body(w: Walker, presence: number): void {
+  private body(w: Walker, index: number, presence: number): void {
     const p = this.p;
     const j = w.joints;
     const cast = this.cast;
@@ -530,10 +537,18 @@ export class FeetEngine implements ParamEngine<FeetParams> {
       cast[s * 3 + 2] = k;
     }
 
-    // Legs: the ankle is nearly on the glass (sharp, dense), the hip far.
+    // Trousers: full through the seat and thigh, easing to the knee, then
+    // falling straight to a flat hem that trails the ankle a little.
+    const cutWidth = clamp(p.pantsWidth, 0.3, 2.5);
+    const drape = clamp(p.pantsDrape, 0, 2);
+    const seat = F * 0.31 * cutWidth;
+    const thigh = F * 0.29 * cutWidth;
+    const knee = F * 0.235 * cutWidth;
+    const hem = knee * clamp(p.pantsHem, 0.4, 2);
+
     for (let side = 0; side < 2; side++) {
-      this.limb(j, J.hipL + side, J.kneeL + side, F * 0.19, F * 0.15, waistZ, strength);
-      this.limb(j, J.kneeL + side, J.ankleL + side, F * 0.145, F * 0.1, waistZ, strength);
+      this.limb(j, J.hipL + side, J.kneeL + side, thigh, knee, waistZ, strength);
+      this.trouserLeg(j, index, side, knee, hem, drape, F, lightZ, maxK, waistZ, strength);
       // A foot only casts a shadow once it has left the glass; until
       // then it is a print.
       const heelZ = j[(J.heelL + side) * 3 + 2];
@@ -543,9 +558,88 @@ export class FeetEngine implements ParamEngine<FeetParams> {
         this.limb(j, J.heelL + side, J.toeL + side, F * 0.15, F * 0.17, waistZ, strength * lifted);
       }
       // Hip up to the waist: fades to nothing by construction.
-      this.limb(j, J.hipL + side, J.waistL + side, F * 0.2, F * 0.18, waistZ, strength);
+      this.limb(j, J.hipL + side, J.waistL + side, seat, seat * 0.92, waistZ, strength);
     }
-    this.limb(j, J.hipL, J.hipR, F * 0.2, F * 0.2, waistZ, strength);
+    this.limb(j, J.hipL, J.hipR, seat, seat, waistZ, strength);
+  }
+
+  /**
+   * Knee to hem. The hem is a light spring chasing the ankle, so the cloth
+   * swings a moment behind the leg and settles once the foot is down.
+   */
+  private trouserLeg(
+    j: Float32Array,
+    walker: number,
+    side: number,
+    kneeR: number,
+    hemR: number,
+    drape: number,
+    F: number,
+    lightZ: number,
+    maxK: number,
+    waistZ: number,
+    strength: number
+  ): void {
+    const ankle = J.ankleL + side;
+    const kn = J.kneeL + side;
+    const ax = j[ankle * 3];
+    const ay = j[ankle * 3 + 1];
+    const az = Math.max(0, j[ankle * 3 + 2]);
+    const c = this.cloth;
+    const o = (walker * 2 + side) * 4;
+
+    // A new or respawned walker: start the cloth at rest on the leg.
+    if (Math.hypot(c[o] - ax, c[o + 1] - ay) > F) {
+      c[o] = ax;
+      c[o + 1] = ay;
+      c[o + 2] = c[o + 3] = 0;
+    }
+    if (this.frameDt > 0) {
+      const steps = Math.min(4, Math.ceil(this.frameDt * 120));
+      const h = this.frameDt / steps;
+      for (let n = 0; n < steps; n++) {
+        c[o + 2] += (CLOTH_K * (ax - c[o]) - CLOTH_C * c[o + 2]) * h;
+        c[o + 3] += (CLOTH_K * (ay - c[o + 1]) - CLOTH_C * c[o + 3]) * h;
+        c[o] += c[o + 2] * h;
+        c[o + 1] += c[o + 3] * h;
+      }
+    }
+
+    let lagX = (c[o] - ax) * drape;
+    let lagY = (c[o + 1] - ay) * drape;
+    const lag = Math.hypot(lagX, lagY);
+    const most = F * 0.16;
+    if (lag > most) {
+      lagX *= most / lag;
+      lagY *= most / lag;
+    }
+
+    const x = ax + lagX;
+    const y = ay + lagY;
+    const k = Math.min(az / Math.max(lightZ - az, lightZ * 0.05), maxK);
+    const hx = x + (x - this.fx) * k;
+    const hy = y + (y - this.fy) * k;
+    const kz = Math.max(0, j[kn * 3 + 2]);
+    const kk = this.cast[kn * 3 + 2];
+    const blur = this.p.penumbra;
+    const blurHem = 1.4 + blur * az * (1 + 0.5 * k);
+    this.capsule(
+      this.cast[kn * 3],
+      this.cast[kn * 3 + 1],
+      hx,
+      hy,
+      kneeR * (1 + kk),
+      hemR * (1 + k),
+      1.4 + blur * kz * (1 + 0.5 * kk),
+      blurHem,
+      strength * fall(kz, waistZ),
+      strength * fall(az, waistZ),
+      0,
+      1,
+      1,
+      1.5 + blurHem * 0.5,
+      0.2 * Math.min(drape, 1.5)
+    );
   }
 
   private limb(
@@ -610,7 +704,9 @@ export class FeetEngine implements ParamEngine<FeetParams> {
     ob: number,
     mr: number,
     mg: number,
-    mb: number
+    mb: number,
+    hemEdge = 0,
+    folds = 0
   ): void {
     const n = this.count;
     if (n >= CAPACITY || (oa <= 0.002 && ob <= 0.002)) return;
@@ -625,8 +721,8 @@ export class FeetEngine implements ParamEngine<FeetParams> {
     this.aR[i + 3] = blurB;
     this.aO[i] = oa;
     this.aO[i + 1] = ob;
-    this.aO[i + 2] = 0;
-    this.aO[i + 3] = 0;
+    this.aO[i + 2] = hemEdge;
+    this.aO[i + 3] = folds;
     this.aM[i] = mr;
     this.aM[i + 1] = mg;
     this.aM[i + 2] = mb;

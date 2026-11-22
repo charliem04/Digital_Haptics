@@ -77,6 +77,12 @@ export type FeetParams = {
   swayAmount: number;
   /** How different the walkers are from one another, 0–2. */
   individuality: number;
+  /** How wide the trousers are cut. 1 is a relaxed straight leg. */
+  pantsWidth: number;
+  /** Hem width against the knee. Below 1 tapers, above 1 flares. */
+  pantsHem: number;
+  /** How much the cloth trails the leg and folds above the hem, 0–2. */
+  pantsDrape: number;
 };
 
 export const FEET_DEFAULTS: FeetParams = {
@@ -110,6 +116,9 @@ export const FEET_DEFAULTS: FeetParams = {
   gaitEnergy: 1,
   swayAmount: 1,
   individuality: 1,
+  pantsWidth: 1,
+  pantsHem: 1.05,
+  pantsDrape: 1,
 };
 
 /** Length of a print at footScale 1, CSS px. */
