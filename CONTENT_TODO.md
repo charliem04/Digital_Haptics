@@ -11,9 +11,9 @@ What each item needs, with examples: [docs/SETUP.md §2](docs/SETUP.md). **The q
 | Legal entity name | `site/site.config.ts` → `legalName` | You | Done 2026-11-03: `Charles Meyers` (sole proprietor). **Change to `Digital Haptics LLC` once the LLC is filed.** |
 | Agency phone | `site/site.config.ts` → `phone` | You | Done 2026-11-03: (337) 412-5714 |
 | Agency email | `site/site.config.ts` → `email` | You | Done 2026-11-03: `charles@digitalhaptics.dev`. **Before launch:** set up a mailbox or Cloudflare Email Routing for it, or mail to it bounces. |
-| Cal.com event URL (`booking.calUrl`, currently empty) | `site/site.config.ts` | You | Deferred: no Cal.com account yet. /start/ shows only the intake form until set. |
+| Cal.com event URL (`booking.calUrl`) | `site/site.config.ts` | You | Done 2026-11-22: `cal.com/charlie-meyers-xhr6cy/intro-call`, embedded on /start/. |
 | Response time | `site/site.config.ts` → `intake.responseTime` (thank-you page) | You | Done 2026-11-03: one business day |
-| Social URLs (all empty, so hidden) | `site/site.config.ts` → `socials` | You | Deferred: no accounts yet. Add each when created. |
+| Social URLs (empty ones stay hidden) | `site/site.config.ts` → `socials` | You | Google Business Profile done 2026-11-22. Facebook, Instagram and LinkedIn open: add each when created. |
 | Service-area city list | `site/site.config.ts` → `serviceArea` | You | Done 2026-11-03: all seven confirmed, plus remote work nationwide (structured data only). |
 | Privacy policy: drafted (Phase 5); `[PLACEHOLDER: retention period]` | `site/app/privacy/page.tsx` | You (QUESTIONS §7), then attorney review (§20) | Done 2026-11-17: 12 months; attorney review skipped (Charles) |
 | Terms of service: drafted (Phase 5); `[PLACEHOLDER: parish]` | `site/app/terms/page.tsx` | You (QUESTIONS §8–9), then attorney review (§20) | Done 2026-11-17: Lafayette Parish |

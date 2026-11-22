@@ -87,9 +87,8 @@ export const site = {
     /**
      * Public Cal.com booking page URL (https://cal.com/<user>/<event>).
      * Embedded on /start/ only. Empty hides the embed.
-     * Not set up yet; deferred (CONTENT_TODO.md).
      */
-    calUrl: "",
+    calUrl: "https://cal.com/charlie-meyers-xhr6cy/intro-call",
   },
 
   // ── Intake form ───────────────────────────────────────────────────
@@ -103,9 +102,9 @@ export const site = {
   },
 
   // ── Socials (empty string hides the link) ─────────────────────────
-  // None yet; add each URL here when the account exists.
+  // Add each remaining URL here when the account exists.
   socials: {
-    googleBusiness: "",
+    googleBusiness: "https://share.google/aXNQILMwa9oqYbJYt",
     facebook: "",
     instagram: "",
     linkedin: "",

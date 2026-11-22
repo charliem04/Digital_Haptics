@@ -27,11 +27,11 @@ Until then they show on preview links only. The Work page, the home proof strip 
 
 > **Answer:**
 
-**C. 🟡 Cal.com.** Your account exists. Follow the walkthrough (in chat, and in `docs/SETUP.md` once done), then send me the event link.
+**C. 🟡 Cal.com test booking.** The calendar is live on `/start/`. Make one test booking on a preview link so the "booking complete" tracking can be confirmed, then cancel it. Also check the event description: it currently talks about "demo sites" for "potential clients", which reads as written for a different audience than a trades owner booking a call.
 
 > **Answer:**
 
-**D. 🟡 Google Business Profile, then social profiles.** None exist yet. Start with the Google Business Profile: it matters most for local search (walkthrough in chat). Send me each profile link as it goes up.
+**D. 🟡 Social profiles.** Google Business Profile is linked. Send me Facebook, Instagram and LinkedIn links as each one goes up.
 
 > **Answer:**
 
@@ -70,3 +70,5 @@ Until then they show on preview links only. The Work page, the home proof strip 
 | 14 | Their towns | CTL: Broussard/Lafayette · Coastal: New Iberia · DA Plumbing: Scott (rest is open item A) |
 | 15 | Draft copy | Approved for now; updated as new info comes in |
 | 20 | Attorney review | Skipped, by your call. The "pending review" notice is removed from the legal pages. |
+| C | Cal.com event link | `cal.com/charlie-meyers-xhr6cy/intro-call`, embedded on `/start/` (`site/site.config.ts`) |
+| D | Google Business Profile | `share.google/aXNQILMwa9oqYbJYt`, in the footer icons and structured data (`site/site.config.ts`) |

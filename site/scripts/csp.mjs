@@ -131,6 +131,7 @@ export const INTEGRATIONS = {
     "https://www.instagram.com",
     "https://www.linkedin.com",
     "https://g.page",
+    "https://share.google", // Google Business Profile share link
     // Framework strings baked into React/Next dev warnings.
     "https://nextjs.org",
     "https://react.dev",
