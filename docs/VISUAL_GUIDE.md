@@ -235,7 +235,7 @@ The canvas has fixed, reserved dimensions, so it cannot cause layout shift. The 
 | No WebGL2 or shader failure | Context or compile error | Poster stays, no error shown |
 | Data saver | `navigator.connection.saveData` or `prefers-reduced-data` | Poster, renderer not downloaded |
 | Low-power device | `deviceMemory` below 4 or `hardwareConcurrency` of 4 or fewer | Poster, renderer not downloaded |
-| Struggling at runtime | Rolling frame time over 24ms for 90 frames | Drop to scale 0.20, then freeze on a still |
+| Struggling at runtime | Average frame interval over 24ms across 90 frames | Drop to scale 0.20. Freeze on a still only if it then averages over 40ms, so a steady 30 fps low-power mode keeps moving |
 | Context lost | `webglcontextlost` | Fade back to poster, stop the loop |
 | Offscreen or hidden tab | IntersectionObserver, `visibilitychange` | Loop stops |
 
@@ -254,13 +254,29 @@ The laptop GPU cannot separate these settings, so they are chosen for fill-rate 
 
 ### 10.5 CSP
 
-**No CSP change is expected.** The renderer is same-origin JavaScript, uses no workers, `eval` or external assets, and the grain is a `data:` image already allowed by `img-src`. Confirm under `wrangler dev` in R4.
+**No CSP change was needed.** The renderer is same-origin JavaScript, uses no workers, `eval` or external assets, and the grain is a `data:` image already allowed by `img-src`. In R4 the production build ran live under its generated policy, served by a local test server, with no violations. It has not yet been run through `wrangler dev` or a hosted preview.
 
-### 10.6 Still to prove in R4
+### 10.6 R4 results
 
-- LCP, CLS and mobile Lighthouse against the baseline recorded before R1
-- Sustained frame rate in a normal browser and on real phones
-- That Pricing and `/start` load no WebGL code
+Measured on the production build, flags off, in headless Edge on the development machine.
+
+| Check | Result |
+|---|---|
+| WebGL code | One 21.9 KB chunk (8.6 KB gzip), referenced by no page's initial HTML |
+| Pages loading it | Home only. Pricing, `/start`, Services and About load none |
+| LCP element | The `h1` at 1440px and 390px |
+| CLS on Home | 0.0001 desktop, 0 phone |
+| Reduced motion, data saver, low memory, 4 cores | Poster stays, renderer not downloaded |
+| WebGL2 context unavailable | Poster stays, no error |
+| Context lost | Fades to poster, loop stops |
+| Offscreen or hidden tab | No draws |
+| Sticky CTA | Hidden while the hero button is visible, shown after |
+
+**Lighthouse on Home, seven runs:** performance was 100 in six and 96 in one. LCP was about 760 ms in six and 2,558 ms in one. With the WebGL chunk blocked, two of seven runs showed the same slow LCP, so the liquid is not its cause. The slow runs also appear on the pre-R1 baseline. Their cause is not yet known.
+
+**Still to prove:** sustained frame rate in a normal browser and on real phones, and the governor on a genuinely slow device.
+
+**Placement until R5:** the canvas is confined to the hero, because Home's lower sections are not solid yet. R5 makes them solid, then extends it to the fixed layer and the final CTA opening in §6.2. On phones the canvas covers only the band above the copy, which halves its pixels.
 
 ### 10.7 Performance baseline (before R1)
 

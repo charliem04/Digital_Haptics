@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/cn";
 import { Button } from "@/components/ui/Button";
@@ -16,6 +17,24 @@ import { Button } from "@/components/ui/Button";
  */
 export function StickyCta({ cta }: { cta: { href: string; label: string } | null }) {
   const pathname = usePathname() ?? "/";
+  // On Home the bar waits until the hero's own button has scrolled away,
+  // so a phone never shows the same button twice (VISUAL_GUIDE §8).
+  const [heroCtaVisible, setHeroCtaVisible] = useState(pathname === "/");
+
+  useEffect(() => {
+    const heroCta = document.querySelector("[data-hero-cta]");
+    if (!heroCta) {
+      setHeroCtaVisible(false);
+      return;
+    }
+    const observer = new IntersectionObserver(
+      ([entry]) => setHeroCtaVisible(entry.isIntersecting),
+      { rootMargin: "0px 0px -57px 0px" }
+    );
+    observer.observe(heroCta);
+    return () => observer.disconnect();
+  }, [pathname]);
+
   if (!cta || pathname.startsWith(cta.href.replace(/\/$/, ""))) return null;
 
   return (
@@ -24,7 +43,7 @@ export function StickyCta({ cta }: { cta: { href: string; label: string } | null
         aria-hidden
         className="h-[calc(57px+env(safe-area-inset-bottom))] bg-ink lg:hidden room:bg-surface"
       />
-      <StickyBar cta={cta} className="fixed inset-x-0 bottom-0 z-40" />
+      <StickyBar cta={cta} hidden={heroCtaVisible} className="fixed inset-x-0 bottom-0 z-40" />
     </>
   );
 }
@@ -32,16 +51,21 @@ export function StickyCta({ cta }: { cta: { href: string; label: string } | null
 /** The bar itself, also shown in place on /styleguide. */
 export function StickyBar({
   cta,
+  hidden = false,
   className,
 }: {
   cta: { href: string; label: string };
+  /** Not shown or focusable. A <noscript> rule in the layout undoes it. */
+  hidden?: boolean;
   className?: string;
 }) {
   return (
     <div
       data-track-loc="sticky"
+      data-sticky-waiting={hidden || undefined}
       className={cn(
         "border-t border-ink bg-signal pb-[env(safe-area-inset-bottom)] lg:hidden room:border-line room:bg-amber",
+        hidden && "invisible",
         className
       )}
     >
