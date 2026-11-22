@@ -43,6 +43,8 @@ export function BoxedLabel({
         "inline-block self-start border font-mono uppercase leading-[1.7]",
         sizing,
         colors,
+        // Boxed labels are retired in Molten Room: a plain small label.
+        "room:border-0 room:bg-transparent room:p-0 room:font-body room:text-room-small room:normal-case room:tracking-normal room:text-muted",
         className
       )}
     >

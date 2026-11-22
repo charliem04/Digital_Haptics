@@ -152,11 +152,13 @@ a {
   color: rgb(var(--on-amber));
 }
 
-/* 3px text-colour ring (VISUAL_GUIDE §8). Clears the old ink shadow. */
+/* 3px text-colour ring (VISUAL_GUIDE §8). Clears the old ink shadow.
+   !important because the old field and card styles remove the outline
+   with utilities; goes when they do, at the end of R6. */
 :where(.room) :focus-visible {
-  outline: 3px solid rgb(var(--text));
-  outline-offset: 3px;
-  box-shadow: none;
+  outline: 3px solid rgb(var(--text)) !important;
+  outline-offset: 3px !important;
+  box-shadow: none !important;
 }
 
 /* ── MOTION ────────────────────────────────────────────────────────── */

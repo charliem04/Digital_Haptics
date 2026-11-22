@@ -34,7 +34,7 @@ export function ArrowBlock({ className }: { className?: string }) {
     <span
       aria-hidden
       className={cn(
-        "flex size-[clamp(2.75rem,5.28vw,4.75rem)] shrink-0 items-center justify-center bg-signal text-ink",
+        "flex size-[clamp(2.75rem,5.28vw,4.75rem)] shrink-0 items-center justify-center bg-signal text-ink room:hidden",
         className
       )}
     >

@@ -35,7 +35,7 @@ export function Flare({
   className?: string;
 }) {
   return (
-    <div aria-hidden className={cn("pointer-events-none absolute inset-0", className)}>
+    <div aria-hidden className={cn("pointer-events-none absolute inset-0 room:hidden", className)}>
       <span
         className="absolute top-0 w-[2px] bg-signal shadow-flare-v motion-safe:animate-flare-pulse"
         style={{ left: x, height: vEnd } as CSSProperties}

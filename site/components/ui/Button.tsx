@@ -42,7 +42,11 @@ type AsButton = Common & { href?: undefined } & Omit<
 const BASE =
   // active: a 1px press, so a tap has a visible receipt on touch screens
   // where hover never fires.
-  "group/btn relative inline-flex items-center font-mono font-medium uppercase tracking-label-sm no-underline transition-[color,background-color,transform] duration-[250ms] ease-brand active:translate-y-px disabled:cursor-not-allowed disabled:opacity-50";
+  "group/btn relative inline-flex items-center font-mono font-medium uppercase tracking-label-sm no-underline transition-[color,background-color,transform] duration-[250ms] ease-brand active:translate-y-px disabled:cursor-not-allowed disabled:opacity-50 room:rounded-control room:font-body room:text-[1rem] room:normal-case room:tracking-normal room:duration-[160ms] room:disabled:opacity-100";
+
+/** Molten Room disabled state (VISUAL_GUIDE §8), the same for every variant. */
+const ROOM_DISABLED =
+  "room:disabled:border room:disabled:border-line room:disabled:bg-raised room:disabled:text-muted";
 
 const SIZES: Record<Size, string> = {
   md: "min-h-button gap-3 px-6 text-label-lg",
@@ -53,15 +57,16 @@ const VARIANTS: Record<Variant, string> = {
   // Hover: an inset ink edge. Drawn with a pseudo-element, not a
   // box-shadow, so it never overrides the focus ring's shadow.
   primary:
-    "bg-signal text-ink after:pointer-events-none after:absolute after:inset-0 after:border-2 after:border-ink after:opacity-0 after:transition-opacity after:duration-[250ms] hover:after:opacity-100",
+    "bg-signal text-ink after:pointer-events-none after:absolute after:inset-0 after:border-2 after:border-ink after:opacity-0 after:transition-opacity after:duration-[250ms] hover:after:opacity-100 room:bg-amber room:text-on-amber room:after:hidden room:hover:bg-amber-hover",
   // ice on steel-deep is 7.91:1.
-  accent: "bg-ink text-ice hover:bg-steel-deep",
-  ghost: "border border-ink text-ink hover:bg-ink hover:text-ice",
+  accent: "bg-ink text-ice hover:bg-steel-deep room:bg-text room:text-room room:hover:bg-muted",
+  ghost:
+    "border border-ink text-ink hover:bg-ink hover:text-ice room:border-text room:text-text room:hover:bg-raised room:hover:text-text",
 };
 
 const ARROW: Record<Variant, string | null> = {
-  primary: "text-ink",
-  accent: "text-signal",
+  primary: "text-ink room:text-on-amber room:group-disabled/btn:text-muted",
+  accent: "text-signal room:text-room room:group-disabled/btn:text-muted",
   ghost: null,
 };
 
@@ -71,6 +76,7 @@ export function Button(props: AsLink | AsButton) {
     BASE,
     SIZES[size],
     VARIANTS[variant],
+    ROOM_DISABLED,
     block && "w-full justify-between",
     className
   );

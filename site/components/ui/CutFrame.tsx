@@ -24,14 +24,23 @@ export type Corner = "tl" | "tr" | "br" | "bl";
 /** Top-left + bottom-right: the mockup's default pair. */
 export const DEFAULT_CORNERS: readonly Corner[] = ["tl", "br"];
 
+const GRAIN = "room:[background-image:var(--grain)]";
+
+/**
+ * Inside `.room` a frame is a solid rounded panel: no cut, no ink border
+ * (VISUAL_GUIDE §4). `field` is the input fill.
+ */
 const FILLS = {
-  frost: "bg-frost",
-  white: "bg-white",
-  ice: "bg-ice",
-  "steel-panel": "bg-steel-panel",
-  ink: "bg-ink",
-  signal: "bg-signal",
+  frost: `bg-frost room:bg-surface ${GRAIN}`,
+  white: `bg-white room:bg-raised ${GRAIN}`,
+  ice: `bg-ice room:bg-room ${GRAIN}`,
+  "steel-panel": `bg-steel-panel room:bg-raised ${GRAIN}`,
+  ink: `bg-ink room:bg-surface ${GRAIN}`,
+  signal: "bg-signal room:bg-amber",
+  field: "bg-white room:bg-room",
 } as const;
+
+const NO_CLIP = "room:![clip-path:none]";
 
 export type CutFill = keyof typeof FILLS;
 
@@ -86,8 +95,9 @@ export function CutFrame({
   ...rest
 }: CutFrameProps) {
   const clip: CSSProperties = { clipPath: cutPath(size, corners) };
+  const radius = size === "sm" ? "room:rounded-field" : "room:rounded-panel";
   const inner = (
-    <div className={cn("h-full", FILLS[fill], innerClassName)} style={clip}>
+    <div className={cn("h-full", NO_CLIP, radius, FILLS[fill], innerClassName)} style={clip}>
       {children}
     </div>
   );
@@ -96,6 +106,7 @@ export function CutFrame({
     <Tag
       className={cn(
         "group/cut relative isolate",
+        radius,
         // The ring below replaces the global outline, which the clip
         // would cut off anyway.
         ring && "focus-visible:shadow-none focus-visible:outline-none",
@@ -107,18 +118,21 @@ export function CutFrame({
         <>
           <span
             aria-hidden
-            className="pointer-events-none absolute -inset-[4px] -z-10 bg-ink opacity-0 group-focus-visible/cut:opacity-100 group-has-[:focus-visible]/cut:opacity-100"
+            className="pointer-events-none absolute -inset-[4px] -z-10 bg-ink opacity-0 group-focus-visible/cut:opacity-100 group-has-[:focus-visible]/cut:opacity-100 room:hidden"
             style={{ clipPath: cutPath(size, corners, 3) }}
           />
           <span
             aria-hidden
-            className="pointer-events-none absolute -inset-[2px] -z-10 bg-signal opacity-0 group-focus-visible/cut:opacity-100 group-has-[:focus-visible]/cut:opacity-100"
+            className="pointer-events-none absolute -inset-[2px] -z-10 bg-signal opacity-0 group-focus-visible/cut:opacity-100 group-has-[:focus-visible]/cut:opacity-100 room:hidden"
             style={{ clipPath: cutPath(size, corners, 1) }}
           />
         </>
       )}
       {border ? (
-        <div className="h-full bg-ink p-px" style={clip}>
+        <div
+          className={cn("h-full bg-ink p-px room:bg-transparent room:p-0", NO_CLIP, radius)}
+          style={clip}
+        >
           {inner}
         </div>
       ) : (

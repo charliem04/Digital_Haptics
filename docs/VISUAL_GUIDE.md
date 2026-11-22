@@ -168,7 +168,7 @@ Every interactive element has a visible focus state: a **3px `text` outline with
 | Button, ghost | Transparent, 1px `text` border, no arrow | `raised` fill | 1px down | As above | "See the Work" |
 | Text link | Underlined, 44px target | Thicker underline | `muted` | n/a | Never colour alone |
 | Input, select, textarea | §4, 48px, 16px text | Border `text` | n/a | `raised` fill, dashed border, `muted` text | 16px prevents iOS zoom |
-| Field error | 2px `error` border plus `Error:` line in `error` | n/a | n/a | n/a | Never colour alone. Keeps existing wording and error summary |
+| Field error | 2px `error` border plus the existing `Error —` line in `error` | n/a | n/a | n/a | Never colour alone. Keeps existing wording and error summary |
 | Checkbox | 22px, `amber` accent, 44px row | n/a | n/a | Native | |
 | Chip | 1px `line` border, pill, 15px | `raised` fill if a link | 1px down | n/a | Static city chips do not react |
 | Service card | `raised`, 28px radius, 28px padding | Link only | n/a | n/a | Name, price, short line, link |

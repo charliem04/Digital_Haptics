@@ -22,10 +22,11 @@ export function SectionLabel({
       className={cn(
         "font-mono text-label uppercase tracking-label-lg",
         tone === "ice" ? "text-ice/70" : "text-steel",
+        "room:font-body room:text-room-small room:normal-case room:tracking-normal room:text-muted",
         className
       )}
     >
-      {index !== undefined && <>( {pad2(index)} ) — </>}
+      {index !== undefined && <span className="room:hidden">( {pad2(index)} ) — </span>}
       {children}
     </p>
   );

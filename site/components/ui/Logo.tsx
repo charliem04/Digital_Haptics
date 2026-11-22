@@ -14,10 +14,17 @@ export function Logo({ tone = "ink", className }: { tone?: "ink" | "ice"; classN
       className={cn(
         "inline-flex min-h-touch items-center gap-2.5 font-display text-logo font-bold uppercase no-underline",
         tone === "ice" ? "text-ice" : "text-ink",
+        "room:font-logo room:text-room-logo room:normal-case room:tracking-normal room:text-text",
         className
       )}
     >
-      <span aria-hidden className={cn("block size-3.5", tone === "ice" ? "bg-signal" : "bg-ink")} />
+      <span
+        aria-hidden
+        className={cn(
+          "block size-3.5 room:rounded-control room:bg-amber",
+          tone === "ice" ? "bg-signal" : "bg-ink"
+        )}
+      />
       {site.name}
     </Link>
   );

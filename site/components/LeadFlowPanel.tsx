@@ -28,11 +28,11 @@ export function LeadFlowPanel({ className }: { className?: string }) {
   return (
     <CutFrame
       size="md"
-      fill="frost"
+      fill="white"
       className={cn("w-[250px]", className)}
-      innerClassName="flex flex-col gap-2.5 px-[18px] pb-[18px] pt-4 font-mono text-label-sm uppercase tracking-label-xs"
+      innerClassName="!bg-frost flex flex-col gap-2.5 px-[18px] pb-[18px] pt-4 font-mono text-label-sm uppercase tracking-label-xs room:!bg-raised room:font-body room:text-room-small room:normal-case room:tracking-normal"
     >
-      <div className="flex justify-between border-b border-ink pb-2">
+      <div className="flex justify-between border-b border-ink pb-2 room:border-line">
         <span className="font-medium">Lead_flow</span>
         <span className="flex items-center gap-1.5">
           <Marker size="dot" />

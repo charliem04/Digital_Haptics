@@ -17,7 +17,7 @@ export function Marker({
     <span
       aria-hidden
       className={cn(
-        "block shrink-0 bg-signal",
+        "block shrink-0 bg-signal room:hidden",
         size === "dot" ? "size-[7px]" : "size-2",
         className
       )}

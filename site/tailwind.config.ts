@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import plugin from "tailwindcss/plugin";
 
 /**
  * ── DESIGN TOKENS ───────────────────────────────────────────────────
@@ -201,7 +202,13 @@ const config: Config = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    // `room:` applies a style only inside a `.room` scope, so a shared
+    // component can carry its Molten Room look while pages that have not
+    // migrated keep the old one. The old classes and this variant go at
+    // the end of R6.
+    plugin(({ addVariant }) => addVariant("room", ":where(.room) &")),
+  ],
 };
 
 export default config;
