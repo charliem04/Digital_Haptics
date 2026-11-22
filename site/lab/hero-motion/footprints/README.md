@@ -1,84 +1,114 @@
-# Concept A — wandering feet on a halftone grid
+# Concept A — bodies on the other side of the glass
 
-Pale paper covered in an even grid of small dots. Shoe prints made of larger dots on the same grid walk in from the edges, wander, pivot and leave, each with a soft blue-grey halo. A thin orange cross flare follows the pointer.
+Pale paper under an even grid of small black dots. People walk across it, and we see them only two ways: where a sole presses against the glass, and the smoky shadow the rest of their body casts onto it. A thin orange cross flare follows the pointer. The flare is the light.
+
+## The model
+
+The screen is a sheet of frosted glass lying like a floor, and the viewer is underneath it looking up. Real 3D figures stand on the far side, with their bodies extending away from the viewer along z.
+
+- **Impressions.** A sole in contact with the glass is at height zero. It is crisp, black and heavy.
+- **Cast shadow.** Everything above the sole is lit by a point light on the walkers' side and throws a shadow down onto the glass. The higher a body part is, the further its shadow is thrown, the wider it gets and the more it blurs.
+
+Each joint `P` is projected from the light `L` onto the glass:
+
+```
+S.xy = P.xy + (P.xy − L.xy) · k        k = P.z / (L.z − P.z)
+```
+
+`k` is zero on the glass and grows with height. Radius scales by `1 + k` (similar triangles), blur grows with height, and opacity falls with height to exactly zero at mid-waist. Nothing above mid-waist is simulated or drawn.
+
+That one rule is the depth. Move the pointer and every shadow swings around its feet, longer the further a walker is from the light, while the prints themselves do not move at all, because they are at height zero.
 
 ## Per frame
 
-1. **Walkers** (`walkers.ts`). Each walker is a point with a heading. Every `strideLength / walkSpeed` seconds it steps and leaves a print, alternating feet. Only the newest `trailLength` prints stay inked.
-2. **Flare.** Its position eases toward the pointer with a critically damped spring, or toward a slowly drifting rest point when nothing is hovering.
-3. **Density pass** (`engine.ts`, Canvas2D). A canvas with one pixel per dot cell is cleared and every inked print is stamped into it: a red foot sprite over a blue halo sprite, added together. At the default spacing a full-bleed hero is roughly 160×70 texels.
-4. **Dot shader** (`dots.frag.glsl.ts`). One fullscreen quad. Each fragment finds its cell, reads print coverage from red at the cell centre and sizes its dot from it, reads the halo from blue to tint the paper, then lays the flare over the top.
+1. **Walkers** (`walkers.ts`). A fixed 120 Hz simulation of 3D skeletons.
+2. **Flare.** Eases toward the pointer on a critically damped spring, or drifts when idle. Its position is also the light's.
+3. **Instances** (`engine.ts`). Every joint is projected; limbs become capsule instances, soles become print instances.
+4. **Density pass** (`density.glsl.ts`). Those instances are drawn into a small render target, two texels per dot cell each way, with MAX blending so overlapping limbs form a union instead of a darker seam. Red is contact, green is shadow, blue is a much wider haze.
+5. **Dot pass** (`dots.frag.glsl.ts`). One fullscreen quad. Dot radius is a continuous function of tone (contact or shadow), with no dithering. The haze tints the paper blue-grey, which carries the out-of-focus part of a shadow. The flare goes over the top.
 
-Because the prints are only ever dot sizes, they stay locked to the grid as they move.
+## How a walker moves
 
-## Walker behaviour
+Built from the ground up, each tick:
 
-- Heading drifts on two slow sines per walker, so paths curve gently.
-- With chance `pivotChance` per step a walker stops and turns 45–180° over two or three short shuffle steps. Less often it simply pauses for a moment.
-- Walkers steer away from anyone close and ahead of them.
-- They spawn just outside a random edge heading inward and may walk out. When a walker's last print has faded it re-enters at another edge.
-- The frame is never empty: the last walker in view is turned back toward the middle before it can leave, and the simulation is run forward eight seconds before the first frame.
+1. **Root.** A point with a heading and a speed. It wanders on two slow sines, steers round other walkers, eases into and out of motion.
+2. **Feet.** A foot is either planted or swinging. A planted foot is locked to its position on the glass and cannot slide. It lifts only once the body has moved on past it, so cadence comes out of speed and stride rather than a clock. The swing follows an arc: the heel peels up, the foot clears the ground, the toes pull up before landing so the heel arrives first.
+3. **Pelvis.** Rides on under-damped springs: it shifts over the standing foot, sinks when the legs are spread (the twice-per-stride bob comes from leg length, not a sine), turns with the stride, and tips toward the swinging side. The waist follows late and counter-rotates.
+4. **Legs.** Two-bone IK from hip to ankle with the knee pointing along the direction of travel. Legs never fully straighten.
+
+**Pressure.** A print is pressed, not stamped. Contact rolls along the sole: the heel inks first, then the rest as weight comes forward, then the heel lifts away while the ball and toes are still down. Ink density follows the share of weight on that foot. A lifted print keeps about half its ink, softens, and fades after `trailLength` further steps.
+
+**Turning.** With chance `pivotChance` at a footfall, a walker stops. The body turns first, by 45–180°, and the feet shuffle round after it once they are twisted too far from the hips.
+
+**Standing.** A paused walker still breathes, shifts weight slowly from hip to hip, and occasionally adjusts a foot.
+
+**Individuality.** Each walker draws a temperament (brisk, ambling or hesitant) and a spread of leg length, hip width, stance, toe-out, sway, bounce, cadence and left/right asymmetry from the seed.
+
+**Staying in frame.** Walkers enter from outside an edge and may leave. The last one in view is turned back before it can walk out, and the simulation runs eight seconds before the first frame.
 
 ## Print styles
 
-`printStyle` picks the shoe: `sneaker` (rounded toe box, gap, round heel), `barefoot` (five toes, ball, arch, heel), `boot` (wide square sole, block heel), `heel` (pointed forefoot, stiletto dot), `oxford` (slim almond toe, D-shaped heel) or `sandal` (one unbroken slab). The default, `mixed`, gives each walker their own, chosen from the seed, and a walker keeps it until they leave the frame. Each style is drawn once as a right foot in `sprites.ts` and mirrored for the left; adding one is a new entry in `PRINTS` and `PRINT_STYLES`, plus the `PrintStyleOption` type.
-
-## Legs and waist
-
-Each walker also has a faint silhouette standing on their two newest prints: two legs rising up the page to the hips, then the waist. It is drawn into a separate channel of the density canvas, and the shader treats that channel differently from prints. Coverage sets the dot size, and an ordered dither decides whether a cell gets a body dot at all, so as coverage falls with height the dots get both smaller and fewer. Coverage reaches zero at mid-waist, which is the top edge of the waist sprite: nothing is drawn above it.
-
-The ankles ease toward each new footfall, so a leg swings forward rather than jumping. `bodyHeight` is the distance from feet to mid-waist in print lengths (0 removes the silhouette) and `bodyDensity` is its overall strength.
+`printStyle` picks the shoe: `sneaker`, `barefoot` (five separate toes), `boot` (square sole, block heel), `heel` (pointed forefoot and a stiletto dot, which press as two separate contacts), `oxford` or `sandal`. `mixed`, the default, gives each walker their own. Shapes live in one atlas (`sprites.ts`) with soft edges that the shader thresholds: lighter pressure leaves a thinner, more broken mark. Adding a style is a new entry in `PRINTS`, `PRINT_STYLES` and the `PrintStyleOption` type.
 
 ## Flare
 
 - Follows the pointer over the hero container with `flareFollowLag` of smoothing; fades in over `flareFadeIn`, out over `flareFadeOut`; breathes ±15% on a 4 s period while hovering.
-- With no pointer, and on touch devices, it drifts around a rest point and fades up and down every `flareIdleCycle` seconds.
-- `secondaryLine` adds a fainter horizontal line higher up.
+- With no pointer, and on touch devices, it drifts around a rest point and fades up and down every `flareIdleCycle` seconds. Because it is the light, that drift also keeps the shadows gently moving.
+- A wide, soft orange-pink column with a thinner horizontal, a four-point star and a pale yellow core at the crossing. `secondaryLine` adds a fainter horizontal higher up, with a small flare where the column crosses it.
+- `flareIntensity: 0` hides the flare but the light, and so the shadows, remain.
 
 ## Overlay
 
-HTML, positioned over the canvas, driven entirely by the `labels` prop: two year fragments, a title, a vertical line down the right edge, a `( from ) → ( to )` readout, the live `x / y` flare readout, and a mark slot. The shipped copy is placeholder (name, discipline, Lafayette's latitude and longitude, the current year). On small containers the title and edge line drop out.
+HTML, positioned over the canvas, driven by the `labels` prop: two year fragments, a title, a vertical line down the right edge, a `( from ) → ( to )` readout, the live `x / y` flare readout, and a mark slot. The shipped copy is placeholder.
 
 ## Final defaults
 
-| Prop             | Default   | Notes                                   |
-| ---------------- | --------- | --------------------------------------- |
-| `gridSpacing`    | `9`       | CSS px between dots                     |
-| `baseDotRadius`  | `0.8`     | CSS px                                  |
-| `maxDotRadius`   | `4.1`     | CSS px                                  |
-| `dotColor`       | `#0b0d10` | the site's `ink`                        |
-| `paperColor`     | `#dfe9ee` |                                         |
-| `haloColor`      | `#8ea8bd` |                                         |
-| `haloBlur`       | `0.6`     | 0 removes the halo                      |
-| `walkers`        | `5`       | 1–12                                    |
-| `walkSpeed`      | `96`      | CSS px per second                       |
-| `strideLength`   | `124`     | CSS px between footfalls                |
-| `pivotChance`    | `0.07`    | per step                                |
-| `trailLength`    | `4`       | prints kept                             |
-| `footScale`      | `1`       | 1 = a print about 150 px long           |
-| `flareIntensity` | `1`       | 0 hides it                              |
-| `flareFollowLag` | `250`     | ms                                      |
-| `flareFadeIn`    | `600`     | ms                                      |
-| `flareFadeOut`   | `900`     | ms                                      |
-| `flareIdleCycle` | `9`       | seconds                                 |
-| `secondaryLine`  | `true`    |                                         |
-| `seed`           | `11`      |                                         |
-| `baseDotOpacity` | `0.34`    | added: opacity of the background dots   |
-| `printStyle`     | `"mixed"` | added: which shoe, or one per walker    |
-| `bodyHeight`     | `2.1`     | added: feet to mid-waist, print lengths |
-| `bodyDensity`    | `0.8`     | added: silhouette strength, 0–1         |
+| Prop             | Default   | Notes                                           |
+| ---------------- | --------- | ----------------------------------------------- |
+| `gridSpacing`    | `9`       | CSS px between dots                             |
+| `baseDotRadius`  | `0.8`     | CSS px                                          |
+| `maxDotRadius`   | `4.1`     | CSS px                                          |
+| `baseDotOpacity` | `0.34`    |                                                 |
+| `dotColor`       | `#0b0d10` | the site's `ink`                                |
+| `paperColor`     | `#dfe9ee` |                                                 |
+| `haloColor`      | `#7f9fba` | what a shadow tints the paper                   |
+| `haloBlur`       | `0.5`     | soft glow hugging each print; 0 removes it      |
+| `walkers`        | `4`       | 1–12                                            |
+| `walkSpeed`      | `120`     | cruising speed, CSS px per second               |
+| `strideLength`   | `175`     | CSS px between footfalls at cruising speed      |
+| `pivotChance`    | `0.06`    | per footfall                                    |
+| `trailLength`    | `3`       | lifted prints kept                              |
+| `footScale`      | `1`       | 1 = a print about 150 px long; the body follows |
+| `printStyle`     | `"mixed"` |                                                 |
+| `gaitEnergy`     | `1`       | cadence, acceleration, foot lift                |
+| `swayAmount`     | `1`       | hip shift, turn and tip                         |
+| `individuality`  | `1`       | how different the walkers are                   |
+| `bodyHeight`     | `3.4`     | feet to mid-waist, in print lengths             |
+| `lightHeight`    | `1150`    | CSS px above the glass                          |
+| `shadowLength`   | `1.6`     | cap on `k`                                      |
+| `penumbra`       | `0.13`    | blur per px of height                           |
+| `shadowOpacity`  | `0.85`    |                                                 |
+| `flareIntensity` | `1`       |                                                 |
+| `flareFollowLag` | `250`     | ms                                              |
+| `flareFadeIn`    | `600`     | ms                                              |
+| `flareFadeOut`   | `900`     | ms                                              |
+| `flareIdleCycle` | `9`       | seconds                                         |
+| `secondaryLine`  | `true`    |                                                 |
+| `seed`           | `11`      |                                                 |
+
+Removed since the first version: `bodyDensity` (now `shadowOpacity`). `bodyHeight` changed meaning: it is now the real height of a 3D body, not the length of a flat silhouette.
 
 ## The three that change the feel most
 
-| Prop          | Try      | What it does                                                                                                                             |
-| ------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `gridSpacing` | 7 – 14   | Fine spacing draws a recognisable shoe; coarse spacing turns prints into bold blocks. Scale `maxDotRadius` to a little under half of it. |
-| `walkSpeed`   | 50 – 160 | A slow drift across the page, or a busy crossing.                                                                                        |
-| `trailLength` | 2 – 8    | Two reads as a single person standing; eight reads as tracks left behind.                                                                |
+| Prop          | Try        | What it does                                                                                                       |
+| ------------- | ---------- | ------------------------------------------------------------------------------------------------------------------ |
+| `lightHeight` | 600 – 2200 | Low: long raking shadows that swing hard as the pointer moves. High: short shadows tucked under the feet, flatter. |
+| `penumbra`    | 0.05 – 0.3 | Low: legs read as distinct limbs. High: the body dissolves into smoke a few dots above the ankle.                  |
+| `gaitEnergy`  | 0.6 – 1.6  | Low: slow, heavy, deliberate. High: quick steps with more lift and a livelier pelvis. Pair with `walkSpeed`.       |
 
 ## Notes on the brief
 
-- **The flare is composited over the paper, not added to it.** Additive light is right on black. On `#dfe9ee` it only clips toward white and the orange never shows. The flare colour replaces the paper in proportion to its heat, which gives the same hot core and falloff and stays orange.
-- **Prints are bigger and the grid finer than "tiny dots" suggests.** At a 12 px grid a 100 px print is 8×4 cells and reads as a blob. The defaults (9 px grid, 150 px print) give about 16×7 cells, enough to show sole, gap and heel.
-- **Flare colours are the brief's** (`#fff3c4`, `#ff7a3d`, `#ff5a7a`), not the site's `signal` `#FF5A1F`. They are constants at the top of the fragment shader if the hero should match the brand orange.
+- **Stride is slower than life.** A body this size walking at a natural cadence would cross the hero in about two seconds. Defaults are an unhurried amble: roughly 0.7 steps per second.
+- **Shuffle marks do not join the trail.** Turning on the spot would otherwise leave a rosette of near-identical prints, so marks made while pivoting fade at once, and a new mark replaces any older one it mostly covers.
 - **Reduced motion ignores the pointer.** A still frame that redrew on every pointer move would be an animation loop by another name.
+- **A bug found on the way.** The keep-in-frame rule steered a lone walker toward the centre unconditionally, which made it orbit the centre and stamp a ring of prints. It now only acts while the walker is actually heading out.
