@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { TerrainDemo } from "./TerrainDemo";
 import { FeetDemo } from "./FeetDemo";
+import { installLabDebug } from "./debug";
 import css from "./lab.module.css";
 
 type Bench = "terrain" | "feet" | null;
@@ -19,6 +20,7 @@ export function Lab() {
   const [still, setStill] = useState(false);
 
   useEffect(() => {
+    installLabDebug();
     const q = new URLSearchParams(window.location.search).get("bench");
     setBench(q === "terrain" || q === "feet" ? q : null);
   }, []);

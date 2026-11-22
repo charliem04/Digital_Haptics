@@ -4,15 +4,15 @@
  * Everything is worked out in CSS pixels with the origin top-left, the
  * same space the walkers and the pointer use.
  *
- *   1. Which grid cell is this fragment in? Sample the density texture
- *      (one texel per cell) at the cell's centre: .r is how much of the
- *      cell a footprint covers. The dot's radius grows with it.
- *      .g is how much of a walker's body is over the cell. It makes
- *      smaller dots, and through an ordered dither it also decides
- *      whether the cell gets a body dot at all: as the value falls
- *      toward the waist, fewer and fewer cells do.
- *   2. Sample .b at the fragment itself, bilinear, for the soft halo
- *      that tints the paper around each print.
+ *   1. Which grid cell is this fragment in? Sample the density target at
+ *      the cell's centre. Red is a sole pressed on the glass, green is
+ *      the body's shadow. Together they are the cell's TONE, and the dot
+ *      radius is a continuous function of it: no dithering, the dots
+ *      simply swell as the shadow deepens.
+ *   2. Sample blue at the fragment itself, bilinear: the wide, soft haze
+ *      that tints the paper. The far, blurred part of a shadow lives
+ *      here more than in the dots, which is what makes it look out of
+ *      focus rather than merely pale.
  *   3. Lay the flare over the top.
  *
  * The flare is composited "over", not added. On black, adding light is
@@ -24,7 +24,7 @@ uniform vec2 uBuffer;      // drawing buffer size, device px
 uniform float uDpr;
 uniform vec2 uSize;        // container size, CSS px
 uniform float uSpacing;
-uniform vec2 uGrid;        // density texture size, cells
+uniform vec2 uGrid;        // dot cells across and down
 uniform sampler2D uDensity;
 uniform float uBaseR;
 uniform float uMaxR;
@@ -36,15 +36,6 @@ uniform vec2 uFlare;       // CSS px
 uniform float uFlareI;
 uniform float uSecondary;  // 0 or 1
 uniform float uSecondaryY; // CSS px
-uniform float uBody;       // silhouette strength, 0–1
-
-// 4×4 ordered-dither thresholds.
-const float BAYER[16] = float[16](
-  0.0, 8.0, 2.0, 10.0,
-  12.0, 4.0, 14.0, 6.0,
-  3.0, 11.0, 1.0, 9.0,
-  15.0, 7.0, 13.0, 5.0
-);
 
 const vec3 FLARE_CORE = vec3(1.0, 0.953, 0.769);  // #fff3c4
 const vec3 FLARE_BODY = vec3(1.0, 0.478, 0.239);  // #ff7a3d
@@ -56,26 +47,18 @@ void main() {
   // ── dots ─────────────────────────────────────────────────────────
   vec2 cell = floor(px / uSpacing);
   vec2 centre = (cell + 0.5) * uSpacing;
+  // The target has 2×2 texels per cell, so a bilinear tap at the cell
+  // centre is the average of all four: the cell's true coverage.
   vec4 cover = texture2D(uDensity, (cell + 0.5) / uGrid);
-  float density = cover.r;
-  float body = clamp(cover.g * uBody, 0.0, 1.0);
-  float halo = texture2D(uDensity, px / (uGrid * uSpacing)).b;
+  float tone = clamp(max(cover.r, cover.g * 0.8), 0.0, 1.0);
+  float haze = texture2D(uDensity, px / (uGrid * uSpacing)).b;
 
-  // Square-root-ish response: a half-covered cell still gets a clearly
-  // bigger dot, which is what draws the edge of the print.
-  float radius = mix(uBaseR, uMaxR, pow(clamp(density, 0.0, 1.0), 0.6));
+  float radius = mix(uBaseR, uMaxR, pow(tone, 0.62));
   float aa = 0.7 / uDpr;
-  float ink = mix(uBaseAlpha, 1.0, smoothstep(0.0, 0.25, density));
-
-  // Body silhouette: a cell gets a dot only if its coverage beats the
-  // cell's dither threshold, and the dot is smaller the weaker it is.
-  int slot = int(mod(cell.x, 4.0)) + 4 * int(mod(cell.y, 4.0));
-  float keep = step((BAYER[slot] + 0.5) / 16.0, body);
-  radius = max(radius, mix(uBaseR, uMaxR * 0.8, sqrt(body) * keep));
-  ink = max(ink, mix(uBaseAlpha, 0.95, smoothstep(0.0, 0.3, body) * keep));
   float dotMask = 1.0 - smoothstep(radius - aa, radius + aa, length(px - centre));
+  float ink = mix(uBaseAlpha, 1.0, smoothstep(0.0, 0.3, tone));
 
-  vec3 color = mix(uPaper, uHalo, smoothstep(0.0, 1.0, halo) * 0.9);
+  vec3 color = mix(uPaper, uHalo, smoothstep(0.0, 0.9, haze) * 0.92);
   color = mix(color, uDot, dotMask * ink);
 
   // ── flare ────────────────────────────────────────────────────────
@@ -85,27 +68,38 @@ void main() {
     float ay = abs(f.y);
     float r = length(f);
 
-    // Two hairlines across the whole hero: a tight core inside a wider,
-    // weaker glow, easing off toward the far edges.
-    float vLine = (exp(-ax * ax / 0.7) * 0.85 + exp(-ax / 6.0) * 0.26)
-                * mix(1.0, 0.5, smoothstep(0.0, uSize.y, ay));
-    float hLine = (exp(-ay * ay / 0.4) * 0.75 + exp(-ay / 4.5) * 0.2)
-                * mix(1.0, 0.5, smoothstep(0.0, uSize.x, ax));
-    // Four-point star: the same lines, much brighter, dying fast.
-    float star = exp(-ax / 1.7) * exp(-ay / 64.0) + exp(-ay / 1.7) * exp(-ax / 64.0);
-    // Bloom: a hot centre and a broad, faint skirt.
-    float bloom = exp(-r / 11.0) * 1.1 + exp(-r * r / 13000.0) * 0.3;
+    // The vertical is a column, not a hairline: a tight core, a body a
+    // few pixels wide and a broad soft skirt. It swells into a diamond
+    // around the crossing.
+    float column = exp(-ax * ax / 1.6) * 0.85
+                 + exp(-ax / 8.0) * 0.5
+                 + exp(-ax * ax / 2600.0) * 0.2;
+    column *= mix(1.0, 0.55, smoothstep(0.0, uSize.y, ay));
+    float swell = exp(-ax / (5.0 + 30.0 * exp(-ay / 80.0))) * exp(-ay / 120.0) * 0.55;
 
-    float heat = vLine + hLine + star * 0.9 + bloom;
+    // The horizontal stays thin and paler.
+    float beam = exp(-ay * ay / 0.6) * 0.6
+               + exp(-ay / 5.0) * 0.2
+               + exp(-ay * ay / 500.0) * 0.07;
+    beam *= mix(1.0, 0.5, smoothstep(0.0, uSize.x, ax));
+
+    // Four-point star and a hot centre.
+    float star = exp(-ax / 2.4) * exp(-ay / 95.0) + exp(-ay / 2.4) * exp(-ax / 95.0);
+    float bloom = exp(-r / 15.0) * 1.35 + exp(-r * r / 17000.0) * 0.34;
+
+    float heat = column + swell + beam + star * 0.9 + bloom;
     if (uSecondary > 0.5) {
       float sy = abs(px.y - uSecondaryY);
-      heat += exp(-sy * sy / 0.4) * 0.34 + exp(-sy / 4.0) * 0.08;
+      heat += exp(-sy * sy / 0.5) * 0.34 + exp(-sy / 5.0) * 0.1;
+      // Where the column crosses the second line it flares again, small.
+      float sr = length(vec2(f.x, px.y - uSecondaryY));
+      heat += exp(-sr / 9.0) * 0.7 + exp(-ax / 2.0) * exp(-sy / 40.0) * 0.5;
     }
     heat *= uFlareI;
 
-    vec3 flare = mix(FLARE_GLOW, FLARE_BODY, smoothstep(0.02, 0.3, heat));
-    flare = mix(flare, FLARE_CORE, smoothstep(0.7, 1.5, heat));
-    color = mix(color, flare, 1.0 - exp(-heat * 1.7));
+    vec3 flare = mix(FLARE_GLOW, FLARE_BODY, smoothstep(0.03, 0.34, heat));
+    flare = mix(flare, FLARE_CORE, smoothstep(0.75, 1.6, heat));
+    color = mix(color, flare, 1.0 - exp(-heat * 1.75));
   }
 
   gl_FragColor = vec4(color, 1.0);

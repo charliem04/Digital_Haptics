@@ -85,6 +85,7 @@ export class Stage {
   private reduced = false;
   private disposed = false;
   private benching = false;
+  private held = false;
 
   private frames = 0;
   private readonly intervals = new Float32Array(RING);
@@ -198,6 +199,22 @@ export class Stage {
     };
   }
 
+  /**
+   * Debug: stop the loop and advance by hand. `step(1/60)` moves the
+   * engine one frame and draws it, whatever the tab's rAF is doing, so
+   * frames can be captured at exact times. `hold(false)` resumes.
+   */
+  hold(on: boolean): void {
+    this.held = on;
+    this.sync();
+  }
+
+  step(dt: number): void {
+    this.time += dt;
+    this.engine.update(this.time, dt, false);
+    this.engine.render();
+  }
+
   dispose(): void {
     this.disposed = true;
     this.stop();
@@ -213,6 +230,7 @@ export class Stage {
     return (
       !this.disposed &&
       !this.benching &&
+      !this.held &&
       !this.paused &&
       !this.reduced &&
       this.onscreen &&

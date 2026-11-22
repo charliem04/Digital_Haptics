@@ -14,6 +14,10 @@ export type HeroMotionHandle<E = unknown> = {
   bench(frames?: number): Promise<BenchResult | null>;
   /** The live engine, for concept-specific debug calls. Null until ready. */
   engine(): E | null;
+  /** Debug: freeze the loop (`true`) or let it run again. */
+  hold(on: boolean): void;
+  /** Debug: advance `dt` seconds and draw, independent of rAF. */
+  step(dt: number): void;
 };
 
 /**
@@ -99,6 +103,8 @@ export function useStage<P, E extends ParamEngine<P>>(
       stats: () => stageRef.current?.stats() ?? null,
       bench: async (frames) => (await stageRef.current?.bench(frames)) ?? null,
       engine: () => engineRef.current,
+      hold: (on) => stageRef.current?.hold(on),
+      step: (dt) => stageRef.current?.step(dt),
     }),
     []
   );

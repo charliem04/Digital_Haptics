@@ -25,8 +25,8 @@ export function FeetDemo({ bench = false, still = false }: { bench?: boolean; st
 
     const walk = pane.addFolder({ title: "Walkers" });
     walk.addBinding(s, "walkers", { min: 1, max: 12, step: 1 });
-    walk.addBinding(s, "walkSpeed", { min: 10, max: 240, step: 1 });
-    walk.addBinding(s, "strideLength", { min: 30, max: 220, step: 1 });
+    walk.addBinding(s, "walkSpeed", { min: 20, max: 400, step: 1 });
+    walk.addBinding(s, "strideLength", { min: 60, max: 360, step: 1 });
     walk.addBinding(s, "pivotChance", { min: 0, max: 0.5, step: 0.005 });
     walk.addBinding(s, "trailLength", { min: 1, max: 12, step: 1 });
     walk.addBinding(s, "footScale", { min: 0.4, max: 2.5, step: 0.01 });
@@ -42,8 +42,16 @@ export function FeetDemo({ bench = false, still = false }: { bench?: boolean; st
         sandal: "sandal",
       },
     });
-    walk.addBinding(s, "bodyHeight", { min: 0, max: 4, step: 0.05 });
-    walk.addBinding(s, "bodyDensity", { min: 0, max: 1, step: 0.01 });
+    walk.addBinding(s, "gaitEnergy", { min: 0.4, max: 2, step: 0.01 });
+    walk.addBinding(s, "swayAmount", { min: 0, max: 2, step: 0.01 });
+    walk.addBinding(s, "individuality", { min: 0, max: 2, step: 0.01 });
+
+    const body = pane.addFolder({ title: "Body and light" });
+    body.addBinding(s, "bodyHeight", { min: 1.5, max: 6, step: 0.05 });
+    body.addBinding(s, "lightHeight", { min: 300, max: 3000, step: 10 });
+    body.addBinding(s, "shadowLength", { min: 0, max: 4, step: 0.05 });
+    body.addBinding(s, "penumbra", { min: 0, max: 0.4, step: 0.005 });
+    body.addBinding(s, "shadowOpacity", { min: 0, max: 1, step: 0.01 });
     walk.addBinding(s, "paused");
 
     const flare = pane.addFolder({ title: "Flare" });

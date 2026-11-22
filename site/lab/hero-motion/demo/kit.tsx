@@ -95,6 +95,13 @@ export function ConceptFrame({
   const [bench, setBench] = useState<string>("");
   const statsRef = useRef<HTMLSpanElement>(null);
 
+  // Lab only: `window.__heroLab.<id>.current` is this concept's handle,
+  // for stepping and capturing frames from the console.
+  useEffect(() => {
+    const host = window as unknown as { __heroLab?: Record<string, unknown> };
+    (host.__heroLab ??= {})[id] = handle;
+  }, [id, handle]);
+
   useEffect(() => {
     const timer = window.setInterval(() => {
       const s = handle.current?.stats();
