@@ -1,7 +1,14 @@
 import { BlobSim, type BlobConfig } from "./blobs";
 import { clamp, hexToRgb } from "./rng";
 import { liquidVert, marchFrag, presentFrag } from "./shaders";
-import { LOOK, MAX_BLOBS, RAMP, type LiquidSettings } from "./params";
+import {
+  LOOK,
+  MAX_BLOBS,
+  RAMP,
+  type LiquidLook,
+  type LiquidSettings,
+  type RampStop,
+} from "./params";
 
 /**
  * ════════════════════════════════════════════════════════════════════
@@ -109,22 +116,24 @@ export class LiquidEngine {
   private scale: number;
   private started = false;
   private clock = 0;
+  private look: LiquidLook = { ...LOOK };
+  private ramp: readonly RampStop[] = RAMP;
 
   private constructor(
     private readonly canvas: HTMLCanvasElement,
     private readonly gl: WebGL2RenderingContext,
     private readonly march: Program,
     private readonly present: Program,
-    private readonly settings: LiquidSettings
+    private settings: LiquidSettings
   ) {
     this.scale = settings.renderScale;
     this.cfg = {
       count: settings.blobCount,
-      coverage: LOOK.coverage,
-      flowSpeed: LOOK.flowSpeed,
-      gravity: LOOK.gravity,
-      buoyancy: LOOK.buoyancy,
-      stretch: LOOK.stretch,
+      coverage: this.look.coverage,
+      flowSpeed: this.look.flowSpeed,
+      gravity: this.look.gravity,
+      buoyancy: this.look.buoyancy,
+      stretch: this.look.stretch,
       aspect: 1.6,
     };
 
@@ -196,13 +205,39 @@ export class LiquidEngine {
     this.layoutScene();
     if (!this.started) {
       this.started = true;
-      this.sim.reset(LOOK.seed, this.cfg);
+      this.sim.reset(this.look.seed, this.cfg);
     }
   }
 
   setRenderScale(scale: number): void {
     this.scale = scale;
     this.layoutScene();
+  }
+
+  /**
+   * Apply new values to the running engine (the dev-only tuner). A new
+   * seed or blob count restarts the arrangement; the rest apply in place.
+   */
+  retune(next: { look: LiquidLook; settings: LiquidSettings; ramp: readonly RampStop[] }): void {
+    const restart =
+      next.look.seed !== this.look.seed || next.settings.blobCount !== this.settings.blobCount;
+    const recolor = next.ramp.some(
+      (stop, i) => stop.at !== this.ramp[i]?.at || stop.color !== this.ramp[i]?.color
+    );
+    this.look = { ...next.look };
+    this.settings = { ...next.settings };
+    this.cfg.count = next.settings.blobCount;
+    this.cfg.coverage = next.look.coverage;
+    this.cfg.flowSpeed = next.look.flowSpeed;
+    this.cfg.gravity = next.look.gravity;
+    this.cfg.buoyancy = next.look.buoyancy;
+    this.cfg.stretch = next.look.stretch;
+    if (recolor) {
+      this.ramp = next.ramp.map((stop) => ({ ...stop }));
+      this.buildRamp();
+    }
+    if (next.settings.renderScale !== this.scale) this.setRenderScale(next.settings.renderScale);
+    if (restart && this.started) this.sim.reset(next.look.seed, this.cfg);
   }
 
   /** Advance `dt` seconds (0 redraws the same moment) and draw. */
@@ -231,8 +266,8 @@ export class LiquidEngine {
 
   private placeCamera(): void {
     const t = this.clock;
-    const yaw = 0.11 * LOOK.cameraDrift * Math.sin(t * 0.043);
-    const pitch = 0.07 * LOOK.cameraDrift * Math.sin(t * 0.031 + 1.1);
+    const yaw = 0.11 * this.look.cameraDrift * Math.sin(t * 0.043);
+    const pitch = 0.07 * this.look.cameraDrift * Math.sin(t * 0.031 + 1.1);
     const cy = Math.cos(yaw);
     const sy = Math.sin(yaw);
     const cp = Math.cos(pitch);
@@ -266,13 +301,13 @@ export class LiquidEngine {
     gl.uniform3fv(m("uCamFwd"), this.fwd);
     gl.uniform1f(m("uTan"), 1 / CAMERA_DISTANCE);
     gl.uniform1f(m("uAspect"), this.width / this.height);
-    gl.uniform1f(m("uSharp"), 3.6 - 2.8 * LOOK.viscosity);
-    gl.uniform1f(m("uWarp"), LOOK.warpAmount);
-    gl.uniform1f(m("uWarpScale"), LOOK.warpScale);
+    gl.uniform1f(m("uSharp"), 3.6 - 2.8 * this.look.viscosity);
+    gl.uniform1f(m("uWarp"), this.look.warpAmount);
+    gl.uniform1f(m("uWarpScale"), this.look.warpScale);
     gl.uniform1f(m("uTime"), this.clock);
-    gl.uniform1f(m("uRim"), LOOK.rimWidth);
-    gl.uniform1f(m("uDof"), LOOK.depthOfField);
-    gl.uniform1f(m("uFog"), LOOK.fogAmount);
+    gl.uniform1f(m("uRim"), this.look.rimWidth);
+    gl.uniform1f(m("uDof"), this.look.depthOfField);
+    gl.uniform1f(m("uFog"), this.look.fogAmount);
     gl.uniform1f(m("uFocus"), CAMERA_DISTANCE);
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, this.rampTexture);
@@ -286,9 +321,9 @@ export class LiquidEngine {
     gl.bindTexture(gl.TEXTURE_2D, this.sceneTexture);
     gl.uniform1i(g("uScene"), 0);
     gl.uniform2f(g("uSceneSize"), this.sceneW, this.sceneH);
-    gl.uniform1f(g("uGrain"), LOOK.grainAmount);
-    gl.uniform1f(g("uGrainSize"), LOOK.grainSize);
-    gl.uniform1f(g("uGrainSeed"), (Math.floor(this.clock * LOOK.grainFps) % 4096) + 1);
+    gl.uniform1f(g("uGrain"), this.look.grainAmount);
+    gl.uniform1f(g("uGrainSize"), this.look.grainSize);
+    gl.uniform1f(g("uGrainSeed"), (Math.floor(this.clock * this.look.grainFps) % 4096) + 1);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
   }
 
@@ -325,9 +360,9 @@ export class LiquidEngine {
     for (let i = 0; i < RAMP_SIZE; i++) {
       const t = i / (RAMP_SIZE - 1);
       let s = 0;
-      while (s < RAMP.length - 2 && t > RAMP[s + 1].at) s++;
-      const lo = RAMP[s];
-      const hi = RAMP[s + 1];
+      while (s < this.ramp.length - 2 && t > this.ramp[s + 1].at) s++;
+      const lo = this.ramp[s];
+      const hi = this.ramp[s + 1];
       let k = clamp((t - lo.at) / (hi.at - lo.at), 0, 1);
       k = k * k * (3 - 2 * k);
       hexToRgb(lo.color, a);

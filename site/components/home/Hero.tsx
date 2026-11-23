@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { flags } from "@/lib/flags";
 import { ctaLink } from "@/lib/nav";
 import { isLive } from "@/lib/routes";
@@ -33,7 +34,7 @@ const COPY = flags.automations
         "Design and local SEO for trades businesses. Built to load fast, rank locally and turn visitors into calls.",
     };
 
-export function Hero() {
+export function Hero({ backdrop = <LiquidBackdrop /> }: { backdrop?: ReactNode }) {
   const cta = ctaLink();
   const work = isLive("/work/");
 
@@ -44,7 +45,7 @@ export function Hero() {
       data-liquid-opening
       className="relative overflow-hidden"
     >
-      <LiquidBackdrop />
+      {backdrop}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,transparent_0,transparent_32svh,rgb(var(--room))_45svh)] lg:bg-[linear-gradient(90deg,rgb(var(--room))_0,rgb(var(--room))_56%,transparent_80%)]"

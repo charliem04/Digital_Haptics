@@ -34,7 +34,8 @@ export async function runLiquid(
   events: LiquidEvents
 ): Promise<() => void> {
   const phone = window.matchMedia("(max-width: 640px)").matches;
-  const engine = await LiquidEngine.create(canvas, phone ? PHONE : DESKTOP);
+  const settings = phone ? PHONE : DESKTOP;
+  const engine = await LiquidEngine.create(canvas, settings);
 
   let raf = 0;
   let last = 0;
@@ -64,7 +65,7 @@ export async function runLiquid(
       count = 0;
       if (!steppedDown && average > SLOW_MS) {
         steppedDown = true;
-        engine.setRenderScale(STEP_DOWN_SCALE);
+        engine.setRenderScale(Math.min(STEP_DOWN_SCALE, settings.renderScale));
       } else if (steppedDown && average > FREEZE_MS) {
         frozen = true;
         sync();

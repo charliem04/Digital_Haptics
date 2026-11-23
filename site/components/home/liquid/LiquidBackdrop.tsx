@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/cn";
+import { RAMP } from "./params";
+import { posterBackground } from "./poster";
 
 /**
  * ════════════════════════════════════════════════════════════════════
@@ -97,9 +99,8 @@ export function LiquidBackdrop() {
         "pointer-events-none fixed inset-x-0 top-0 z-0 h-[100lvh] overflow-hidden [--lh:22%] [--lw:38%] [--lx:44%] [--ly:27%] lg:[--lh:36%] lg:[--lw:14%] lg:[--lx:81%] lg:[--ly:85%]"
       )}
       style={{
-        backgroundColor: "#181c21",
-        backgroundImage:
-          "radial-gradient(var(--lw) var(--lh) at var(--lx) var(--ly), #871922 0%, #a81f20 22%, #e22e20 42%, #f56c36 58%, #f5a254 74%, #987d57 84%, #415a54 92%, transparent 100%), radial-gradient(calc(var(--lw) * 2.4) calc(var(--lh) * 2) at var(--lx) var(--ly), #1c4345 0%, #133236 55%, transparent 100%)",
+        backgroundColor: RAMP[0].color,
+        backgroundImage: posterBackground(RAMP),
       }}
     >
       <canvas
