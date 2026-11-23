@@ -406,6 +406,15 @@ html[data-motion-text="underline"] [data-mt-state="in"] .motion-key {
   }
 }
 
+/* ── Liquid side window: a clear shape whose huge shadow is the section's
+   fill, which leaves a rounded hole onto the fixed liquid layer. ───── */
+.liquid-cutout {
+  position: relative;
+  z-index: 0;
+  border-radius: 28px;
+  box-shadow: 0 0 0 200vmax rgb(var(--section-bg, var(--room)));
+}
+
 /* ── Case card trim: a band of molten light travels the card's edge ── */
 .motion-trim {
   position: absolute;

@@ -11,13 +11,22 @@ import { SmallLabel } from "@/components/ui/SmallLabel";
 export function StepsStrip({
   steps,
   headingAs: Heading = "h3",
+  compact = false,
 }: {
   steps: ProcessStep[];
   /** h2 when the strip sits directly under the page's h1. */
   headingAs?: "h2" | "h3";
+  /** Stays two columns on desktop, for a half-width layout. */
+  compact?: boolean;
 }) {
   return (
-    <ol className="grid gap-8 border-line md:grid-cols-2 lg:grid-flow-col lg:grid-cols-none lg:auto-cols-fr lg:gap-10 border-t-0 pt-0">
+    <ol
+      className={
+        compact
+          ? "grid gap-8 md:grid-cols-2 lg:gap-10"
+          : "grid gap-8 border-line md:grid-cols-2 lg:grid-flow-col lg:grid-cols-none lg:auto-cols-fr lg:gap-10 border-t-0 pt-0"
+      }
+    >
       {steps.map((s, i) => (
         <li key={s.name} className="relative flex flex-col gap-2 border-l-2 border-amber pl-5">
           <SmallLabel>Step.{pad2(i + 1)}</SmallLabel>

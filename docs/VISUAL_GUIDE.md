@@ -118,7 +118,7 @@ Static surfaces carry the film grain, so the identity continues where the liquid
 
 | Page | Treatment |
 |---|---|
-| Home | **Live.** One fixed canvas seen through the hero and final CTA |
+| Home | **Live.** One fixed canvas seen through the hero, a wide band after Work, a side window beside Process, and the final CTA (owner's choice, 2026-11-23) |
 | Pricing, Work, case study, Services, About, Blog, cities | **None** by default. Final CTA is a solid `surface` band |
 | `/start`, thanks | **None.** Nothing competes with the form |
 | Legal, 404 | **None** |

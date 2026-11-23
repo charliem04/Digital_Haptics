@@ -5,6 +5,7 @@ import { pageMetadata } from "@/lib/meta";
 import { citySlug, isLive } from "@/lib/routes";
 import { getCombineNote, getFeaturedCases, getProcessSteps, getServices } from "@/lib/content";
 import { Hero } from "@/components/home/Hero";
+import { LiquidBand, LiquidSideWindow } from "@/components/home/LiquidWindows";
 import { Section } from "@/components/layout/Section";
 import { SectionHead } from "@/components/page/SectionHead";
 import { ServiceCard } from "@/components/page/ServiceCard";
@@ -50,8 +51,14 @@ export default function Home() {
             </div>
           </Section>
         )}
+      </div>
 
-        <Section aria-labelledby="services">
+      {/* Wide window. Skipped without a proof section, so it never sits
+          directly under the hero's own opening. */}
+      {featured.length > 0 && <LiquidBand />}
+
+      <div className="relative z-10 bg-room">
+        <Section ambient aria-labelledby="services">
           <div className="flex flex-col gap-10">
             <SectionHead
               id="services"
@@ -87,14 +94,21 @@ export default function Home() {
             </div>
           </Section>
         )}
+      </div>
 
-        <Section ambient aria-labelledby="process">
-          <div className="flex flex-col gap-12">
+      {/* Side window. This section is transparent: LiquidSideWindow paints
+          its solid fill and the copy sits above that. */}
+      <Section ambient={false} className="z-10 overflow-hidden" aria-labelledby="process">
+        <div className="grid gap-10 lg:grid-cols-2 lg:items-stretch lg:gap-16">
+          <div className="relative z-[1] flex flex-col justify-center gap-12">
             <SectionHead id="process" label="Process" title="How a project runs" />
-            <StepsStrip steps={getProcessSteps()} />
+            <StepsStrip steps={getProcessSteps()} compact />
           </div>
-        </Section>
+          <LiquidSideWindow />
+        </div>
+      </Section>
 
+      <div className="relative z-10 bg-room">
         <Section aria-labelledby="area">
           <Panel fill="surface" innerClassName="flex flex-col gap-8 p-6 lg:p-12">
             <div className="flex flex-wrap items-center justify-between gap-4 border-b pb-5 border-line">
