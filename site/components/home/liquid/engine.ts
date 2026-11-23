@@ -46,6 +46,9 @@ ${body}`;
 
 type Program = { program: WebGLProgram; loc: (name: string) => WebGLUniformLocation | null };
 
+/** Hand the main thread back so input and paint can run between GL steps. */
+export const yieldToPage = () => new Promise<void>((resolve) => setTimeout(resolve, 0));
+
 function startProgram(gl: WebGL2RenderingContext, fragmentSource: string): WebGLProgram {
   const program = gl.createProgram();
   const vs = gl.createShader(gl.VERTEX_SHADER);
@@ -120,7 +123,7 @@ export class LiquidEngine {
   private ramp: readonly RampStop[] = RAMP;
 
   private constructor(
-    private readonly canvas: HTMLCanvasElement,
+    private readonly canvas: HTMLCanvasElement | OffscreenCanvas,
     private readonly gl: WebGL2RenderingContext,
     private readonly march: Program,
     private readonly present: Program,
@@ -172,8 +175,11 @@ export class LiquidEngine {
   }
 
   /** Throws when WebGL2 or the shaders are unavailable; the poster stays. */
-  static async create(canvas: HTMLCanvasElement, settings: LiquidSettings): Promise<LiquidEngine> {
-    const gl = canvas.getContext("webgl2", {
+  static async create(
+    canvas: HTMLCanvasElement | OffscreenCanvas,
+    settings: LiquidSettings
+  ): Promise<LiquidEngine> {
+    const gl = (canvas as HTMLCanvasElement).getContext("webgl2", {
       alpha: false,
       antialias: false,
       depth: false,
@@ -188,17 +194,21 @@ export class LiquidEngine {
     if (/swiftshader|llvmpipe|software|basic render/i.test(renderer)) {
       throw new Error("No hardware GPU");
     }
+    // One step per task, so no single task holds the page for all of them.
     const marchProgram = startProgram(gl, marchFrag);
+    await yieldToPage();
     const presentProgram = startProgram(gl, presentFrag);
+    await yieldToPage();
     await whenLinked(gl, [marchProgram, presentProgram]);
+    await yieldToPage();
     return new LiquidEngine(canvas, gl, wrap(gl, marchProgram), wrap(gl, presentProgram), settings);
   }
 
-  resize(width: number, height: number): void {
+  resize(width: number, height: number, pixelRatio = globalThis.devicePixelRatio || 1): void {
     if (width === 0 || height === 0) return;
     this.width = width;
     this.height = height;
-    this.dpr = Math.min(window.devicePixelRatio || 1, this.settings.maxDpr);
+    this.dpr = Math.min(pixelRatio, this.settings.maxDpr);
     this.canvas.width = Math.round(width * this.dpr);
     this.canvas.height = Math.round(height * this.dpr);
     this.cfg.aspect = width / height;

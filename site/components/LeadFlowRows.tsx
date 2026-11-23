@@ -1,41 +1,22 @@
-"use client";
-
-import { motion } from "framer-motion";
+import type { CSSProperties } from "react";
 import { cn } from "@/lib/cn";
-import { dur, ease, stagger, travel, viewport } from "@/lib/motion";
-import { useStillness } from "@/lib/useScrollMotion";
 import type { LeadFlowStep } from "@/content/types";
 
 /**
- * The lead-flow rows, sequencing in once as the panel enters the
- * viewport (PLAN §4.6). Still under reduced motion. Only ever rendered
- * by <LeadFlowPanel>, which owns the flag check.
+ * The lead-flow rows, sequencing in once (PLAN §4.6). CSS only
+ * (.lead-flow in app/motion.css), so flag-off pages load no animation
+ * library for a panel they never render. Still under reduced motion.
+ * Only ever rendered by <LeadFlowPanel>, which owns the flag check.
  */
 export function LeadFlowRows({ steps }: { steps: LeadFlowStep[] }) {
-  const still = useStillness();
   const last = steps.length - 1;
 
   return (
-    <motion.ol
-      className="flex flex-col gap-2.5"
-      initial={still ? false : "hidden"}
-      animate={still ? "shown" : undefined}
-      whileInView={still ? undefined : "shown"}
-      viewport={viewport.standard}
-    >
+    <ol className="lead-flow flex flex-col gap-2.5">
       {steps.map((s, i) => (
-        <motion.li
+        <li
           key={s.key}
-          variants={{
-            hidden: { opacity: 0, y: travel.sm },
-            shown: {
-              opacity: 1,
-              y: 0,
-              transition: still
-                ? { duration: 0 }
-                : { duration: dur.base, ease: ease.out, delay: i * stagger.sequence },
-            },
-          }}
+          style={{ "--i": i } as CSSProperties}
           className={cn(
             "flex justify-between",
             i === last && "-mx-1.5 px-1.5 py-1 rounded-notice bg-amber text-on-amber"
@@ -43,8 +24,8 @@ export function LeadFlowRows({ steps }: { steps: LeadFlowStep[] }) {
         >
           <span className={i === last ? undefined : "text-muted"}>{s.key}</span>
           <span className={i === last ? "font-medium" : undefined}>{s.value}</span>
-        </motion.li>
+        </li>
       ))}
-    </motion.ol>
+    </ol>
   );
 }

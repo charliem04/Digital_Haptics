@@ -66,6 +66,14 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Below lg the sticky CTA is pinned to the bottom. Keep whatever takes
+   keyboard focus clear of it (WCAG 2.2 AA 2.4.11). */
+@media (max-width: 1023.98px) {
+  html {
+    scroll-padding-bottom: calc(57px + env(safe-area-inset-bottom) + 12px);
+  }
+}
+
 ::selection {
   background: rgb(var(--amber));
   color: rgb(var(--on-amber));

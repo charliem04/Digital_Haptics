@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useRef, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import type { Option } from "@/content/types";
 import type { ContactLinks } from "@/lib/nav";
 import {
@@ -98,6 +98,8 @@ export function IntakeForm({
   const [errors, setErrors] = useState<Errors>({});
   const [summary, setSummary] = useState<FieldName[]>([]);
   const [status, setStatus] = useState<"idle" | "sending" | "failed" | "busy" | "check">("idle");
+  const [ready, setReady] = useState(false);
+  useEffect(() => setReady(true), []);
 
   // The same rules the Worker applies (lib/intake-rules.ts).
   const opts: IntakeOptions = {
@@ -198,9 +200,36 @@ export function IntakeForm({
         started.current = true;
         trackEvent("form_start");
       }}
+      // Never GET: if a submit ever got past the disabled button below,
+      // personal details must not land in the URL.
+      method="post"
       noValidate
       className="flex flex-col gap-6"
     >
+      <noscript>
+        <p className="border-l-4 p-4 text-body-sm rounded-field border-error bg-raised text-text">
+          This form needs JavaScript to send. Reach us directly
+          {contact.phone && (
+            <>
+              {" "}
+              at{" "}
+              <a href={contact.phone.href} className="underline text-text">
+                {contact.phone.display}
+              </a>
+            </>
+          )}
+          {contact.email && (
+            <>
+              {contact.phone ? " or " : " at "}
+              <a href={contact.email.href} className="underline text-text">
+                {contact.email.display}
+              </a>
+            </>
+          )}
+          .
+        </p>
+      </noscript>
+
       {summary.length > 0 && (
         // Focused by script after a failed submit, so screen readers read
         // it. It isn't a control, so it gets no ring.
@@ -395,7 +424,9 @@ export function IntakeForm({
       )}
 
       <div>
-        <Button type="submit" disabled={status === "sending"}>
+        {/* Disabled until hydrated, which also blocks Enter-to-submit. The
+            fields stay usable, so anything typed early is kept. */}
+        <Button type="submit" disabled={!ready || status === "sending"}>
           {status === "sending" ? "Sending…" : "Send it"}
         </Button>
       </div>

@@ -66,10 +66,15 @@ export function LiquidBackdrop() {
     let stop: (() => void) | undefined;
     const cancel = afterLoadAndIdle(async () => {
       try {
-        const { runLiquid } = await import("./runLiquid");
+        // Off the main thread wherever the browser allows it, so the
+        // liquid can never hold up scrolling or taps.
+        const run =
+          "transferControlToOffscreen" in canvas && typeof Worker === "function"
+            ? (await import("./runLiquidWorker")).runLiquidWorker
+            : (await import("./runLiquid")).runLiquid;
         if (dead) return;
         const openings = Array.from(document.querySelectorAll("[data-liquid-opening]"));
-        const dispose = await runLiquid(canvas, root, openings, {
+        const dispose = await run(canvas, root, openings, {
           onReady: () => setLive(true),
           onLost: () => setLive(false),
         });
@@ -81,7 +86,20 @@ export function LiquidBackdrop() {
       }
     });
 
+    // Reduced motion switched on mid-visit: stop and return to the poster.
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const onReducedChange = () => {
+      if (!reduced.matches || dead) return;
+      dead = true;
+      cancel();
+      stop?.();
+      stop = undefined;
+      setLive(false);
+    };
+    reduced.addEventListener("change", onReducedChange);
+
     return () => {
+      reduced.removeEventListener("change", onReducedChange);
       dead = true;
       cancel();
       stop?.();

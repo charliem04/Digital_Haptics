@@ -155,8 +155,14 @@ The Stage 1 demo also opened the CTA on Pricing and the case study. This guide n
 | Button colour and press (1px) | 160ms | Instant |
 | Arrow nudge on hover | 160ms | None |
 | Accordion and menu | Opens in response to the visitor, 250ms at most | Instant |
+| Page transition: molten wipe | 240ms cover, 300ms uncover | None |
+| Section headings and ledes: light sweep | 950ms, once, on entering view | Static |
+| Toned sections: rising embers, at the outer edges | Continuous, only while on screen | None |
+| Section dividers: heat seam | 4.2s loop, only while on screen | Static line |
 
-The existing `Reveal` entrance is removed from content. Headlines and body are present on first paint. There is no scroll-jacking and no parallax on content.
+**Owner's picks, 2026-11-22.** `site/motion.config.ts` selects them. All 16 options stay built in `site/app/motion.css` and `site/components/motion/`, and can be compared at `/lab/motion` under `npm run dev`.
+
+The home headline and anything on screen at first load paint immediately and never animate. Text is hidden only by JavaScript, so it stays visible if scripts fail. There is no scroll-jacking and no parallax on content.
 
 ## 8. Components
 
@@ -256,7 +262,9 @@ The laptop GPU cannot separate these settings, so they are chosen for fill-rate 
 
 ### 10.5 CSP
 
-**No CSP change was needed.** The renderer is same-origin JavaScript, uses no workers, `eval` or external assets, and the grain is a `data:` image already allowed by `img-src`. In R4 the production build ran live under its generated policy, served by a local test server, with no violations. In R7 it ran through the real Worker under `wrangler dev`, with the live canvas in Firefox and no violations. It has not yet run on a hosted preview.
+**Update, 2026-11-22:** the renderer now runs in a same-origin Web Worker through OffscreenCanvas, because it intermittently blocked the main thread for about a second in Edge. After the move, 24 of 24 Edge Lighthouse runs scored 100, with a worst blocking time of 9 ms. `worker-src` falls back to `script-src 'self'`, so the policy is unchanged. Browsers without OffscreenCanvas use the main-thread path, and any worker failure keeps the poster.
+
+**No CSP change was needed.** The renderer is same-origin JavaScript, uses no `eval` or external assets, and the grain is a `data:` image already allowed by `img-src`. In R4 the production build ran live under its generated policy, served by a local test server, with no violations. In R7 it ran through the real Worker under `wrangler dev`, with the live canvas in Firefox and no violations. It has not yet run on a hosted preview.
 
 ### 10.6 R4 results
 
