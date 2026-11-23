@@ -1,5 +1,6 @@
 import type { HTMLAttributes, ReactNode } from "react";
 import { cn } from "@/lib/cn";
+import { SectionAmbient, SectionDivider } from "@/components/motion/SectionMotion";
 import { Container } from "./Container";
 
 /**
@@ -26,9 +27,19 @@ const SPACING = {
   none: "",
 } as const;
 
+/** Read by the liquid-edge divider so it matches the section's own fill. */
+const TONE_FILL = {
+  none: "[--section-bg:var(--room)]",
+  frost: "[--section-bg:var(--surface)]",
+  "steel-panel": "[--section-bg:var(--raised)]",
+  ink: "[--section-bg:var(--surface)]",
+} as const;
+
 export function Section({
   tone = "none",
   spacing = "default",
+  ambient = tone !== "none",
+  divider = spacing === "default",
   className,
   containerClassName,
   children,
@@ -36,13 +47,22 @@ export function Section({
 }: {
   tone?: keyof typeof TONES;
   spacing?: keyof typeof SPACING;
+  /** Background motion (motion.config.ts). On for toned sections. */
+  ambient?: boolean;
+  /** Animated top edge. Off for tight sections that follow a page hero. */
+  divider?: boolean;
   className?: string;
   containerClassName?: string;
   children: ReactNode;
 } & HTMLAttributes<HTMLElement>) {
   return (
-    <section className={cn(TONES[tone], SPACING[spacing], className)} {...rest}>
-      <Container className={containerClassName}>{children}</Container>
+    <section
+      className={cn("relative", TONE_FILL[tone], TONES[tone], SPACING[spacing], className)}
+      {...rest}
+    >
+      {ambient && <SectionAmbient />}
+      {divider && <SectionDivider />}
+      <Container className={cn("relative", containerClassName)}>{children}</Container>
     </section>
   );
 }

@@ -1,0 +1,450 @@
+/* ── SITE MOTION ─────────────────────────────────────────────────────
+   All 16 options. motion.config.ts picks one per category and the root
+   layout writes those picks onto <html> as data attributes. Only
+   transform, opacity and short mask or clip animations are used. */
+
+:root {
+  --motion-ease: cubic-bezier(0.21, 0.65, 0.36, 1);
+}
+
+/* ── Page transitions ─────────────────────────────────────────────── */
+.motion-page {
+  position: fixed;
+  z-index: 55; /* over the header and sticky CTA, under the grain */
+  inset: 0;
+  display: none;
+  background: rgb(var(--room));
+}
+
+.motion-page:not([data-phase="idle"]) {
+  display: block;
+}
+
+html[data-motion-page="molten"] .motion-page {
+  background: linear-gradient(90deg, #871922, #e22e20 26%, #f56c36 52%, #f5a254 76%, #133236);
+}
+
+html[data-motion-page="sheet"] .motion-page {
+  background: rgb(var(--surface));
+}
+
+.motion-page[data-phase="cover"] {
+  animation: 240ms cubic-bezier(0.65, 0, 0.35, 1) both;
+}
+
+.motion-page[data-phase="reveal"] {
+  animation: 300ms cubic-bezier(0.65, 0, 0.35, 1) both;
+}
+
+html[data-motion-page="fade"] .motion-page[data-phase="cover"] {
+  animation-name: motion-fade-cover;
+}
+html[data-motion-page="fade"] .motion-page[data-phase="reveal"] {
+  animation-name: motion-fade-reveal;
+}
+html[data-motion-page="sheet"] .motion-page[data-phase="cover"] {
+  animation-name: motion-sheet-cover;
+}
+html[data-motion-page="sheet"] .motion-page[data-phase="reveal"] {
+  animation-name: motion-sheet-reveal;
+}
+html[data-motion-page="molten"] .motion-page[data-phase="cover"] {
+  animation-name: motion-molten-cover;
+}
+html[data-motion-page="molten"] .motion-page[data-phase="reveal"] {
+  animation-name: motion-molten-reveal;
+}
+html[data-motion-page="iris"] .motion-page[data-phase="cover"] {
+  animation-name: motion-iris-cover;
+}
+html[data-motion-page="iris"] .motion-page[data-phase="reveal"] {
+  animation-name: motion-iris-reveal;
+}
+
+@keyframes motion-fade-cover {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes motion-fade-reveal {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes motion-sheet-cover {
+  from {
+    transform: translateY(100%);
+  }
+}
+@keyframes motion-sheet-reveal {
+  to {
+    transform: translateY(-100%);
+  }
+}
+@keyframes motion-molten-cover {
+  from {
+    transform: translateX(-100%);
+  }
+}
+@keyframes motion-molten-reveal {
+  to {
+    transform: translateX(100%);
+  }
+}
+@keyframes motion-iris-cover {
+  from {
+    clip-path: circle(0% at 50% 50%);
+  }
+  to {
+    clip-path: circle(120% at 50% 50%);
+  }
+}
+@keyframes motion-iris-reveal {
+  from {
+    clip-path: circle(120% at 50% 50%);
+  }
+  to {
+    clip-path: circle(0% at 50% 50%);
+  }
+}
+
+/* ── Text ─────────────────────────────────────────────────────────── */
+html[data-motion-text="line"] .motion-word,
+html[data-motion-text="words"] .motion-word {
+  display: inline-block;
+}
+
+html[data-motion-text="line"] .motion-word {
+  overflow: clip;
+  overflow-clip-margin: 0.14em;
+}
+
+html[data-motion-text="line"] .motion-word-inner {
+  display: inline-block;
+}
+
+/* line */
+html[data-motion-text="line"] [data-mt-state="armed"] .motion-word-inner {
+  transform: translateY(112%);
+}
+html[data-motion-text="line"] [data-mt-state="in"] .motion-word-inner {
+  animation: motion-line 800ms var(--motion-ease) both;
+  animation-delay: calc(var(--i, 0) * 110ms + var(--mt-delay, 0ms));
+}
+
+/* words */
+html[data-motion-text="words"] [data-mt-state="armed"] .motion-word {
+  opacity: 0;
+}
+html[data-motion-text="words"] [data-mt-state="in"] .motion-word {
+  animation: motion-word 620ms var(--motion-ease) both;
+  animation-delay: calc(min(var(--i, 0), 9) * 70ms + var(--mt-delay, 0ms));
+}
+
+/* line and words: the lede has no split, so it fades */
+html[data-motion-text="line"] p[data-mt-state="armed"],
+html[data-motion-text="words"] p[data-mt-state="armed"] {
+  opacity: 0;
+}
+html[data-motion-text="line"] p[data-mt-state="in"],
+html[data-motion-text="words"] p[data-mt-state="in"] {
+  animation: motion-fade-cover 600ms calc(240ms + var(--mt-delay, 0ms)) var(--motion-ease) both;
+}
+
+/* sweep */
+html[data-motion-text="sweep"] [data-mt-state] {
+  -webkit-mask-image: linear-gradient(90deg, #000 42%, transparent 58%);
+  mask-image: linear-gradient(90deg, #000 42%, transparent 58%);
+  -webkit-mask-size: 260% 100%;
+  mask-size: 260% 100%;
+}
+html[data-motion-text="sweep"] [data-mt-state="armed"] {
+  -webkit-mask-position: 100% 0;
+  mask-position: 100% 0;
+}
+html[data-motion-text="sweep"] [data-mt-state="in"] {
+  animation: motion-sweep 950ms var(--mt-delay, 0ms) var(--motion-ease) both;
+}
+html[data-motion-text="sweep"] p[data-mt-state="in"] {
+  animation-delay: calc(140ms + var(--mt-delay, 0ms));
+}
+
+/* underline: the text never hides */
+html[data-motion-text="underline"] .motion-key {
+  background: linear-gradient(rgb(var(--amber)), rgb(var(--amber))) 0 100% / 100% 3px no-repeat;
+}
+html[data-motion-text="underline"] [data-mt-state="armed"] .motion-key {
+  background-size: 0 3px;
+}
+html[data-motion-text="underline"] [data-mt-state="in"] .motion-key {
+  animation: motion-underline 800ms calc(120ms + var(--mt-delay, 0ms)) var(--motion-ease) both;
+}
+
+@keyframes motion-line {
+  from {
+    transform: translateY(112%);
+  }
+}
+@keyframes motion-word {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+@keyframes motion-sweep {
+  from {
+    -webkit-mask-position: 100% 0;
+    mask-position: 100% 0;
+  }
+  to {
+    -webkit-mask-position: 0 0;
+    mask-position: 0 0;
+  }
+}
+@keyframes motion-underline {
+  from {
+    background-size: 0 3px;
+  }
+}
+
+/* ── Passive background ───────────────────────────────────────────── */
+.motion-ambient {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.motion-ambient * {
+  animation-play-state: paused !important;
+}
+
+.motion-ambient[data-motion-live="on"] * {
+  animation-play-state: running !important;
+}
+
+.motion-glow {
+  position: absolute;
+  top: -45%;
+  left: -18%;
+  width: min(760px, 110%);
+  aspect-ratio: 1;
+  background: radial-gradient(
+    circle,
+    rgb(245 108 54 / 0.2),
+    rgb(226 46 32 / 0.07) 38%,
+    transparent 66%
+  );
+  animation: motion-glow 14s ease-in-out infinite alternate;
+}
+
+.motion-ember {
+  position: absolute;
+  bottom: -8px;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: rgb(var(--amber));
+  opacity: 0;
+  animation: motion-ember calc(7s + var(--i) * 0.47s) linear infinite;
+  animation-delay: calc(var(--i) * -1.13s);
+}
+
+.motion-contours {
+  position: absolute;
+  width: 200%;
+  height: 100%;
+  animation: motion-drift 32s linear infinite;
+}
+
+.motion-contours path {
+  fill: none;
+  stroke: rgb(var(--muted) / 0.14);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.motion-rim {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 150vmax;
+  height: 150vmax;
+  margin: -75vmax 0 0 -75vmax;
+  background: conic-gradient(transparent 0 90%, rgb(var(--amber) / 0.8) 97%, transparent 100%);
+  animation: motion-spin 9s linear infinite;
+}
+
+.motion-ambient-rim {
+  padding: 1px;
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+}
+
+@keyframes motion-glow {
+  to {
+    transform: translate(48%, 16%) scale(1.12);
+  }
+}
+@keyframes motion-ember {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0);
+  }
+  18% {
+    opacity: 0.75;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(18px, -420px);
+  }
+}
+@keyframes motion-drift {
+  to {
+    transform: translateX(-50%);
+  }
+}
+@keyframes motion-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ── Section dividers ─────────────────────────────────────────────── */
+.motion-divider {
+  position: absolute;
+  z-index: 1;
+  top: -1px;
+  right: 0;
+  left: 0;
+  height: 1px;
+  pointer-events: none;
+}
+
+.motion-divider * {
+  animation-play-state: paused;
+}
+
+.motion-divider[data-motion-live="on"] * {
+  animation-play-state: running;
+}
+
+.motion-divider-draw {
+  background: rgb(var(--line));
+}
+.motion-divider-draw[data-motion-live="on"] {
+  animation: motion-draw 900ms var(--motion-ease) both;
+}
+
+.motion-divider-seam {
+  height: 2px;
+  overflow: hidden;
+  background: rgb(var(--line));
+}
+
+.motion-seam {
+  position: absolute;
+  width: 34%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgb(var(--amber)), transparent);
+  animation: motion-seam 4.2s ease-in-out infinite;
+}
+
+.motion-divider-wave {
+  top: -22px;
+  height: 24px;
+  overflow: hidden;
+}
+
+.motion-divider-wave svg {
+  display: block;
+  width: 200%;
+  height: 100%;
+  animation: motion-drift 11s linear infinite;
+}
+
+.motion-divider-wave path {
+  fill: rgb(var(--section-bg, var(--room)));
+}
+
+.motion-divider-drip {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 8%;
+}
+
+.motion-divider-drip span {
+  width: 12px;
+  border-radius: 0 0 999px 999px;
+  background: rgb(var(--raised));
+  transform-origin: top;
+  animation: motion-drip 6s ease-in-out infinite alternate;
+  animation-delay: calc(var(--i) * -0.8s);
+}
+
+@keyframes motion-draw {
+  from {
+    transform: scaleX(0);
+  }
+}
+@keyframes motion-seam {
+  from {
+    transform: translateX(-110%);
+  }
+  to {
+    transform: translateX(310%);
+  }
+}
+@keyframes motion-drip {
+  from {
+    transform: scaleY(0.25);
+  }
+}
+
+/* ── Lead-flow panel 🚩: each row is one step in the story ─────────── */
+.lead-flow > li {
+  animation: motion-word 700ms var(--motion-ease) both;
+  animation-delay: calc(var(--i) * 550ms);
+}
+
+/* Half the sparks on phones. */
+@media (max-width: 640px) {
+  .motion-ember:nth-child(n + 7) {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .motion-page,
+  .motion-ambient {
+    display: none !important;
+  }
+
+  .motion-divider *,
+  .lead-flow > li {
+    animation: none !important;
+  }
+
+  .motion-seam {
+    display: none;
+  }
+}
+
+@media print {
+  .motion-page,
+  .motion-ambient,
+  .motion-divider {
+    display: none !important;
+  }
+
+  [data-mt-state] {
+    opacity: 1 !important;
+    -webkit-mask: none !important;
+    mask: none !important;
+  }
+}

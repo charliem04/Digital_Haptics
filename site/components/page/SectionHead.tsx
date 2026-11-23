@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { cn } from "@/lib/cn";
 import { SectionLabel } from "@/components/ui/SectionLabel";
+import { MotionText } from "@/components/motion/MotionText";
 
 /**
  * A section's label + heading (+ lede). The heading carries `id`, so
@@ -22,10 +23,14 @@ export function SectionHead({
   return (
     <div className={cn("flex flex-col gap-4", className)}>
       <SectionLabel>{label}</SectionLabel>
-      <h2 id={id} className="max-w-[15.024em] font-body text-room-section font-medium">
-        {title}
+      <h2 id={id} data-mt="" className="max-w-[15.024em] font-body text-room-section font-medium">
+        <MotionText>{title}</MotionText>
       </h2>
-      {lede && <p className="max-w-[640px] text-room-body text-muted">{lede}</p>}
+      {lede && (
+        <p data-mt="" className="max-w-[640px] text-room-body text-muted">
+          {lede}
+        </p>
+      )}
     </div>
   );
 }

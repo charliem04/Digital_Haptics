@@ -119,7 +119,7 @@ Manrope for all text; Chakra Petch 700 for the logo only. Sentence case. Scale i
 Specs and all interactive states are in VISUAL_GUIDE §8. The lead-flow panel stays 🚩 FLAGGED and only renders when `FEATURE_AUTOMATIONS` is on. The mobile sticky CTA appears on every page except `/start`.
 
 ### 4.6 Motion
-- Subtle and purposeful: the liquid, button feedback, and responses to what the visitor does
+- Purposeful: the liquid, button feedback, responses to what the visitor does, and the page, text, passive and divider motion selected in `site/motion.config.ts` (VISUAL_GUIDE §7)
 - No scroll-jacking, no parallax on content, nothing that delays reading
 - The hero headline is the LCP element and never waits for, or is animated by, WebGL
 - Under `prefers-reduced-motion`: one composed still frame, no loop

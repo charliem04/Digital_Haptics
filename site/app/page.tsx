@@ -88,7 +88,7 @@ export default function Home() {
           </Section>
         )}
 
-        <Section aria-labelledby="process">
+        <Section ambient aria-labelledby="process">
           <div className="flex flex-col gap-12">
             <SectionHead id="process" label="Process" title="How a project runs" />
             <StepsStrip steps={getProcessSteps()} />

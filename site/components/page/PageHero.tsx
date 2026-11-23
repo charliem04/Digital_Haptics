@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { Container } from "@/components/layout/Container";
+import { MotionText } from "@/components/motion/MotionText";
 
 /**
  * The opening block of every inner page: breadcrumbs, a section label,
@@ -29,8 +30,16 @@ export function PageHero({
       <Breadcrumbs path={path} leafLabel={leafLabel} />
       <div className="flex flex-col gap-5">
         <SectionLabel>{label}</SectionLabel>
-        <h1 className="max-w-[10.016em] font-body text-room-title font-medium">{title}</h1>
-        {lead && <p className="max-w-[640px] text-room-lede text-muted">{lead}</p>}
+        {/* data-mt plays only after a page transition. On first load it is
+            on screen, so it paints at once and LCP is untouched. */}
+        <h1 data-mt="" className="max-w-[10.016em] font-body text-room-title font-medium">
+          <MotionText>{title}</MotionText>
+        </h1>
+        {lead && (
+          <p data-mt="" className="max-w-[640px] text-room-lede text-muted">
+            {lead}
+          </p>
+        )}
       </div>
       {children}
     </Container>

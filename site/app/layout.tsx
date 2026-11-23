@@ -1,7 +1,11 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import "./motion.css";
 import { site } from "@/site.config";
+import { motionConfig } from "@/motion.config";
+import { MotionRuntime } from "@/components/motion/MotionRuntime";
+import { PageTransition } from "@/components/motion/PageTransition";
 import { IS_PREVIEW } from "@/lib/preview";
 import { JsonLd } from "@/components/JsonLd";
 import { SkipLink } from "@/components/layout/SkipLink";
@@ -77,7 +81,12 @@ export const metadata: Metadata = {
  */
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${display.variable} ${body.variable}`}>
+    <html
+      lang="en"
+      className={`${display.variable} ${body.variable}`}
+      data-motion-page={motionConfig.page}
+      data-motion-text={motionConfig.text}
+    >
       <body className="flex min-h-dvh flex-col">
         {/*
           Framer serialises each entrance's starting state into the HTML
@@ -105,6 +114,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <StickyCta cta={ctaLink()} />
         <div aria-hidden className="room-grain" />
         <InteractionTracking ctaHref={CTA_HREF} />
+        <PageTransition />
+        <MotionRuntime />
         <JsonLd />
       </body>
     </html>

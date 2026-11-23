@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/Button";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { Section } from "@/components/layout/Section";
 import { Container } from "@/components/layout/Container";
+import { MotionText } from "@/components/motion/MotionText";
 import type { CtaCopy } from "@/content/types";
 
 /**
@@ -30,8 +31,8 @@ export function CtaBand({
     <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
       <div className="flex max-w-[720px] flex-col gap-4">
         <SectionLabel>Next step</SectionLabel>
-        <h2 id={id} className="font-body text-room-cta font-medium">
-          {copy.heading}
+        <h2 id={id} data-mt="" className="font-body text-room-cta font-medium">
+          <MotionText>{copy.heading}</MotionText>
         </h2>
         <p className="text-room-lede text-muted">{copy.body}</p>
       </div>

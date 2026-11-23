@@ -1,0 +1,646 @@
+.lab {
+  --ease: cubic-bezier(0.21, 0.65, 0.36, 1);
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 48px 20px 96px;
+}
+
+.intro h1 {
+  margin: 0 0 12px;
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1;
+}
+
+.intro p,
+.category > p {
+  max-width: 680px;
+  margin: 0;
+  color: rgb(var(--muted));
+}
+
+.bar {
+  position: sticky;
+  z-index: 20;
+  top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  margin: 28px 0;
+  padding: 12px 16px;
+  border: 1px solid rgb(var(--line));
+  border-radius: 20px;
+  background: rgb(var(--surface));
+  font-size: 14px;
+}
+
+.bar b {
+  margin-right: 14px;
+  font-weight: 500;
+}
+
+.barActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.bar button,
+.card button {
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1px solid rgb(var(--muted));
+  border-radius: 999px;
+  background: transparent;
+  color: rgb(var(--text));
+  cursor: pointer;
+  font: inherit;
+  font-size: 15px;
+}
+
+.bar button:hover,
+.card button:hover {
+  background: rgb(var(--raised));
+}
+
+.bar .primary,
+.bar .primary:hover,
+.selected button,
+.selected button:hover {
+  border-color: rgb(var(--amber));
+  background: rgb(var(--amber));
+  color: rgb(var(--on-amber));
+}
+
+.category {
+  padding: 44px 0;
+  border-top: 1px solid rgb(var(--line));
+}
+
+.category h2 {
+  margin: 0 0 6px;
+  font-size: clamp(1.7rem, 3vw, 2.6rem);
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  line-height: 1.08;
+}
+
+.grid {
+  display: grid;
+  gap: 16px;
+  margin-top: 24px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 290px), 1fr));
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 12px 12px 18px;
+  border-radius: 24px;
+  background: rgb(var(--surface));
+  outline: 2px solid transparent;
+}
+
+.selected {
+  outline-color: rgb(var(--amber));
+}
+
+.card h3 {
+  margin: 14px 6px 2px;
+  font-size: 19px;
+  font-weight: 500;
+}
+
+.card p {
+  flex: 1;
+  margin: 0 6px 14px;
+  color: rgb(var(--muted));
+  font-size: 15px;
+  line-height: 1.45;
+}
+
+.card button {
+  margin-left: 6px;
+}
+
+.stage {
+  position: relative;
+  width: 100%;
+  height: 190px;
+  overflow: hidden;
+  border-radius: 16px;
+  background: rgb(var(--room));
+}
+
+.replay {
+  display: flex;
+  height: 100%;
+  align-items: center;
+}
+
+.demoHeading {
+  margin: 0;
+  padding: 0 20px;
+  font-size: 30px;
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  line-height: 1.12;
+}
+
+/* ── Text ─────────────────────────────────────────────────────────── */
+.lineMask {
+  display: block;
+  overflow: hidden;
+}
+
+.lineInner {
+  display: block;
+  animation: lineRise 800ms var(--ease) both;
+  animation-delay: calc(var(--i) * 110ms);
+}
+
+@keyframes lineRise {
+  from {
+    transform: translateY(105%);
+  }
+}
+
+.word {
+  display: inline-block;
+  white-space: pre;
+  animation: wordIn 620ms var(--ease) both;
+  animation-delay: calc(var(--i) * 75ms);
+}
+
+@keyframes wordIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+.sweep {
+  -webkit-mask-image: linear-gradient(90deg, #000 42%, transparent 58%);
+  mask-image: linear-gradient(90deg, #000 42%, transparent 58%);
+  -webkit-mask-size: 260% 100%;
+  mask-size: 260% 100%;
+  animation: sweep 950ms var(--ease) both;
+}
+
+@keyframes sweep {
+  from {
+    -webkit-mask-position: 100% 0;
+    mask-position: 100% 0;
+  }
+  to {
+    -webkit-mask-position: 0 0;
+    mask-position: 0 0;
+  }
+}
+
+.underline {
+  background: linear-gradient(rgb(var(--amber)), rgb(var(--amber))) 0 100% / 100% 3px no-repeat;
+  animation: underline 800ms 180ms var(--ease) both;
+}
+
+@keyframes underline {
+  from {
+    background-size: 0 3px;
+  }
+}
+
+/* ── Passive ──────────────────────────────────────────────────────── */
+.passive {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: rgb(var(--room));
+}
+
+.passiveCard {
+  position: absolute;
+  z-index: 2;
+  right: 20px;
+  bottom: 20px;
+  left: 20px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: rgb(var(--raised));
+  font-size: 15px;
+}
+
+.glow {
+  position: absolute;
+  width: 110%;
+  aspect-ratio: 1;
+  top: -70%;
+  left: -30%;
+  background: radial-gradient(
+    circle,
+    rgb(245 108 54 / 0.38),
+    rgb(226 46 32 / 0.12) 38%,
+    transparent 66%
+  );
+  animation: glow 9s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  to {
+    transform: translate(42%, 22%) scale(1.15);
+  }
+}
+
+.ember {
+  position: absolute;
+  bottom: -8px;
+  left: calc(4% + var(--i) * 8%);
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: rgb(var(--amber));
+  animation: ember calc(4.5s + var(--i) * 0.31s) linear infinite;
+  animation-delay: calc(var(--i) * -0.73s);
+}
+
+@keyframes ember {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0);
+  }
+  20% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(18px, -210px);
+  }
+}
+
+.contours {
+  position: absolute;
+  width: 200%;
+  height: 100%;
+  animation: drift 18s linear infinite;
+}
+
+.contours path {
+  fill: none;
+  stroke: rgb(var(--muted) / 0.34);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+@keyframes drift {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.rim {
+  position: absolute;
+  z-index: 1;
+  right: 18px;
+  bottom: 18px;
+  left: 18px;
+  height: 54px;
+  overflow: hidden;
+  border-radius: 16px;
+}
+
+.rim::before {
+  position: absolute;
+  width: 140%;
+  aspect-ratio: 1;
+  top: 50%;
+  left: -20%;
+  background: conic-gradient(transparent 0 72%, rgb(var(--amber)) 88%, transparent 100%);
+  content: "";
+  transform-origin: center;
+  translate: 0 -50%;
+  animation: spin 5s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+/* ── Dividers ─────────────────────────────────────────────────────── */
+.dividerStage {
+  position: absolute;
+  inset: 0;
+  background: rgb(var(--room));
+}
+
+.upper {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 50%;
+  background: rgb(var(--raised));
+}
+
+.draw,
+.seamLine {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  left: 0;
+  height: 1px;
+  overflow: hidden;
+  background: rgb(var(--muted));
+}
+
+.draw {
+  animation: draw 900ms var(--ease) both;
+}
+
+@keyframes draw {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+.seamLine {
+  height: 2px;
+  background: rgb(var(--line));
+}
+
+.seam {
+  position: absolute;
+  width: 34%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgb(var(--amber)), transparent);
+  animation: seam 2.8s ease-in-out infinite;
+}
+
+@keyframes seam {
+  from {
+    transform: translateX(-110%);
+  }
+  to {
+    transform: translateX(310%);
+  }
+}
+
+.wave {
+  position: absolute;
+  top: calc(50% - 2px);
+  left: 0;
+  width: 200%;
+  height: 34px;
+  animation: drift 7s linear infinite;
+}
+
+.wave path {
+  fill: rgb(var(--raised));
+}
+
+.drips {
+  position: absolute;
+  top: 50%;
+  right: 8%;
+  left: 8%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.drips span {
+  width: 14px;
+  border-radius: 0 0 999px 999px;
+  background: rgb(var(--raised));
+  transform-origin: top;
+  animation: drip 4.8s ease-in-out infinite alternate;
+  animation-delay: calc(var(--i) * -0.8s);
+}
+
+@keyframes drip {
+  from {
+    transform: scaleY(0.25);
+  }
+}
+
+/* ── Page transitions ─────────────────────────────────────────────── */
+.pageStage {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.layer {
+  position: absolute;
+  inset: 0;
+}
+
+.mockPage {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px;
+  background: rgb(var(--surface));
+}
+
+.mockAlt {
+  background: rgb(var(--raised));
+}
+
+.mockPage strong {
+  font-size: 26px;
+  font-weight: 500;
+}
+
+.mockPage > span {
+  width: 76%;
+  height: 10px;
+  border-radius: 999px;
+  background: rgb(var(--muted) / 0.45);
+}
+
+.mockPage > span:last-child {
+  width: 52%;
+}
+
+.out-fade {
+  animation: fadeOut 180ms ease-out both;
+}
+
+.in-fade {
+  animation: fadeIn 380ms 120ms var(--ease) both;
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+.out-sheet {
+  animation: sheetBack 480ms var(--ease) both;
+}
+
+.in-sheet {
+  overflow: hidden;
+  border-radius: 20px 20px 0 0;
+  animation: sheetUp 480ms var(--ease) both;
+}
+
+@keyframes sheetBack {
+  to {
+    opacity: 0.45;
+    transform: scale(0.96);
+  }
+}
+
+@keyframes sheetUp {
+  from {
+    transform: translateY(100%);
+  }
+}
+
+.out-molten {
+  animation: hide 1ms 220ms both;
+}
+
+.in-molten {
+  animation: fadeIn 1ms 220ms both;
+}
+
+@keyframes hide {
+  to {
+    visibility: hidden;
+  }
+}
+
+.curtain {
+  position: absolute;
+  z-index: 3;
+  top: 0;
+  bottom: 0;
+  left: -130%;
+  width: 130%;
+  background: linear-gradient(90deg, #871922, #e22e20 26%, #f56c36 52%, #f5a254 76%, #133236);
+  animation: curtain 480ms cubic-bezier(0.65, 0, 0.35, 1) both;
+}
+
+@keyframes curtain {
+  to {
+    transform: translateX(200%);
+  }
+}
+
+.out-iris {
+  opacity: 1;
+}
+
+.in-iris {
+  animation: iris 480ms var(--ease) both;
+}
+
+@keyframes iris {
+  from {
+    clip-path: circle(0% at 50% 50%);
+  }
+  to {
+    clip-path: circle(75% at 50% 50%);
+  }
+}
+
+/* ── Combined preview ─────────────────────────────────────────────── */
+.together {
+  position: relative;
+  height: min(620px, 80vh);
+  margin-top: 24px;
+  overflow: hidden;
+  border-radius: 28px;
+  background: rgb(var(--room));
+}
+
+.together .mockPage {
+  padding: 0;
+}
+
+.togetherPage {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  background: rgb(var(--room));
+}
+
+.togetherPage > .passive {
+  bottom: 42%;
+}
+
+.togetherPage .passiveCard {
+  display: none;
+}
+
+/* With no card to sit behind, the rim frames the section itself. */
+.togetherPage .rim {
+  inset: 10px;
+  height: auto;
+  border-radius: 22px;
+}
+
+.togetherPage .rim::after {
+  position: absolute;
+  border-radius: 20px;
+  background: rgb(var(--room));
+  content: "";
+  inset: 2px;
+}
+
+.togetherPage > .dividerStage {
+  top: 58%;
+  bottom: 0;
+}
+
+.togetherText {
+  position: absolute;
+  z-index: 3;
+  top: 12%;
+  left: clamp(16px, 5vw, 64px);
+  max-width: min(620px, calc(100% - 32px));
+  padding: 24px 12px;
+  border-radius: 20px;
+  background: rgb(var(--room));
+}
+
+.togetherText small {
+  display: block;
+  margin: 0 20px 8px;
+  color: rgb(var(--muted));
+  font-size: 15px;
+}
+
+.togetherText .demoHeading {
+  font-size: clamp(2rem, 5vw, 4rem);
+  line-height: 1.02;
+}
+
+@media (min-width: 1024px) {
+  .lab {
+    padding-right: 64px;
+    padding-left: 64px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lab *,
+  .lab *::before {
+    animation: none !important;
+  }
+}
