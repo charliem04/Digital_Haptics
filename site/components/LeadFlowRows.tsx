@@ -19,7 +19,8 @@ export function LeadFlowRows({ steps }: { steps: LeadFlowStep[] }) {
     <motion.ol
       className="flex flex-col gap-2.5"
       initial={still ? false : "hidden"}
-      whileInView="shown"
+      animate={still ? "shown" : undefined}
+      whileInView={still ? undefined : "shown"}
       viewport={viewport.standard}
     >
       {steps.map((s, i) => (
@@ -30,7 +31,9 @@ export function LeadFlowRows({ steps }: { steps: LeadFlowStep[] }) {
             shown: {
               opacity: 1,
               y: 0,
-              transition: { duration: dur.base, ease: ease.out, delay: i * stagger.sequence },
+              transition: still
+                ? { duration: 0 }
+                : { duration: dur.base, ease: ease.out, delay: i * stagger.sequence },
             },
           }}
           className={cn(

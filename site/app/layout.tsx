@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { site } from "@/site.config";
@@ -38,8 +38,17 @@ const body = localFont({
   src: [{ path: "./fonts/manrope-variable.woff2", weight: "400 500", style: "normal" }],
   variable: "--font-body",
   display: "swap",
-  fallback: ["system-ui", "sans-serif"],
+  // Matched per weight in globals.css. The automatic fallback set Manrope
+  // too narrow, so lines re-wrapped and moved the page when it loaded.
+  adjustFontFallback: false,
+  fallback: ["Manrope Fallback", "system-ui", "sans-serif"],
 });
+
+/** Browser chrome and native controls match the dark room. */
+export const viewport: Viewport = {
+  themeColor: "#12161A",
+  colorScheme: "dark",
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),

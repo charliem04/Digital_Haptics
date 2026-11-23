@@ -29,7 +29,7 @@ export function PageHero({
       <Breadcrumbs path={path} leafLabel={leafLabel} />
       <div className="flex flex-col gap-5">
         <SectionLabel>{label}</SectionLabel>
-        <h1 className="max-w-[16ch] font-body text-room-title font-medium">{title}</h1>
+        <h1 className="max-w-[10.016em] font-body text-room-title font-medium">{title}</h1>
         {lead && <p className="max-w-[640px] text-room-lede text-muted">{lead}</p>}
       </div>
       {children}

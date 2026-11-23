@@ -50,7 +50,7 @@ export function FaqList({
                   <span className="hidden group-open:inline">−</span>
                 </span>
               </summary>
-              <p className="max-w-[68ch] pb-6 text-room-body text-muted">{f.a}</p>
+              <p className="max-w-[41.48em] pb-6 text-room-body text-muted">{f.a}</p>
             </details>
           ))}
         </div>

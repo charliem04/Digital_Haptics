@@ -256,7 +256,7 @@ The laptop GPU cannot separate these settings, so they are chosen for fill-rate 
 
 ### 10.5 CSP
 
-**No CSP change was needed.** The renderer is same-origin JavaScript, uses no workers, `eval` or external assets, and the grain is a `data:` image already allowed by `img-src`. In R4 the production build ran live under its generated policy, served by a local test server, with no violations. It has not yet been run through `wrangler dev` or a hosted preview.
+**No CSP change was needed.** The renderer is same-origin JavaScript, uses no workers, `eval` or external assets, and the grain is a `data:` image already allowed by `img-src`. In R4 the production build ran live under its generated policy, served by a local test server, with no violations. In R7 it ran through the real Worker under `wrangler dev`, with the live canvas in Firefox and no violations. It has not yet run on a hosted preview.
 
 ### 10.6 R4 results
 
@@ -276,7 +276,19 @@ Measured on the production build, flags off, in headless Edge on the development
 
 **Lighthouse on Home, seven runs:** performance was 100 in six and 96 in one. LCP was about 760 ms in six and 2,558 ms in one. With the WebGL chunk blocked, two of seven runs showed the same slow LCP, so the liquid is not its cause. The slow runs also appear on the pre-R1 baseline. Their cause is not yet known.
 
-**Still to prove:** sustained frame rate in a normal browser and on real phones, and the governor on a genuinely slow device.
+**Final pass (R7), production build, five mobile Lighthouse runs per page:**
+
+| Page | Performance | LCP | CLS | Weight |
+|---|---|---|---|---|
+| Home | 99–100 | 764–786 ms | 0 | 222 KB |
+| Pricing | 99–100 | 776–780 ms | 0 | 231 KB |
+| `/start` | 100 | 771–783 ms | 0.032 | 215 KB |
+
+`/start`'s shift comes from its headline wrapping differently once Manrope replaces the fallback at one phone width. The per-weight fallback in `globals.css` reduced such re-wraps from 10 to 7 across 70 page views, and the remainder stay within the 0.05 budget.
+
+Tested in Edge 157 and Firefox 155 through the local Worker, including a full form submission to a local database.
+
+**Still to prove:** Safari, sustained frame rate on real phones, the governor on a genuinely slow device, and a hosted preview.
 
 **Placement from R5:** one fixed canvas sits behind Home and shows through the hero and final CTA, as in §6.2. It stops drawing whenever neither opening is on screen.
 

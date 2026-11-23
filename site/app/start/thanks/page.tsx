@@ -41,7 +41,7 @@ export default function ThanksPage() {
         </div>
         <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:justify-between">
           <div className="flex max-w-[640px] flex-col gap-5">
-            <h1 className="max-w-[16ch] font-body text-room-title font-medium">
+            <h1 className="max-w-[10.016em] font-body text-room-title font-medium">
               Thanks. It&rsquo;s in.
             </h1>
             <p className="text-room-lede text-muted">

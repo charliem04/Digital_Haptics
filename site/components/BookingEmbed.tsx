@@ -145,7 +145,7 @@ export function BookingEmbed() {
             the visitor cannot identify is not agreement, and /privacy/
             names the same one — both read schedulerName() from
             lib/booking.ts, so swapping bookingUrl renames it in both. */}
-        <p className="mx-auto mt-3 max-w-[46ch]">
+        <p className="mx-auto mt-3 max-w-[28.06em]">
           The calendar is hosted by {schedulerName()}, which sets its own cookies. Load it here, or
           open it in a new tab — your choice.
         </p>

@@ -22,7 +22,7 @@ export function StepsStrip({
         <li key={s.name} className="relative flex flex-col gap-2 border-l-2 border-amber pl-5">
           <SmallLabel>Step.{pad2(i + 1)}</SmallLabel>
           <Heading className="font-body text-room-step font-medium">{s.name}</Heading>
-          <p className="max-w-[40ch] text-room-small text-muted">{s.body}</p>
+          <p className="max-w-[24.4em] text-room-small text-muted">{s.body}</p>
         </li>
       ))}
     </ol>

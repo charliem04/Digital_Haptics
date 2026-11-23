@@ -22,7 +22,7 @@ export function SectionHead({
   return (
     <div className={cn("flex flex-col gap-4", className)}>
       <SectionLabel>{label}</SectionLabel>
-      <h2 id={id} className="max-w-[24ch] font-body text-room-section font-medium">
+      <h2 id={id} className="max-w-[15.024em] font-body text-room-section font-medium">
         {title}
       </h2>
       {lede && <p className="max-w-[640px] text-room-body text-muted">{lede}</p>}
