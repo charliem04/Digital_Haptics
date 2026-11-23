@@ -24,6 +24,11 @@ export const about = {
   ],
   local:
     "Based in Lafayette, Acadiana born and raised. I work remotely too, so I take on projects across Louisiana and beyond.",
-  /** QUESTIONS.md §4: Charles will supply it. Undefined hides the slot. */
-  photo: undefined as Photo | undefined,
+  /** Supplied by Charles 2026-11-22. Undefined hides the slot. */
+  photo: {
+    src: "/about/charles-meyers.webp",
+    alt: "Charles Meyers smiling and leaning on a railing with a backpack on, high-rise buildings behind him.",
+    width: 800,
+    height: 1000,
+  } as Photo | undefined,
 };
