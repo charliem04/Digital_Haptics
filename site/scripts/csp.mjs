@@ -132,6 +132,10 @@ export const INTEGRATIONS = {
     "https://www.linkedin.com",
     "https://g.page",
     "https://share.google", // Google Business Profile share link
+    // Case study links to client sites.
+    "https://coastalconstructionservicesofla.com",
+    "https://darrenaucoinsplumbing.com",
+    "https://ctl-preview.pages.dev",
     // Framework strings baked into React/Next dev warnings.
     "https://nextjs.org",
     "https://react.dev",

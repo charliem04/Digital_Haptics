@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { site } from "@/site.config";
+import { getCases } from "@/lib/content";
 import { livePaths } from "@/lib/routes";
 import { IS_PREVIEW } from "@/lib/preview";
 
@@ -15,9 +16,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // production domain.
   if (IS_PREVIEW) return [];
 
-  return livePaths().map(({ path, priority }) => ({
+  const pages: MetadataRoute.Sitemap = livePaths().map(({ path, priority }) => ({
     url: `${site.url}${path}`,
     priority,
     changeFrequency: path === "/" ? "weekly" : "monthly",
   }));
+
+  // Case studies are content, not registry routes. getCases() returns
+  // only published, permitted ones in a production build.
+  const cases: MetadataRoute.Sitemap = getCases().map((c) => ({
+    url: `${site.url}/work/${c.slug}/`,
+    priority: 0.7,
+    changeFrequency: "monthly",
+  }));
+
+  return [...pages, ...cases];
 }

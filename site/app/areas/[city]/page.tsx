@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { site } from "@/site.config";
 import { pageMetadata } from "@/lib/meta";
-import { getCities, getCity, getServices } from "@/lib/content";
+import { getCases, getCities, getCity, getServices } from "@/lib/content";
+import { CaseGrid } from "@/components/page/CaseGrid";
 import { PageHero } from "@/components/page/PageHero";
 import { Section } from "@/components/layout/Section";
 import { SectionHead } from "@/components/page/SectionHead";
@@ -35,7 +36,9 @@ export function generateMetadata({ params }: { params: { city: string } }): Meta
   return pageMetadata(
     {
       title: `Web design in ${c.name}, ${site.location.state}`,
-      description: `Websites and local SEO for trades businesses in ${c.name}, Louisiana: built for phones, made to rank locally and turn visitors into calls.`,
+      description:
+        c.description ??
+        `Websites and local SEO for trades businesses in ${c.name}, Louisiana: built for phones, made to rank locally and turn visitors into calls.`,
       path: `/areas/${c.slug}/`,
     },
     { noindex: c.draft }
@@ -45,6 +48,8 @@ export function generateMetadata({ params }: { params: { city: string } }): Meta
 export default function CityPage({ params }: { params: { city: string } }) {
   const c = getCity(params.city);
   if (!c) notFound();
+  // getCases() applies the publish and permission rules for this build.
+  const project = getCases().find((x) => x.slug === c.caseSlug);
 
   return (
     <>
@@ -81,6 +86,15 @@ export default function CityPage({ params }: { params: { city: string } }) {
           </div>
         </div>
       </Section>
+
+      {project && (
+        <Section aria-labelledby="city-work">
+          <div className="flex flex-col gap-10">
+            <SectionHead id="city-work" label="Local work" title={`Our work in ${c.name}`} />
+            <CaseGrid cases={[project]} />
+          </div>
+        </Section>
+      )}
 
       <Section aria-labelledby="city-services">
         <div className="flex flex-col gap-10">

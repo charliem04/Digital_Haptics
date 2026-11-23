@@ -100,6 +100,10 @@ export type CaseStudy = {
   systems: string[];
   liveUrl?: string;
   heroImage?: Photo;
+  /** Phone screenshot, shown beside the desktop one. */
+  mobileImage?: Photo;
+  /** A proposed build that isn't the business's live website. */
+  demo?: boolean;
   results: CaseResult[];
   featured: boolean;
   order: number;

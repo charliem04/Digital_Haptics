@@ -17,7 +17,7 @@ export function CaseGrid({ cases }: { cases: CaseStudy[] }) {
             trade={c.trade}
             systems={c.systems.join(" / ")}
             result={c.results[0]?.value ?? "[RESULT]"}
-            status={c.draft ? "Draft" : c.liveUrl ? "Live site" : "Case study"}
+            status={c.draft ? "Draft" : c.demo ? "Demo" : c.liveUrl ? "Live site" : "Case study"}
             image={c.heroImage}
           />
         </li>

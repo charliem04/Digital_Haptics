@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "next dev",
-    "build": "node scripts/worker-flags.mjs && next build && node scripts/og.mjs && node scripts/csp.mjs && node scripts/seo.mjs && node scripts/routes.mjs --check && node scripts/placeholders.mjs && node scripts/preview-headers.mjs --if-preview && node scripts/harden.mjs",
+    "build": "node scripts/worker-flags.mjs && next build && node scripts/hold-images.mjs && node scripts/og.mjs && node scripts/csp.mjs && node scripts/seo.mjs && node scripts/routes.mjs --check && node scripts/placeholders.mjs && node scripts/preview-headers.mjs --if-preview && node scripts/harden.mjs",
     "start": "next start",
     "lint": "next lint",
     "typecheck": "node scripts/worker-flags.mjs && tsc --noEmit && tsc -p worker --noEmit",

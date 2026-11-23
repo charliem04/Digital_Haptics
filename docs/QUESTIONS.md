@@ -19,7 +19,15 @@ Legend: 🔴 needed before launch · 🟡 makes the site better · 🚩 only onc
 
 Until then they show on preview links only. The Work page, the home proof strip and "See the Work" appear in production as soon as the first one publishes.
 
-> **Also: you wrote "CTL Demo".** Is the CTL project a demo or concept site rather than a live client site? If so, the card should say "Demo" instead of "Live site". Tell me which.
+> **CTL Pro Construction (Broussard):**
+>
+> **Coastal Construction Services (New Iberia):**
+>
+> **DA Plumbing (Scott):**
+
+All three written and published 2026-11-22. CTL is labeled as a demo.
+
+> **CTL:** Charles confirmed 2026-11-22 that it can be named and shown.
 >
 > **Answer:**
 
@@ -35,11 +43,11 @@ Until then they show on preview links only. The Work page, the home proof strip 
 
 > **Answer:**
 
-**E. 🟡 Your photo** for the About page. Drop it in `site/public/about/` or send it.
+**E. Your photo.** Done 2026-11-22: on the About page.
 
 > **Answer:**
 
-**F. 🟡 City pages.** Each town only publishes with content that's specific to it (PLAN §5). The case study towns are a start: Broussard/Lafayette (CTL), New Iberia (Coastal), Scott (DA Plumbing). Once those write-ups exist, I can build those cities' pages around the real local work. Anything else you know about a specific town helps too.
+**F. 🟡 City pages.** Each town only publishes with content that's specific to it (PLAN §5). Written 2026-11-22: New Iberia, Scott, Lafayette and Broussard are ready. To add Matthew Guidry's site to Lafayette, send his business, its website, and whether he's OK being named. Youngsville, Carencro and Breaux Bridge stay unpublished until they have a local project.
 
 > **Answer:**
 

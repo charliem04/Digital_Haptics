@@ -76,6 +76,11 @@ export default function CasePage({ params }: { params: { slug: string } }) {
             Draft: not published. Shown on preview builds only.
           </p>
         )}
+        {meta.demo && (
+          <p className="self-start border px-3 py-2 rounded-notice border-line bg-surface font-body text-room-small">
+            Demo: a proposed redesign. This is not the business&rsquo;s live website.
+          </p>
+        )}
         <dl className="grid gap-x-10 gap-y-4 border-t pt-6 sm:grid-cols-[auto_1fr] border-line font-body text-room-body">
           <dt className="text-muted">Trade</dt>
           <dd>{meta.trade}</dd>
@@ -89,7 +94,7 @@ export default function CasePage({ params }: { params: { slug: string } }) {
           </dd>
           {meta.liveUrl && (
             <>
-              <dt className="text-muted">Live site</dt>
+              <dt className="text-muted">{meta.demo ? "Demo site" : "Live site"}</dt>
               <dd>
                 <a
                   href={meta.liveUrl}
@@ -106,16 +111,33 @@ export default function CasePage({ params }: { params: { slug: string } }) {
       </PageHero>
 
       {meta.heroImage && (
-        <Section spacing="none" aria-label="Screenshot">
-          <Panel fill="raised" innerClassName="overflow-hidden">
-            <Image
-              src={meta.heroImage.src}
-              alt={meta.heroImage.alt}
-              width={meta.heroImage.width}
-              height={meta.heroImage.height}
-              className="h-auto w-full"
-            />
-          </Panel>
+        <Section spacing="none" aria-label="Screenshots">
+          <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,4fr)_minmax(0,1fr)]">
+            <Panel fill="raised" innerClassName="overflow-hidden">
+              <Image
+                src={meta.heroImage.src}
+                alt={meta.heroImage.alt}
+                width={meta.heroImage.width}
+                height={meta.heroImage.height}
+                className="h-auto w-full"
+              />
+            </Panel>
+            {meta.mobileImage && (
+              <Panel
+                fill="raised"
+                className="mx-auto w-full max-w-[280px]"
+                innerClassName="overflow-hidden"
+              >
+                <Image
+                  src={meta.mobileImage.src}
+                  alt={meta.mobileImage.alt}
+                  width={meta.mobileImage.width}
+                  height={meta.mobileImage.height}
+                  className="h-auto w-full"
+                />
+              </Panel>
+            )}
+          </div>
         </Section>
       )}
 
@@ -128,7 +150,11 @@ export default function CasePage({ params }: { params: { slug: string } }) {
       <Section tone="frost" className="border-y border-line" aria-labelledby="systems">
         <div className="grid gap-10 lg:grid-cols-2">
           <div className="flex flex-col gap-6">
-            <SectionHead id="systems" label="Systems running" title="What's running now" />
+            <SectionHead
+              id="systems"
+              label={meta.demo ? "Systems built" : "Systems running"}
+              title={meta.demo ? "What's in the demo" : "What's running now"}
+            />
             <ul className="flex flex-wrap gap-2">
               {meta.systems.map((s) => (
                 <li key={s}>
@@ -138,7 +164,11 @@ export default function CasePage({ params }: { params: { slug: string } }) {
             </ul>
           </div>
           <div className="flex flex-col gap-6">
-            <SectionHead id="results" label="Results" title="What changed" />
+            <SectionHead
+              id="results"
+              label={meta.demo ? "Status" : "Results"}
+              title={meta.demo ? "Where it stands" : "What changed"}
+            />
             <dl className="border-t border-line font-body text-room-body">
               {meta.results.map((r) => (
                 <div key={r.label} className="flex justify-between gap-6 border-b py-3 border-line">
