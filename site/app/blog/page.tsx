@@ -36,7 +36,7 @@ export default function BlogPage() {
           <ul className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {posts.map((p) => (
               <li key={p.slug}>
-                <PostCard post={p} />
+                <PostCard post={p} headingAs="h2" />
               </li>
             ))}
           </ul>

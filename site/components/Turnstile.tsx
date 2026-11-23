@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import Script from "next/script";
 import { site } from "@/site.config";
 
@@ -8,7 +9,13 @@ const siteKey: string = site.intake.turnstileSiteKey;
 
 declare global {
   interface Window {
-    turnstile?: { reset: (widget?: string | HTMLElement) => void };
+    turnstile?: {
+      reset: (widget?: string | HTMLElement) => void;
+      render?: (
+        el: HTMLElement,
+        options: { sitekey: string; action: string; theme: "light" }
+      ) => string;
+    };
   }
 }
 
@@ -29,14 +36,40 @@ declare global {
  * visitors never reach a form, and it's the site's only third-party
  * script.
  */
-export function Turnstile({ action, className }: { action: string; className?: string }) {
+export function Turnstile({
+  action,
+  className,
+  load = true,
+}: {
+  action: string;
+  className?: string;
+  /** False holds back the script, which is heavy, until the form is used. */
+  load?: boolean;
+}) {
+  const box = useRef<HTMLDivElement>(null);
+
+  // The script auto-renders only once, when it first loads. After a
+  // client-side return to this page it is already there, so render here.
+  useEffect(() => {
+    const el = box.current;
+    if (!load || !siteKey || !el || !window.turnstile?.render) return;
+    if (el.querySelector("iframe, input")) return;
+    window.turnstile.render(el, { sitekey: siteKey, action, theme: "light" });
+  }, [load, action]);
+
   if (!siteKey) return null;
 
   return (
     <>
-      <Script src="https://challenges.cloudflare.com/turnstile/v0/api.js" strategy="lazyOnload" />
+      {load && (
+        <Script
+          src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+          strategy="afterInteractive"
+        />
+      )}
       <div
-        className={`cf-turnstile ${className ?? ""}`}
+        ref={box}
+        className={`cf-turnstile min-h-[65px] ${className ?? ""}`}
         data-sitekey={siteKey}
         data-action={action}
         data-theme="light"

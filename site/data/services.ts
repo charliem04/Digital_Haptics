@@ -77,10 +77,56 @@ export const services: (Service & { flag?: FlagName })[] = [
     system: "SEO",
   },
   {
+    slug: "google-business-profile",
+    code: "ACT.03",
+    name: "Google Business Profile",
+    short: "Your listing on Google and Maps, set up right and kept current.",
+    lead: "For a lot of customers, your Google listing is the first thing they see, before your website and before they call. We set it up, keep it accurate and keep it active, so it works for you while you're on the job.",
+    included: [
+      "A new profile created, or your existing one claimed",
+      "Help getting through Google's verification",
+      "Categories, services, service areas and hours filled in properly",
+      "Real photos of your jobs, crew and equipment added and kept fresh",
+      "An easy review link to text to happy customers",
+      "Your details checked for unwanted or incorrect edits",
+      "Your website and profile kept saying the same thing",
+    ],
+    forWho: [
+      "Trades businesses with no Google listing yet",
+      "Owners with a profile they set up once and never touched again",
+      "Service-area businesses that work out of a truck, with no storefront",
+    ],
+    faq: [
+      {
+        q: "Who owns the profile?",
+        a: "You do. It stays under your business, and we're added as a manager. If you ever stop working with us, you keep the profile, the photos and the reviews.",
+      },
+      {
+        q: "I don't have a storefront. Can I still have a profile?",
+        a: "Yes. Google calls this a service-area business. Your home address stays hidden, and the profile lists the towns you work in instead.",
+      },
+      {
+        q: "Can you get rid of bad reviews?",
+        a: "Not just because they're negative. We can help you report reviews that break Google's policies, and help you write a calm, professional reply to the rest. Google makes the final call.",
+      },
+      {
+        q: "Can you guarantee the top spot on the map?",
+        a: "No, and be careful of anyone who does. Where you show up depends on things like distance from the person searching. We make sure your profile is complete, accurate and active.",
+      },
+      {
+        q: "Do I need a website too?",
+        a: "A profile works on its own, but it works better when it links to a site that backs it up. If you don't have one, we can build that too.",
+      },
+    ],
+    // Charles, 2026-11-23: also starting at $100 a month.
+    price: "Google Business Profile from $100/mo",
+    system: "Google Business Profile",
+  },
+  {
     // 🚩 FEATURE_AUTOMATIONS. The full page (modules detail, the demo)
     // is Phase 4; this entry gives it a card, a sub-page and a price.
     slug: "automations",
-    code: "ACT.03",
+    code: "ACT.04",
     name: "Automations",
     short: "Every form and missed call gets a reply in seconds.",
     lead: "Leads go cold while you are on a roof or under a sink. Automations reply to every form and missed call for you, alert you right away, and keep the lead warm until you can call back.",
@@ -105,6 +151,6 @@ export const services: (Service & { flag?: FlagName })[] = [
 
 /** The overview note (PLAN §5 Services), per flag state. */
 export const combineNote = {
-  off: "Most clients combine both: a site worth finding, and the local search work that gets it found.",
-  on: "Most clients combine all three: a site worth finding, the local search work that gets it found, and automations that answer every lead.",
+  off: "Most clients combine them: a site worth finding, the local search work that gets it found, and a Google listing kept current.",
+  on: "Most clients combine them: a site worth finding, the local search work that gets it found, a Google listing kept current, and automations that answer every lead.",
 };

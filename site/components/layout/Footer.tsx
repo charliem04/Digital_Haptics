@@ -48,7 +48,7 @@ export function FooterView({
   const { contact } = data;
 
   return (
-    <footer className="relative z-10 border-t border-line bg-surface text-text">
+    <footer id="site-footer" className="relative z-10 border-t border-line bg-surface text-text">
       <Container className="flex flex-col gap-12 py-room-section-sm lg:py-room-section">
         <div className="flex flex-col justify-between gap-8 border-b pb-10 lg:flex-row lg:items-end border-line">
           <div className="flex max-w-[560px] flex-col gap-4">

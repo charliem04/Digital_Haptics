@@ -12,7 +12,7 @@ import {
   TextField,
 } from "@/components/ui/Field";
 import { Button } from "@/components/ui/Button";
-import { Turnstile, resetTurnstile } from "@/components/Turnstile";
+import { Turnstile, resetTurnstile, turnstileConfigured } from "@/components/Turnstile";
 import { trackEvent } from "@/lib/tracking";
 import {
   checkField,
@@ -99,6 +99,8 @@ export function IntakeForm({
   const [summary, setSummary] = useState<FieldName[]>([]);
   const [status, setStatus] = useState<"idle" | "sending" | "failed" | "busy" | "check">("idle");
   const [ready, setReady] = useState(false);
+  /** The spam check's script loads on first use of the form. */
+  const [engaged, setEngaged] = useState(false);
   useEffect(() => setReady(true), []);
 
   // The same rules the Worker applies (lib/intake-rules.ts).
@@ -144,6 +146,13 @@ export function IntakeForm({
 
     // Honeypot: real people never see or fill this field.
     if (String(fd.get("company_url") ?? "")) return;
+
+    // The check may still be finishing. Say so, rather than spend a request.
+    if (turnstileConfigured() && !fd.get("cf-turnstile-response")) {
+      setEngaged(true);
+      setStatus("check");
+      return;
+    }
 
     setStatus("sending");
     try {
@@ -198,6 +207,7 @@ export function IntakeForm({
       onFocus={() => {
         if (started.current) return;
         started.current = true;
+        setEngaged(true);
         trackEvent("form_start");
       }}
       // Never GET: if a submit ever got past the disabled button below,
@@ -379,7 +389,7 @@ export function IntakeForm({
         <input id="intake-company-url" name="company_url" tabIndex={-1} autoComplete="off" />
       </div>
 
-      <Turnstile action="intake" />
+      <Turnstile action="intake" load={engaged} />
 
       {(status === "failed" || status === "busy" || status === "check") && (
         <div

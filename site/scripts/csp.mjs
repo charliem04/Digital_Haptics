@@ -137,6 +137,7 @@ export const INTEGRATIONS = {
     "https://coastalconstructionservicesofla.com",
     "https://darrenaucoinsplumbing.com",
     "https://ctl-preview.pages.dev",
+    "https://mattjyguidry.tv",
     // Framework strings baked into React/Next dev warnings.
     "https://nextjs.org",
     "https://react.dev",

@@ -47,7 +47,7 @@ All three written and published 2026-11-22. CTL is labeled as a demo.
 
 > **Answer:**
 
-**F. 🟡 City pages.** Each town only publishes with content that's specific to it (PLAN §5). Written 2026-11-22: New Iberia, Scott, Lafayette and Broussard are ready. To add Matthew Guidry's site to Lafayette, send his business, its website, and whether he's OK being named. Youngsville, Carencro and Breaux Bridge stay unpublished until they have a local project.
+**F. 🟡 City pages.** Each town only publishes with content that's specific to it (PLAN §5). Written 2026-11-22: New Iberia, Scott, Lafayette and Broussard are ready. Matt Guidry Video & Animation added to Lafayette 2026-11-23. Youngsville, Carencro and Breaux Bridge stay unpublished until they have a local project.
 
 > **Answer:**
 

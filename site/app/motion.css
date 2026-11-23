@@ -406,6 +406,61 @@ html[data-motion-text="underline"] [data-mt-state="in"] .motion-key {
   }
 }
 
+/* ── Case card trim: a band of molten light travels the card's edge ── */
+.motion-trim {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  overflow: hidden;
+  padding: 2px;
+  border-radius: 28px;
+  opacity: 0.8;
+  pointer-events: none;
+  transition: opacity 160ms ease-out;
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+}
+
+.motion-trim::before {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 220%;
+  aspect-ratio: 1;
+  background: conic-gradient(
+    transparent 0 66%,
+    #871922 74%,
+    #e22e20 82%,
+    #f56c36 89%,
+    #f5a254 96%,
+    transparent 100%
+  );
+  content: "";
+  transform: translate(-50%, -50%);
+  animation: motion-trim 7s linear infinite paused;
+  animation-delay: calc(var(--i, 0) * -2.3s);
+}
+
+.motion-trim[data-motion-live="on"]::before {
+  animation-play-state: running;
+}
+
+.group\/panel:hover > div > .motion-trim,
+.group\/panel:focus-visible > div > .motion-trim {
+  opacity: 1;
+}
+
+@keyframes motion-trim {
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
 /* ── Lead-flow panel 🚩: each row is one step in the story ─────────── */
 .lead-flow > li {
   animation: motion-word 700ms var(--motion-ease) both;
@@ -421,7 +476,8 @@ html[data-motion-text="underline"] [data-mt-state="in"] .motion-key {
 
 @media (prefers-reduced-motion: reduce) {
   .motion-page,
-  .motion-ambient {
+  .motion-ambient,
+  .motion-trim {
     display: none !important;
   }
 
@@ -438,6 +494,7 @@ html[data-motion-text="underline"] [data-mt-state="in"] .motion-key {
 @media print {
   .motion-page,
   .motion-ambient,
+  .motion-trim,
   .motion-divider {
     display: none !important;
   }

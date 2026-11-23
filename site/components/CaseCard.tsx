@@ -1,5 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
+import type { CSSProperties } from "react";
+import { motionConfig } from "@/motion.config";
 import { cn, pad2 } from "@/lib/cn";
 import type { Photo } from "@/content/types";
 import { Panel } from "./ui/Panel";
@@ -30,6 +32,8 @@ export type CaseCardProps = {
   /** Status in the header strip, e.g. "Live site". */
   status?: string;
   image?: Photo;
+  /** Load the screenshot right away, for a card at the top of a page. */
+  priority?: boolean;
   className?: string;
 };
 
@@ -42,6 +46,7 @@ export function CaseCard({
   result,
   status = "Live site",
   image,
+  priority = false,
   className,
 }: CaseCardProps) {
   const rows = [
@@ -58,6 +63,14 @@ export function CaseCard({
       className={cn("block no-underline text-text", className)}
       innerClassName="flex flex-col overflow-hidden"
     >
+      {motionConfig.card === "rim" && (
+        <span
+          aria-hidden
+          className="motion-trim"
+          data-motion-live=""
+          style={{ "--i": index } as CSSProperties}
+        />
+      )}
       <div
         className={cn(
           "flex items-center justify-between border-b py-2.5 border-line px-5 font-body text-room-small"
@@ -67,13 +80,14 @@ export function CaseCard({
         <span className="flex items-center gap-1.5 text-muted">{status}</span>
       </div>
 
-      <div className="relative aspect-[27/10] border-b border-line bg-room">
+      <div className="relative aspect-[16/10] border-b border-line bg-room">
         {image ? (
           <Image
             src={image.src}
             alt={image.alt}
             width={image.width}
             height={image.height}
+            priority={priority}
             className="absolute inset-0 size-full object-cover object-top"
           />
         ) : (

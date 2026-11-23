@@ -4,7 +4,14 @@ import { Panel } from "@/components/ui/Panel";
 import { Arrow } from "@/components/ui/Arrow";
 
 /** A blog post card: date and reading time, title, summary. One link, ring follows the cut. */
-export function PostCard({ post }: { post: Post }) {
+export function PostCard({
+  post,
+  headingAs: Heading = "h3",
+}: {
+  post: Post;
+  /** h2 when the card sits directly under the page's h1. */
+  headingAs?: "h2" | "h3";
+}) {
   return (
     <Panel
       as={Link}
@@ -19,7 +26,7 @@ export function PostCard({ post }: { post: Post }) {
         <span>{post.readingMinutes} min read</span>
         {post.draft && <span className="text-text">· Draft</span>}
       </p>
-      <h3 className="font-body text-room-card font-medium">{post.title}</h3>
+      <Heading className="font-body text-room-card font-medium">{post.title}</Heading>
       <p className="text-room-small text-muted">{post.description}</p>
       <span className="mt-auto inline-flex items-center gap-2 pt-2 font-body text-room-small font-medium text-text underline underline-offset-[5px] group-hover/panel:decoration-2">
         Read

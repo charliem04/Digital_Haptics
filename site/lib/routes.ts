@@ -66,6 +66,12 @@ export const nav: RouteNode[] = [
       { href: "/services/web-design/", label: "Web Design", live: true, priority: 0.8 },
       { href: "/services/local-seo/", label: "Local SEO", live: true, priority: 0.8 },
       {
+        href: "/services/google-business-profile/",
+        label: "Google Business Profile",
+        live: true,
+        priority: 0.8,
+      },
+      {
         href: "/services/automations/",
         label: "Automations",
         live: true,

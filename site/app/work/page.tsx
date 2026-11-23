@@ -44,7 +44,7 @@ export default function WorkPage() {
           </p>
         )}
         {cases.length > 0 ? (
-          <CaseGrid cases={cases} />
+          <CaseGrid cases={cases} priority />
         ) : (
           <p className="text-room-body text-muted">No case studies are published yet.</p>
         )}

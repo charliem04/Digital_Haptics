@@ -5,6 +5,7 @@ import { pageMetadata } from "@/lib/meta";
 import Link from "next/link";
 import { getCases, getCities, getCity, getServices, getTradeByName } from "@/lib/content";
 import { CaseGrid } from "@/components/page/CaseGrid";
+import { MoreLink } from "@/components/MoreLink";
 import { PageHero } from "@/components/page/PageHero";
 import { Section } from "@/components/layout/Section";
 import { SectionHead } from "@/components/page/SectionHead";
@@ -74,6 +75,11 @@ export default function CityPage({ params }: { params: { city: string } }) {
             {c.work && (
               <SectionHead id="work-nearby" label="Nearby" title="Work in the area" lede={c.work} />
             )}
+            {c.workLink && (
+              <div>
+                <MoreLink href={c.workLink.href}>{c.workLink.label}</MoreLink>
+              </div>
+            )}
             <div className="flex flex-col gap-3">
               <p className="font-body text-room-small text-muted">Trades we work with here</p>
               <ul className="flex flex-wrap gap-2">
@@ -112,7 +118,7 @@ export default function CityPage({ params }: { params: { city: string } }) {
       <Section aria-labelledby="city-services">
         <div className="flex flex-col gap-10">
           <SectionHead id="city-services" label="Services" title={`What we do in ${c.name}`} />
-          <ul className="grid gap-6 md:grid-cols-2">
+          <ul className="grid gap-6 md:grid-cols-3">
             {getServices().map((s) => (
               <li key={s.slug}>
                 <ServiceCard service={s} />

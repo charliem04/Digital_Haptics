@@ -20,7 +20,7 @@ if (isPreviewBuild()) {
   for (const file of readdirSync(WORK).filter((f) => f.endsWith(".mdx"))) {
     const { data } = matter(readFileSync(join(WORK, file), "utf8"));
     if (data.published === true && data.permission === true) continue;
-    for (const image of [data.heroImage, data.mobileImage]) {
+    for (const image of [data.heroImage, data.cardImage, data.mobileImage]) {
       if (!image?.src) continue;
       const built = join("out", image.src);
       if (existsSync(built)) {

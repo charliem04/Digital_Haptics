@@ -26,6 +26,8 @@ export type City = {
   market: string;
   /** Work nearby: projects or clients (with permission), or omit. */
   work?: string;
+  /** Link to that work when it has no case study here. */
+  workLink?: { label: string; href: string };
   /**
    * The case study from this town (its file name in content/work). Its
    * card appears only in builds where that case study is itself visible.
@@ -54,6 +56,9 @@ export const cities: City[] = [
       "Digital Haptics is based in Lafayette. I'm a computer science senior at UL Lafayette, and I build websites for the trades I grew up working around.",
     market:
       "Lafayette is the center of Acadiana, so a trade here is competing with every company that serves the area. A lot of good businesses still rely on word of mouth, a Facebook page or a site from years ago. When a customer searches instead of asking a neighbor, the company that shows up clearly gets the call.",
+    // Named with Matt's OK, confirmed by Charles 2026-11-23.
+    work: "We built the website for Matt Guidry Video & Animation, a Louisiana video producer whose work covers logo animation, documentary and motion graphics.",
+    workLink: { label: "See Matt's site", href: "https://mattjyguidry.tv/" },
     trades: ["Roofing", "Plumbing", "HVAC", "General contracting", "Dirt work"],
   },
   {

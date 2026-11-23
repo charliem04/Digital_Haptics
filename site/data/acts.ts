@@ -20,7 +20,7 @@ export const acts: (Act & { flag?: FlagName })[] = [
     blurb: "Found first when someone nearby searches for your trade.",
   },
   {
-    code: "ACT.03",
+    code: "ACT.04",
     name: "Automate",
     blurb: "Every form and missed call gets a reply in seconds.",
     highlight: true,

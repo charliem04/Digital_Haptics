@@ -69,7 +69,11 @@ export function StickyBar({
         className
       )}
     >
-      <Button href={cta.href} block className="!min-h-[56px] !px-gutter-sm !rounded-none">
+      <Button
+        href={cta.href}
+        block
+        className="!min-h-[56px] !px-gutter-sm !rounded-none focus-visible:!outline-on-amber focus-visible:!outline-offset-[-7px]"
+      >
         {cta.label}
       </Button>
     </div>

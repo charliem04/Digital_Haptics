@@ -81,7 +81,7 @@ export default function TradePage({ params }: { params: { slug: string } }) {
       <Section aria-labelledby="trade-services">
         <div className="flex flex-col gap-10">
           <SectionHead id="trade-services" label="Services" title="How we can help" />
-          <ul className="grid gap-6 md:grid-cols-2">
+          <ul className="grid gap-6 md:grid-cols-3">
             {getServices().map((s) => (
               <li key={s.slug}>
                 <ServiceCard service={s} />

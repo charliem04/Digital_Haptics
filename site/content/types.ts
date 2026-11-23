@@ -100,6 +100,8 @@ export type CaseStudy = {
   systems: string[];
   liveUrl?: string;
   heroImage?: Photo;
+  /** Smaller copy of the desktop screenshot, for case cards. */
+  cardImage?: Photo;
   /** Phone screenshot, shown beside the desktop one. */
   mobileImage?: Photo;
   /** A proposed build that isn't the business's live website. */

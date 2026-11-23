@@ -156,6 +156,7 @@ function readCase(file: string): { meta: CaseStudy; body: string } {
       client: permitted ? fm.client : CLIENT_HELD,
       liveUrl: permitted ? fm.liveUrl || undefined : undefined,
       heroImage: permitted ? fm.heroImage : undefined,
+      cardImage: permitted ? fm.cardImage : undefined,
       mobileImage: permitted ? fm.mobileImage : undefined,
       draft: !publishable,
     },

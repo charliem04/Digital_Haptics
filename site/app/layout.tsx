@@ -99,7 +99,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <noscript>
           <style
             dangerouslySetInnerHTML={{
-              __html: `[style*="opacity:0"]{opacity:1!important;transform:none!important}[data-sticky-waiting]{visibility:visible!important}`,
+              __html: `[style*="opacity:0"]{opacity:1!important;transform:none!important}[data-sticky-waiting]{visibility:visible!important}[data-menu-button]{display:none!important}`,
             }}
           />
         </noscript>

@@ -67,6 +67,7 @@ export function MobileMenu({
     <>
       <button
         type="button"
+        data-menu-button
         aria-haspopup="dialog"
         aria-expanded={open}
         aria-controls={id}
@@ -89,6 +90,15 @@ export function MobileMenu({
           <rect y="12" width="20" height="2" />
         </svg>
       </button>
+
+      <noscript>
+        <a
+          href="#site-footer"
+          className="flex h-12 items-center rounded-control border border-line bg-surface px-4 font-body text-room-small no-underline text-text lg:hidden"
+        >
+          Menu
+        </a>
+      </noscript>
 
       <dialog
         ref={dialog}
