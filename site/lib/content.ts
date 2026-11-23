@@ -38,6 +38,7 @@ import { startFaq } from "@/data/faq";
 import { budgets, smsConsent, timelines, trades } from "@/data/intake";
 import { about } from "@/data/about";
 import { cities, type City } from "@/data/cities";
+import { trades as tradePages, type Trade } from "@/data/trades";
 import type {
   Act,
   CaseStudy,
@@ -209,6 +210,21 @@ export function getNextCase(slug: string): CaseStudy | undefined {
 /** Does this build have any case to show? Drives the Work route. */
 export function hasCases(): boolean {
   return getCases().length > 0;
+}
+
+/* ── Trade pages ─────────────────────────────────────────────────── */
+
+export function getTrades(): Trade[] {
+  return tradePages;
+}
+
+export function getTrade(slug: string): Trade | undefined {
+  return tradePages.find((t) => t.slug === slug);
+}
+
+/** The trade page for a case study's or city's trade name, if any. */
+export function getTradeByName(name: string): Trade | undefined {
+  return tradePages.find((t) => t.name === name);
 }
 
 /* ── About ───────────────────────────────────────────────────────── */

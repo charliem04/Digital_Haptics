@@ -70,7 +70,8 @@ export function footerData(): FooterData {
     return r && isLive(href) ? [{ href, label: r.label }] : [];
   };
 
-  const services = nav.flatMap((n) =>
+  const tradesRoute = aux("/trades/");
+  const services = [...nav, ...(tradesRoute ? [tradesRoute] : [])].flatMap((n) =>
     liveChildren(n).map((c) => ({ href: c.href, label: c.label }))
   );
 
@@ -80,6 +81,7 @@ export function footerData(): FooterData {
   return {
     site: [
       ...nav.map((n) => ({ href: n.href, label: n.label })),
+      ...link("/trades/"),
       ...link(CTA_HREF),
       ...link("/blog/"),
     ],

@@ -59,7 +59,8 @@ What each item needs, with examples: [docs/SETUP.md §2](docs/SETUP.md). **The q
 | About page: name and title, intro, story, principles, local ties, optional photo (all `[PLACEHOLDER]`) | `site/data/about.ts` | You (QUESTIONS §1–5) | Done 2026-11-17; photo added 2026-11-22 |
 | City pages: unique content per town; each stays unpublished until `ready: true` | `site/data/cities.ts` | You (QUESTIONS F) | Lafayette, Scott, New Iberia, Broussard ready 2026-11-22. Youngsville, Carencro, Breaux Bridge open. |
 | "Draft pending attorney review" notice on the legal pages: remove after review | `site/app/legal.tsx` | Attorney (QUESTIONS §20) | Removed 2026-11-17 (no attorney review, Charles's call) |
-| Blog: example draft post (previews only); delete when the first real post exists | `site/content/blog/example-post.mdx` | Me | Open |
+| Blog: four guides drafted for review | `site/content/blog/*.mdx` | You: read and approve | Published in the build 2026-11-22 |
+| Trade pages: roofing, plumbing, dirt work copy | `site/data/trades.ts` | You: read and approve | Published in the build 2026-11-22 |
 
 ## Coming in later phases (from PLAN.md, logged when the code lands)
 

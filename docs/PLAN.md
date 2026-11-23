@@ -79,6 +79,7 @@ The AI voice receptionist and SMS auto-response are **not implemented yet**. Eve
 ### Supporting pages
 | Route | Page |
 |---|---|
+| `/trades`, `/trades/[slug]` | Trade landing pages (only trades with a real project) |
 | `/about` | About |
 | `/blog`, `/blog/[slug]` | Blog index + post template |
 | `/areas/[city]` | City location pages (Lafayette, Broussard, Youngsville, Scott, Carencro, New Iberia, Breaux Bridge; confirm list) |

@@ -3,7 +3,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { pageMetadata } from "@/lib/meta";
-import { getCase, getCases, getNextCase } from "@/lib/content";
+import { getCase, getCases, getNextCase, getTradeByName } from "@/lib/content";
+import { MoreLink } from "@/components/MoreLink";
 import { PageHero } from "@/components/page/PageHero";
 import { Section } from "@/components/layout/Section";
 import { SectionHead } from "@/components/page/SectionHead";
@@ -61,6 +62,7 @@ export default function CasePage({ params }: { params: { slug: string } }) {
   if (!c) notFound();
   const { meta, body } = c;
   const next = getNextCase(meta.slug);
+  const trade = getTradeByName(meta.trade);
 
   return (
     <>
@@ -144,6 +146,11 @@ export default function CasePage({ params }: { params: { slug: string } }) {
       <Section aria-label="The project">
         <article className="max-w-[720px]">
           <Mdx source={body} />
+          {trade && (
+            <div className="mt-10">
+              <MoreLink href={`/trades/${trade.slug}/`}>Websites for {trade.audience}</MoreLink>
+            </div>
+          )}
         </article>
       </Section>
 

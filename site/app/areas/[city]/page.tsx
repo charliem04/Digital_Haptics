@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { site } from "@/site.config";
 import { pageMetadata } from "@/lib/meta";
-import { getCases, getCities, getCity, getServices } from "@/lib/content";
+import Link from "next/link";
+import { getCases, getCities, getCity, getServices, getTradeByName } from "@/lib/content";
 import { CaseGrid } from "@/components/page/CaseGrid";
 import { PageHero } from "@/components/page/PageHero";
 import { Section } from "@/components/layout/Section";
@@ -76,11 +77,23 @@ export default function CityPage({ params }: { params: { city: string } }) {
             <div className="flex flex-col gap-3">
               <p className="font-body text-room-small text-muted">Trades we work with here</p>
               <ul className="flex flex-wrap gap-2">
-                {c.trades.map((t) => (
-                  <li key={t}>
-                    <Chip>{t}</Chip>
-                  </li>
-                ))}
+                {c.trades.map((t) => {
+                  const page = getTradeByName(t);
+                  return (
+                    <li key={t}>
+                      {page ? (
+                        <Link
+                          href={`/trades/${page.slug}/`}
+                          className="inline-flex min-h-touch items-center border no-underline active:translate-y-px rounded-control border-line px-4 font-body text-room-small text-text hover:bg-raised hover:text-text"
+                        >
+                          {t}
+                        </Link>
+                      ) : (
+                        <Chip>{t}</Chip>
+                      )}
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           </div>

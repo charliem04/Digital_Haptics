@@ -20,7 +20,7 @@
  */
 import { site } from "@/site.config";
 import { isOn, type FlagName } from "./flags";
-import { cityVisible, hasCases, hasPosts } from "./content";
+import { cityVisible, getTrades, hasCases, hasPosts } from "./content";
 
 export type RouteNode = {
   href: string;
@@ -82,6 +82,20 @@ export const nav: RouteNode[] = [
 export const auxRoutes: RouteNode[] = [
   { href: "/start/", label: "Start a Project", live: true, priority: 0.9 },
   { href: "/start/thanks/", label: "Thank you", live: true, noindex: true },
+  {
+    href: "/trades/",
+    label: "Trades",
+    live: true,
+    priority: 0.8,
+    children: getTrades().map(
+      (t): RouteNode => ({
+        href: `/trades/${t.slug}/`,
+        label: `Websites for ${t.audience}`,
+        live: true,
+        priority: 0.8,
+      })
+    ),
+  },
   // Live only with a post to show (PLAN §5: start with 0 posts).
   { href: "/blog/", label: "Blog", live: hasPosts(), priority: 0.6 },
   ...site.serviceArea.cities.map(

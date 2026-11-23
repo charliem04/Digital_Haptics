@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { pageMetadata } from "@/lib/meta";
 import { isIndexable } from "@/lib/routes";
-import { getCasesFor, getService, getServices } from "@/lib/content";
+import { getCasesFor, getService, getServices, getTrades } from "@/lib/content";
 import { PageHero } from "@/components/page/PageHero";
 import { Section } from "@/components/layout/Section";
 import { SectionHead } from "@/components/page/SectionHead";
@@ -88,6 +88,21 @@ export default function ServicePage({ params }: { params: { slug: string } }) {
       </Section>
 
       {s.slug === "automations" && <AutomationsSections />}
+
+      {s.slug === "web-design" && (
+        <Section aria-labelledby="by-trade">
+          <div className="flex flex-col gap-8">
+            <SectionHead id="by-trade" label="Trades" title="Built around your trade" />
+            <ul className="flex flex-wrap gap-x-10 gap-y-3">
+              {getTrades().map((t) => (
+                <li key={t.slug}>
+                  <MoreLink href={`/trades/${t.slug}/`}>Websites for {t.audience}</MoreLink>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </Section>
+      )}
 
       {cases.length > 0 && (
         <Section aria-labelledby="cases">

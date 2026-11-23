@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { site } from "@/site.config";
-import { getCases } from "@/lib/content";
+import { getCases, getPosts } from "@/lib/content";
 import { livePaths } from "@/lib/routes";
 import { IS_PREVIEW } from "@/lib/preview";
 
@@ -30,5 +30,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     changeFrequency: "monthly",
   }));
 
-  return [...pages, ...cases];
+  const posts: MetadataRoute.Sitemap = getPosts().map((p) => ({
+    url: `${site.url}/blog/${p.slug}/`,
+    lastModified: p.date,
+    priority: 0.6,
+    changeFrequency: "monthly",
+  }));
+
+  return [...pages, ...cases, ...posts];
 }

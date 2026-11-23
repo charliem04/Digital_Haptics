@@ -132,6 +132,7 @@ export const INTEGRATIONS = {
     "https://www.linkedin.com",
     "https://g.page",
     "https://share.google", // Google Business Profile share link
+    "https://business.google.com", // linked from the Google profile guide
     // Case study links to client sites.
     "https://coastalconstructionservicesofla.com",
     "https://darrenaucoinsplumbing.com",
