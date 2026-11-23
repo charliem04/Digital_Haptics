@@ -55,17 +55,13 @@ export default function CityPage({ params }: { params: { city: string } }) {
         lead={c.intro}
       >
         {c.draft && (
-          <p className="self-start border border-ink bg-frost px-3 py-2 font-mono text-label uppercase tracking-label room:rounded-notice room:border-line room:bg-surface room:font-body room:text-room-small room:normal-case room:tracking-normal">
+          <p className="self-start border px-3 py-2 rounded-notice border-line bg-surface font-body text-room-small">
             Draft: not published until this city has its own content. Preview builds only.
           </p>
         )}
       </PageHero>
 
-      <Section
-        tone="frost"
-        className="border-y border-ink room:border-line"
-        aria-labelledby="market"
-      >
+      <Section tone="frost" className="border-y border-line" aria-labelledby="market">
         <div className="grid gap-10 lg:grid-cols-2 lg:gap-16">
           <SectionHead id="market" label={c.name} title="The local market" lede={c.market} />
           <div className="flex flex-col gap-6">
@@ -73,9 +69,7 @@ export default function CityPage({ params }: { params: { city: string } }) {
               <SectionHead id="work-nearby" label="Nearby" title="Work in the area" lede={c.work} />
             )}
             <div className="flex flex-col gap-3">
-              <p className="font-mono text-label uppercase tracking-label text-steel room:font-body room:text-room-small room:normal-case room:tracking-normal room:text-muted">
-                Trades we work with here
-              </p>
+              <p className="font-body text-room-small text-muted">Trades we work with here</p>
               <ul className="flex flex-wrap gap-2">
                 {c.trades.map((t) => (
                   <li key={t}>
@@ -94,7 +88,7 @@ export default function CityPage({ params }: { params: { city: string } }) {
           <ul className="grid gap-6 md:grid-cols-2">
             {getServices().map((s) => (
               <li key={s.slug}>
-                <ServiceCard service={s} highlight={s.slug === "automations"} />
+                <ServiceCard service={s} />
               </li>
             ))}
           </ul>

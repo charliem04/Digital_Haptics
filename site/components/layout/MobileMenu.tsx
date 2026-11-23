@@ -7,7 +7,6 @@ import type { ContactLinks, NavLink } from "@/lib/nav";
 import { Logo } from "@/components/ui/Logo";
 import { Button } from "@/components/ui/Button";
 import { SectionLabel } from "@/components/ui/SectionLabel";
-import { Marker } from "@/components/ui/Marker";
 
 /**
  * ════════════════════════════════════════════════════════════════════
@@ -24,9 +23,7 @@ import { Marker } from "@/components/ui/Marker";
  * ════════════════════════════════════════════════════════════════════
  */
 const ICON_BUTTON =
-  "flex size-12 items-center justify-center bg-ink text-ice transition-colors duration-[250ms] ease-brand hover:bg-steel-deep active:translate-y-px room:rounded-control room:border room:border-line room:bg-surface room:text-text room:duration-[160ms] room:hover:bg-raised";
-
-const ROOM_SMALL = "room:font-body room:text-room-small room:normal-case room:tracking-normal";
+  "flex size-12 items-center justify-center transition-colors ease-brand active:translate-y-px rounded-control border border-line bg-surface text-text duration-[160ms] hover:bg-raised";
 
 export function MobileMenu({
   links,
@@ -98,13 +95,13 @@ export function MobileMenu({
         id={id}
         aria-label="Menu"
         onClose={() => setOpen(false)}
-        className="fixed inset-0 m-0 h-dvh max-h-none w-screen max-w-none overflow-y-auto bg-ice bg-dots bg-dot-pitch p-0 text-ink backdrop:bg-ink/40 open:flex open:flex-col motion-safe:open:animate-menu-in room:bg-surface room:bg-auto room:text-text room:bg-none"
+        className="fixed inset-0 m-0 h-dvh max-h-none w-screen max-w-none overflow-y-auto p-0 backdrop:bg-room/40 open:flex open:flex-col motion-safe:open:animate-menu-in bg-surface text-text bg-none"
       >
         {/* The dialog is in the top layer, above the page's grain. */}
-        <div aria-hidden className="room-grain hidden room:block" />
+        <div aria-hidden className="room-grain block" />
         {/* Same row geometry as the header, so the close button lands
             exactly where the menu button was. */}
-        <div className="page-x flex min-h-[88px] items-center justify-between gap-6 py-5 room:min-h-20 room:py-4">
+        <div className="page-x flex items-center justify-between gap-6 min-h-20 py-4">
           <Logo />
           <button type="button" onClick={close} className={ICON_BUTTON}>
             <span className="sr-only">Close menu</span>
@@ -122,14 +119,14 @@ export function MobileMenu({
           </button>
         </div>
 
-        <div className="page-x flex flex-1 flex-col gap-10 border-t border-ink pb-10 pt-8 room:border-line">
+        <div className="page-x flex flex-1 flex-col gap-10 border-t pb-10 pt-8 border-line">
           <SectionLabel>Menu</SectionLabel>
 
           {links.length > 0 && (
             <nav aria-label="Main">
               <ul className="flex flex-col">
                 {links.map((l) => (
-                  <li key={l.href} className="border-b border-ink/20 room:border-line">
+                  <li key={l.href} className="border-b border-line">
                     <MenuLink href={l.href} current={pathname} onSame={close} big>
                       {l.label}
                     </MenuLink>
@@ -157,16 +154,13 @@ export function MobileMenu({
           )}
 
           {(contact.phone || contact.email) && (
-            <ul
-              className={`mt-auto flex flex-col font-mono text-label uppercase tracking-label ${ROOM_SMALL}`}
-            >
+            <ul className={`mt-auto flex flex-col font-body text-room-small`}>
               {contact.phone && (
                 <li>
                   <a
                     href={contact.phone.href}
-                    className="inline-flex min-h-touch items-center gap-2 text-ink no-underline room:text-text"
+                    className="inline-flex min-h-touch items-center gap-2 no-underline text-text"
                   >
-                    <Marker size="dot" />
                     {contact.phone.display}
                   </a>
                 </li>
@@ -175,9 +169,8 @@ export function MobileMenu({
                 <li>
                   <a
                     href={contact.email.href}
-                    className="inline-flex min-h-touch items-center gap-2 normal-case tracking-normal text-ink no-underline room:text-text"
+                    className="inline-flex min-h-touch items-center gap-2 no-underline text-text"
                   >
-                    <Marker size="dot" />
                     {contact.email.display}
                   </a>
                 </li>
@@ -212,8 +205,8 @@ function MenuLink({
       onClick={() => isCurrent && onSame()}
       className={
         big
-          ? "flex min-h-[64px] items-center justify-between font-display text-heading font-semibold uppercase text-ink no-underline aria-[current=page]:underline aria-[current=page]:decoration-signal aria-[current=page]:decoration-2 aria-[current=page]:underline-offset-8 room:min-h-[52px] room:font-body room:text-[1.375rem] room:font-medium room:normal-case room:text-text room:aria-[current=page]:decoration-amber"
-          : `inline-flex min-h-touch items-center font-mono text-label uppercase tracking-label text-steel no-underline aria-[current=page]:text-ink ${ROOM_SMALL} room:text-muted room:aria-[current=page]:text-text`
+          ? "flex items-center justify-between no-underline aria-[current=page]:underline aria-[current=page]:decoration-2 aria-[current=page]:underline-offset-8 min-h-[52px] font-body text-[1.375rem] font-medium text-text aria-[current=page]:decoration-amber"
+          : `inline-flex min-h-touch items-center no-underline font-body text-room-small text-muted aria-[current=page]:text-text`
       }
     >
       {children}

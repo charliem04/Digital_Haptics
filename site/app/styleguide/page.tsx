@@ -263,11 +263,11 @@ export default function StyleguidePage() {
               <p className="text-room-card">Room</p>
               <Caption>Page ground</Caption>
             </li>
-            <li className="room-surface rounded-panel p-6">
+            <li className="bg-surface rounded-panel p-6">
               <p className="text-room-card">Surface</p>
               <Caption>Sections and forms</Caption>
             </li>
-            <li className="room-raised rounded-panel p-6">
+            <li className="bg-raised rounded-panel p-6">
               <p className="text-room-card">Raised</p>
               <Caption>Cards</Caption>
             </li>
@@ -275,7 +275,7 @@ export default function StyleguidePage() {
           <ul className="grid grid-cols-2 gap-4 lg:grid-cols-4">
             {SHAPES.map((s) => (
               <li key={s.name} className="flex flex-col gap-2.5">
-                <div className={cn("room-raised h-20", s.className)} />
+                <div className={cn("bg-raised h-20", s.className)} />
                 <Caption>
                   {s.name}: {s.value}
                 </Caption>

@@ -4,7 +4,6 @@ import { site } from "@/site.config";
 import { ctaLink, footerData, type FooterData } from "@/lib/nav";
 import { Logo } from "@/components/ui/Logo";
 import { Button } from "@/components/ui/Button";
-import { Marker } from "@/components/ui/Marker";
 import { SocialIcons } from "@/components/SocialIcons";
 import { Container } from "./Container";
 
@@ -28,19 +27,12 @@ export function Footer() {
 }
 
 const LINK =
-  "inline-flex min-h-touch items-center text-ice no-underline transition-colors duration-[250ms] ease-brand hover:text-signal active:text-ice/70 room:text-text room:duration-[160ms] room:hover:text-amber room:active:text-muted";
-
-const ROOM_CAPTION =
-  "room:font-body room:text-room-caption room:normal-case room:tracking-normal room:text-muted";
+  "inline-flex min-h-touch items-center no-underline transition-colors ease-brand text-text duration-[160ms] hover:text-amber active:text-muted";
 
 function Column({ title, children }: { title: string; children: ReactNode }) {
   return (
     <div className="flex flex-col gap-3">
-      <h2
-        className={`font-mono text-label-sm uppercase tracking-label-lg text-ice/70 room:font-medium ${ROOM_CAPTION}`}
-      >
-        {title}
-      </h2>
+      <h2 className={`font-medium font-body text-room-caption text-muted`}>{title}</h2>
       <ul className="flex flex-col">{children}</ul>
     </div>
   );
@@ -56,14 +48,12 @@ export function FooterView({
   const { contact } = data;
 
   return (
-    <footer className="bg-ink text-ice room:relative room:z-10 room:border-t room:border-line room:bg-surface room:text-text">
-      <Container className="flex flex-col gap-12 py-section-sm lg:py-section room:py-room-section-sm room:lg:py-room-section">
-        <div className="flex flex-col justify-between gap-8 border-b border-ice/20 pb-10 lg:flex-row lg:items-end room:border-line">
+    <footer className="relative z-10 border-t border-line bg-surface text-text">
+      <Container className="flex flex-col gap-12 py-room-section-sm lg:py-room-section">
+        <div className="flex flex-col justify-between gap-8 border-b pb-10 lg:flex-row lg:items-end border-line">
           <div className="flex max-w-[560px] flex-col gap-4">
-            <Logo tone="ice" className="self-start" />
-            <p className="text-body-sm text-ice/70 room:text-muted">
-              {site.seo.defaultDescription}
-            </p>
+            <Logo className="self-start" />
+            <p className="text-body-sm text-muted">{site.seo.defaultDescription}</p>
           </div>
           {cta && (
             <Button href={cta.href} className="self-start lg:self-auto">
@@ -105,9 +95,7 @@ export function FooterView({
                     {a.label}
                   </Link>
                 ) : (
-                  <span className="inline-flex items-center py-1.5 text-ice/70 room:text-muted">
-                    {a.label}
-                  </span>
+                  <span className="inline-flex items-center py-1.5 text-muted">{a.label}</span>
                 )}
               </li>
             ))}
@@ -118,7 +106,6 @@ export function FooterView({
               {contact.phone && (
                 <li>
                   <a href={contact.phone.href} className={`${LINK} gap-2`}>
-                    <Marker size="dot" />
                     {contact.phone.display}
                   </a>
                 </li>
@@ -126,7 +113,6 @@ export function FooterView({
               {contact.email && (
                 <li>
                   <a href={contact.email.href} className={`${LINK} gap-2 break-all`}>
-                    <Marker size="dot" />
                     {contact.email.display}
                   </a>
                 </li>
@@ -136,7 +122,7 @@ export function FooterView({
         </div>
 
         <div
-          className={`flex flex-col gap-4 border-t border-ice/20 pt-6 font-mono text-label uppercase tracking-label text-ice/70 lg:flex-row lg:items-center lg:justify-between room:border-line ${ROOM_CAPTION}`}
+          className={`flex flex-col gap-4 border-t pt-6 lg:flex-row lg:items-center lg:justify-between border-line font-body text-room-caption text-muted`}
         >
           <p>{data.copyright}</p>
           <div className="flex flex-wrap items-center gap-x-8 gap-y-2">

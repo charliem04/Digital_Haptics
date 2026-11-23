@@ -15,13 +15,13 @@ import { Container } from "./Container";
  */
 const TONES = {
   none: "",
-  frost: `bg-frost room:bg-surface`,
-  "steel-panel": `bg-steel-panel room:bg-raised`,
-  ink: `bg-ink text-ice room:bg-surface room:text-text`,
+  frost: `bg-surface`,
+  "steel-panel": `bg-raised`,
+  ink: `bg-surface text-text`,
 } as const;
 
 const SPACING = {
-  default: "py-section-sm lg:py-section room:py-room-section-sm room:lg:py-room-section",
+  default: "py-room-section-sm lg:py-room-section",
   tight: "py-10 lg:py-16",
   none: "",
 } as const;

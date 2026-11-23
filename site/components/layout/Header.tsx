@@ -36,9 +36,9 @@ export function HeaderView({
   contact: ContactLinks;
 }) {
   return (
-    <header className="relative z-30 room:bg-room">
+    <header className="relative z-30 bg-room">
       <Container>
-        <div className="flex h-[var(--header-h)] items-center justify-between gap-6 room:h-20">
+        <div className="flex items-center justify-between gap-6 h-20">
           <Logo />
           {links.length > 0 && (
             <nav aria-label="Main" className="hidden lg:ml-auto lg:block">

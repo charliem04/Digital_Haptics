@@ -35,11 +35,10 @@ export function LeadFlowRows({ steps }: { steps: LeadFlowStep[] }) {
           }}
           className={cn(
             "flex justify-between",
-            i === last &&
-              "-mx-1.5 bg-signal px-1.5 py-1 text-ink room:rounded-notice room:bg-amber room:text-on-amber"
+            i === last && "-mx-1.5 px-1.5 py-1 rounded-notice bg-amber text-on-amber"
           )}
         >
-          <span className={i === last ? undefined : "text-steel room:text-muted"}>{s.key}</span>
+          <span className={i === last ? undefined : "text-muted"}>{s.key}</span>
           <span className={i === last ? "font-medium" : undefined}>{s.value}</span>
         </motion.li>
       ))}

@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { robotsFor } from "@/lib/meta";
 import { isLive, CTA_HREF } from "@/lib/routes";
 import { Container } from "@/components/layout/Container";
-import { CutFrame } from "@/components/ui/CutFrame";
-import { BoxedLabel } from "@/components/ui/BoxedLabel";
+import { Panel } from "@/components/ui/Panel";
+import { SmallLabel } from "@/components/ui/SmallLabel";
 import { Button } from "@/components/ui/Button";
 
 export const metadata: Metadata = {
@@ -25,15 +25,13 @@ export default function NotFound() {
 
   return (
     <Container className="py-section-sm lg:py-section">
-      <CutFrame size="lg" fill="frost" innerClassName="flex flex-col gap-8 p-6 lg:p-12">
-        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-ink pb-5 room:border-line">
-          <BoxedLabel tone="ink">Error 404</BoxedLabel>
+      <Panel fill="surface" innerClassName="flex flex-col gap-8 p-6 lg:p-12">
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b pb-5 border-line">
+          <SmallLabel>Error 404</SmallLabel>
         </div>
         <div className="flex max-w-[640px] flex-col gap-4">
-          <h1 className="font-display text-display-sm font-semibold uppercase room:font-body room:text-room-title room:font-medium room:normal-case">
-            That page isn&rsquo;t here.
-          </h1>
-          <p className="text-body-lg text-steel-deep room:text-room-lede room:text-muted">
+          <h1 className="font-body text-room-title font-medium">That page isn&rsquo;t here.</h1>
+          <p className="text-room-lede text-muted">
             It may have moved, or the link may be wrong. These will get you back on track.
           </p>
         </div>
@@ -50,7 +48,7 @@ export default function NotFound() {
             </Button>
           )}
         </div>
-      </CutFrame>
+      </Panel>
     </Container>
   );
 }

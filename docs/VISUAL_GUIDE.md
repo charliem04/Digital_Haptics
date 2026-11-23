@@ -296,7 +296,7 @@ Local serving has no real network latency, so compare later runs with this table
 
 ## 11. Token migration
 
-Add the new tokens under new names. Do not redefine old names, or `text-ink` would silently become a light colour mid-migration. Remove the old tokens at the end of R6.
+**Completed in R6.** The old tokens, the temporary `room:` variant, Chakra Petch 600 and JetBrains Mono are gone. `CutFrame` is now `Panel` and `BoxedLabel` is now `SmallLabel`. The compact `text-body`, `text-body-sm` and `text-body-xs` sizes stay because lists, notes and form rows still use them.
 
 | Old | New | Note |
 |---|---|---|

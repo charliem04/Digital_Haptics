@@ -9,7 +9,6 @@ import { SectionHead } from "@/components/page/SectionHead";
 import { CaseGrid } from "@/components/page/CaseGrid";
 import { CtaBand } from "@/components/page/CtaBand";
 import { FaqList } from "@/components/FaqList";
-import { Marker } from "@/components/ui/Marker";
 import { MoreLink } from "@/components/MoreLink";
 import { AutomationsSections } from "@/components/automations/AutomationsSections";
 
@@ -54,21 +53,16 @@ export default function ServicePage({ params }: { params: { slug: string } }) {
         lead={s.lead}
       />
 
-      <Section
-        tone="frost"
-        className="border-y border-ink room:border-line"
-        aria-labelledby="included"
-      >
+      <Section tone="frost" className="border-y border-line" aria-labelledby="included">
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
           <div className="flex flex-col gap-6">
             <SectionHead id="included" label="Included" title="What you get" />
-            <ul className="flex flex-col border-t border-ink room:border-line">
+            <ul className="flex flex-col border-t border-line">
               {s.included.map((item) => (
                 <li
                   key={item}
-                  className="flex items-start gap-3 border-b border-hairline py-3 text-body room:border-line"
+                  className="flex items-start gap-3 border-b py-3 text-body border-line"
                 >
-                  <Marker size="dot" className="mt-2.5" />
                   {item}
                 </li>
               ))}
@@ -76,13 +70,12 @@ export default function ServicePage({ params }: { params: { slug: string } }) {
           </div>
           <div className="flex flex-col gap-6">
             <SectionHead id="for-who" label="Who it's for" title="A good fit if" />
-            <ul className="flex flex-col border-t border-ink room:border-line">
+            <ul className="flex flex-col border-t border-line">
               {s.forWho.map((item) => (
                 <li
                   key={item}
-                  className="flex items-start gap-3 border-b border-hairline py-3 text-body room:border-line"
+                  className="flex items-start gap-3 border-b py-3 text-body border-line"
                 >
-                  <Marker size="dot" className="mt-2.5" />
                   {item}
                 </li>
               ))}

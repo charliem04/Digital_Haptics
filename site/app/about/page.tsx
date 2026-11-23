@@ -7,10 +7,9 @@ import { Section } from "@/components/layout/Section";
 import { SectionHead } from "@/components/page/SectionHead";
 import { StepsStrip } from "@/components/page/StepsStrip";
 import { CtaBand } from "@/components/page/CtaBand";
-import { CutFrame } from "@/components/ui/CutFrame";
-import { BoxedLabel } from "@/components/ui/BoxedLabel";
+import { Panel } from "@/components/ui/Panel";
+import { SmallLabel } from "@/components/ui/SmallLabel";
 import { Chip } from "@/components/ui/Chip";
-import { Marker } from "@/components/ui/Marker";
 
 /**
  * ════════════════════════════════════════════════════════════════════
@@ -40,30 +39,23 @@ export default function AboutPage() {
         lead={about.lead}
       />
 
-      <Section
-        tone="frost"
-        className="border-y border-ink room:border-line"
-        aria-labelledby="story"
-      >
+      <Section tone="frost" className="border-y border-line" aria-labelledby="story">
         <div className="grid gap-12 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:gap-16">
           <div className="flex flex-col gap-6">
             <SectionHead id="story" label="The short version" title="Why trades" />
             <div className="flex max-w-[640px] flex-col gap-4">
               {about.story.map((p) => (
-                <p
-                  key={p}
-                  className="text-body text-steel-deep room:text-room-body room:text-muted"
-                >
+                <p key={p} className="text-room-body text-muted">
                   {p}
                 </p>
               ))}
             </div>
-            <p className="font-mono text-label uppercase tracking-label room:font-body room:text-room-small room:normal-case room:tracking-normal">
-              {about.name} · <span className="text-steel room:text-muted">{about.role}</span>
+            <p className="font-body text-room-small">
+              {about.name} · <span className="text-muted">{about.role}</span>
             </p>
           </div>
           {about.photo && (
-            <CutFrame size="lg" fill="white" innerClassName="overflow-hidden">
+            <Panel fill="raised" innerClassName="overflow-hidden">
               <Image
                 src={about.photo.src}
                 alt={about.photo.alt}
@@ -71,7 +63,7 @@ export default function AboutPage() {
                 height={about.photo.height}
                 className="h-auto w-full"
               />
-            </CutFrame>
+            </Panel>
           )}
         </div>
       </Section>
@@ -79,13 +71,9 @@ export default function AboutPage() {
       <Section aria-labelledby="principles">
         <div className="grid gap-10 lg:grid-cols-2 lg:gap-16">
           <SectionHead id="principles" label="How we work" title="What working together is like" />
-          <ul className="flex flex-col border-t border-ink room:border-line">
+          <ul className="flex flex-col border-t border-line">
             {about.principles.map((p) => (
-              <li
-                key={p}
-                className="flex items-start gap-3 border-b border-hairline py-4 text-body room:border-line"
-              >
-                <Marker size="dot" className="mt-2.5" />
+              <li key={p} className="flex items-start gap-3 border-b py-4 text-body border-line">
                 {p}
               </li>
             ))}
@@ -101,12 +89,10 @@ export default function AboutPage() {
       </Section>
 
       <Section aria-labelledby="local">
-        <CutFrame size="lg" fill="frost" innerClassName="flex flex-col gap-8 p-6 lg:p-12">
-          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-ink pb-5 room:border-line">
-            <BoxedLabel tone="ink">Local</BoxedLabel>
-            <span className="font-mono text-label uppercase tracking-label text-steel room:font-body room:text-room-small room:normal-case room:tracking-normal room:text-muted">
-              {site.serviceArea.label}
-            </span>
+        <Panel fill="surface" innerClassName="flex flex-col gap-8 p-6 lg:p-12">
+          <div className="flex flex-wrap items-center justify-between gap-4 border-b pb-5 border-line">
+            <SmallLabel>Local</SmallLabel>
+            <span className="font-body text-room-small text-muted">{site.serviceArea.label}</span>
           </div>
           <SectionHead id="local" label="Acadiana" title="Local, and remote" lede={about.local} />
           <ul className="flex flex-wrap gap-2">
@@ -116,7 +102,7 @@ export default function AboutPage() {
               </li>
             ))}
           </ul>
-        </CutFrame>
+        </Panel>
       </Section>
 
       <CtaBand

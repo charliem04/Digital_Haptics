@@ -41,7 +41,7 @@ export function StickyCta({ cta }: { cta: { href: string; label: string } | null
     <>
       <div
         aria-hidden
-        className="h-[calc(57px+env(safe-area-inset-bottom))] bg-ink lg:hidden room:relative room:z-10 room:bg-surface"
+        className="h-[calc(57px+env(safe-area-inset-bottom))] lg:hidden relative z-10 bg-surface"
       />
       <StickyBar cta={cta} hidden={heroCtaVisible} className="fixed inset-x-0 bottom-0 z-40" />
     </>
@@ -64,12 +64,12 @@ export function StickyBar({
       data-track-loc="sticky"
       data-sticky-waiting={hidden || undefined}
       className={cn(
-        "border-t border-ink bg-signal pb-[env(safe-area-inset-bottom)] lg:hidden room:border-line room:bg-amber",
+        "border-t pb-[env(safe-area-inset-bottom)] lg:hidden border-line bg-amber",
         hidden && "invisible",
         className
       )}
     >
-      <Button href={cta.href} block className="!min-h-[56px] !px-gutter-sm room:!rounded-none">
+      <Button href={cta.href} block className="!min-h-[56px] !px-gutter-sm !rounded-none">
         {cta.label}
       </Button>
     </div>

@@ -8,43 +8,24 @@ import { SectionLabel } from "@/components/ui/SectionLabel";
  */
 export function SectionHead({
   id,
-  index,
   label,
   title,
   lede,
-  tone = "light",
   className,
 }: {
   id: string;
-  index?: number;
   label: ReactNode;
   title: ReactNode;
   lede?: ReactNode;
-  /** "dark" on an ink slab: the label goes ice/70 (steel fails on ink). */
-  tone?: "light" | "dark";
   className?: string;
 }) {
   return (
     <div className={cn("flex flex-col gap-4", className)}>
-      <SectionLabel index={index} tone={tone === "dark" ? "ice" : "steel"}>
-        {label}
-      </SectionLabel>
-      <h2
-        id={id}
-        className="max-w-[24ch] font-display text-heading font-semibold room:font-body room:text-room-section room:font-medium"
-      >
+      <SectionLabel>{label}</SectionLabel>
+      <h2 id={id} className="max-w-[24ch] font-body text-room-section font-medium">
         {title}
       </h2>
-      {lede && (
-        <p
-          className={cn(
-            "max-w-[640px] text-body room:text-room-body room:text-muted",
-            tone === "dark" ? "text-ice/70" : "text-steel-deep"
-          )}
-        >
-          {lede}
-        </p>
-      )}
+      {lede && <p className="max-w-[640px] text-room-body text-muted">{lede}</p>}
     </div>
   );
 }

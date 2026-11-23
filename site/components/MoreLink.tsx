@@ -19,12 +19,10 @@ import { Arrow } from "./ui/Arrow";
 export function MoreLink({
   href,
   children,
-  tone = "ink",
   className,
 }: {
   href: string;
   children: React.ReactNode;
-  tone?: "ink" | "deep";
   className?: string;
 }) {
   // mailto:, tel:, https: — off-site, so the registry has no opinion.
@@ -35,15 +33,12 @@ export function MoreLink({
   const reachable = external || path === "" || path === "/" || isLive(path);
   if (!reachable) return null;
 
-  // Signal is never text on a light ground (PLAN §4.1).
-  const colors = tone === "deep" ? "text-ice" : "text-ink";
-
   return (
     <Link
       href={href}
-      className={`group inline-flex min-h-touch items-center gap-2 font-mono text-label uppercase tracking-label no-underline room:font-body room:text-room-small room:font-medium room:normal-case room:tracking-normal room:text-text room:underline room:underline-offset-[5px] room:hover:decoration-2 ${colors} ${
+      className={`group inline-flex min-h-touch items-center gap-2 ${
         className ?? ""
-      }`}
+      } font-body text-room-small font-medium text-text underline underline-offset-[5px] hover:decoration-2`}
     >
       {children}
       <Arrow className="size-3.5 transition-transform duration-[250ms] ease-brand group-hover:translate-x-0.5 group-hover:translate-y-0.5 group-active:translate-y-1" />

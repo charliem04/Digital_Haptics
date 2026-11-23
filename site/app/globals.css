@@ -3,29 +3,11 @@
 @tailwind utilities;
 
 /* ── DESIGN TOKENS ───────────────────────────────────────────────────
-   Source: PLAN §4 and the Hybrid mockup. Full table with contrast
-   ratios: docs/REFACTOR_AUDIT.md §3.
+   Molten Room. Roles and measured contrast: docs/VISUAL_GUIDE.md §2.
 
    Colors are space-separated RGB channels so Tailwind opacity works
-   (`bg-ink/20`). tailwind.config.ts maps every utility onto these.
-
-   Contrast (WCAG): ink on ice 16.5:1 · steel on ice 6.46, on frost
-   7.13, on steel-panel 5.36 · steel-deep on steel-panel 6.56 · ink on
-   signal 6.24 · signal on ink 6.24. Signal on ice is 2.65:1, so signal
-   is NEVER text on a light ground (PLAN §4.1). */
+   (`bg-room/40`). tailwind.config.ts maps every utility onto these. */
 :root {
-  --ice: 228 238 244; /* #E4EEF4  page ground, dot grid */
-  --frost: 244 248 251; /* #F4F8FB  panels, section frames */
-  --white: 255 255 255; /* #FFFFFF  cards, inputs */
-  --steel-panel: 207 218 226; /* #CFDAE2  hero sidebar, secondary bands */
-  --hairline: 201 213 222; /* #C9D5DE  row dividers (decorative) */
-  --ink: 11 13 16; /* #0B0D10  text, borders, accent fills */
-  --steel: 74 85 96; /* #4A5560  secondary text, labels */
-  --signal: 255 90 31; /* #FF5A1F  actions, flare, markers */
-  --steel-deep: 62 72 82; /* #3E4852  mockup: hero subline, sidebar copy */
-  --flare-core: 255 244 236; /* #FFF4EC  mockup: flare node centre */
-
-  /* Molten Room (docs/VISUAL_GUIDE.md §2, with measured contrast). */
   --room: 18 22 26; /* #12161A  page ground, header, input fill */
   --surface: 26 32 37; /* #1A2025  alternate sections, form, footer */
   --raised: 35 44 48; /* #232C30  cards, disabled fills */
@@ -40,97 +22,48 @@
   /* Film grain (VISUAL_GUIDE §5): a 128px tile with its 0.08 strength
      built into the alpha channel, used as a mask by .room-grain. */
   --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 .128 -.024'/%3E%3C/filter%3E%3Crect width='128' height='128' filter='url(%23n)'/%3E%3C/svg%3E");
-
-  /* Cut corners (PLAN §4.4). xl is the hero sidebar's cut (mockup). */
-  --cut-sm: 10px;
-  --cut-md: 16px;
-  --cut-lg: 24px;
-  --cut-xl: 56px;
-
-  /* Dot grid pitch: 16px desktop, 14px mobile (PLAN §4.4). */
-  --dot-size: 14px;
-
-  /* Header row height. The home hero reads it to start its rail and
-     flare at the very top of the page, behind the header (mockup). */
-  --header-h: 88px;
-}
-
-@media (min-width: 768px) {
-  :root {
-    --dot-size: 16px;
-  }
-}
-
-@media (min-width: 1024px) {
-  :root {
-    --header-h: 108px;
-  }
 }
 
 /* ── BASE ──────────────────────────────────────────────────────────── */
 
 html {
   scroll-behavior: smooth;
-  scrollbar-color: rgb(var(--steel)) rgb(var(--frost));
+  scrollbar-color: rgb(var(--muted)) rgb(var(--surface));
 }
 
 body {
-  @apply bg-ice bg-dots bg-dot-pitch font-body text-body text-ink antialiased;
+  background-color: rgb(var(--room));
+  color: rgb(var(--text));
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 ::selection {
-  background: rgb(var(--ink));
-  color: rgb(var(--ice));
+  background: rgb(var(--amber));
+  color: rgb(var(--on-amber));
 }
 
 input,
 textarea,
 select {
-  caret-color: rgb(var(--ink));
+  caret-color: rgb(var(--text));
 }
 
 a {
-  color: rgb(var(--ink));
+  color: inherit;
 }
 
-/* ── FOCUS ─────────────────────────────────────────────────────────
-   Two-tone ring: 2px signal, then a 2px ink edge (REFACTOR_AUDIT C10).
-   Signal alone is 2.65:1 on ice and fails the 3:1 a focus indicator
-   needs; the ink edge carries the contrast (16.5:1) and the signal
-   keeps the brand color PLAN §4.5 asks for.
-
-   Elements clipped with clip-path lose their outline. Cut-corner
-   components (Phase 1) draw their ring on the outer frame layer with
-   :focus-within instead. */
+/* 3px text-colour ring (VISUAL_GUIDE §8). */
 :focus-visible {
-  outline: 2px solid rgb(var(--signal));
-  outline-offset: 2px;
-  box-shadow: 0 0 0 6px rgb(var(--ink));
+  outline: 3px solid rgb(var(--text));
+  outline-offset: 3px;
 }
 
-/* ── MOLTEN ROOM FOUNDATIONS ─────────────────────────────────────────
-   Opt-in while the site migrates (R2–R6): anything inside `.room` gets
-   the new ground, type, focus ring, selection and scrollbar, and pages
-   outside it are untouched. At the end of R6 this moves onto the body.
-
-   :where() keeps these at the specificity of the base rules above, so
-   a utility such as `text-amber` on a link still wins. */
-.room {
-  background-color: rgb(var(--room));
-  background-image: none;
-  color: rgb(var(--text));
-  font-family: var(--font-body), system-ui, sans-serif;
-  font-size: 1.0625rem;
-  line-height: 1.6;
-  scrollbar-color: rgb(var(--muted)) rgb(var(--surface));
-}
-
-/* While any page is in the room, so are the scrollbar and overscroll. */
-html:has(.room) {
-  scrollbar-color: rgb(var(--muted)) rgb(var(--surface));
-}
-
-/* One decorative layer over the page. A mask on a solid fill, not a
+/* ── FILM GRAIN ──────────────────────────────────────────────────────
+   One decorative layer over the page. A mask on a solid fill, not a
    background image: browsers count a textured background on a card as
    the page's main content, and LCP would then measure the grain. */
 .room-grain {
@@ -147,39 +80,6 @@ html:has(.room) {
   .room-grain {
     display: none;
   }
-}
-
-/* A surface inside the room, with the same grain. */
-.room-surface {
-  background-color: rgb(var(--surface));
-}
-
-.room-raised {
-  background-color: rgb(var(--raised));
-}
-
-:where(.room) a {
-  color: inherit;
-}
-
-:where(.room) input,
-:where(.room) textarea,
-:where(.room) select {
-  caret-color: rgb(var(--text));
-}
-
-:where(.room) ::selection {
-  background: rgb(var(--amber));
-  color: rgb(var(--on-amber));
-}
-
-/* 3px text-colour ring (VISUAL_GUIDE §8). Clears the old ink shadow.
-   !important because the old field and card styles remove the outline
-   with utilities; goes when they do, at the end of R6. */
-:where(.room) :focus-visible {
-  outline: 3px solid rgb(var(--text)) !important;
-  outline-offset: 3px !important;
-  box-shadow: none !important;
 }
 
 /* ── MOTION ────────────────────────────────────────────────────────── */
@@ -213,9 +113,5 @@ html:has(.room) {
 @layer components {
   .page-x {
     @apply mx-auto w-full max-w-page px-gutter-sm lg:px-gutter;
-  }
-
-  .section-y {
-    @apply py-section-sm lg:py-section;
   }
 }

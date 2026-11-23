@@ -29,21 +29,18 @@ export function CtaBand({
   const content = (
     <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
       <div className="flex max-w-[720px] flex-col gap-4">
-        <SectionLabel tone="ice">Next step</SectionLabel>
-        <h2
-          id={id}
-          className="font-display text-display-sm font-semibold uppercase room:font-body room:text-room-cta room:font-medium room:normal-case"
-        >
+        <SectionLabel>Next step</SectionLabel>
+        <h2 id={id} className="font-body text-room-cta font-medium">
           {copy.heading}
         </h2>
-        <p className="text-body-lg text-ice/70 room:text-room-lede room:text-muted">{copy.body}</p>
+        <p className="text-room-lede text-muted">{copy.body}</p>
       </div>
       <div className="flex flex-col gap-3">
         <Button href={cta.href}>{cta.label}</Button>
         {phone && (
           <a
             href={phone.href}
-            className="inline-flex min-h-touch items-center font-mono text-label uppercase tracking-label text-ice no-underline hover:text-signal active:text-ice/70 room:font-body room:text-room-small room:normal-case room:tracking-normal room:text-text room:hover:text-amber room:active:text-muted"
+            className="inline-flex min-h-touch items-center no-underline font-body text-room-small text-text hover:text-amber active:text-muted"
           >
             Or call {phone.display}
           </a>

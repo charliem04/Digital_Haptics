@@ -3,8 +3,8 @@ import { addOn, demoCopy, modules, problem, voiceCopy } from "@/data/automations
 import { demoSequence } from "@/data/demo";
 import { Section } from "@/components/layout/Section";
 import { SectionHead } from "@/components/page/SectionHead";
-import { CutFrame } from "@/components/ui/CutFrame";
-import { BoxedLabel } from "@/components/ui/BoxedLabel";
+import { Panel } from "@/components/ui/Panel";
+import { SmallLabel } from "@/components/ui/SmallLabel";
 import { LeadFlowPanel } from "@/components/LeadFlowPanel";
 import { LiveDemo } from "./LiveDemo";
 
@@ -33,32 +33,23 @@ export function AutomationsSections() {
         </div>
       </Section>
 
-      <Section
-        tone="frost"
-        className="border-y border-ink room:border-line"
-        aria-labelledby="auto-modules"
-      >
+      <Section tone="frost" className="border-y border-line" aria-labelledby="auto-modules">
         <div className="flex flex-col gap-10">
           <SectionHead id="auto-modules" label="Modules" title="What it can run" />
           <ul className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {modules.map((m) => (
               <li key={m.name}>
-                <CutFrame
-                  size="md"
-                  fill="white"
+                <Panel
+                  fill="raised"
                   className="h-full"
                   innerClassName="flex h-full flex-col gap-3 p-6"
                 >
                   <div className="flex flex-wrap items-center gap-3">
-                    <h3 className="font-display text-subheading font-semibold room:font-body room:text-room-card room:font-medium">
-                      {m.name}
-                    </h3>
-                    {m.soon && <BoxedLabel>Coming soon</BoxedLabel>}
+                    <h3 className="font-body text-room-card font-medium">{m.name}</h3>
+                    {m.soon && <SmallLabel>Coming soon</SmallLabel>}
                   </div>
-                  <p className="text-body-sm text-steel-deep room:text-room-small room:text-muted">
-                    {m.body}
-                  </p>
-                </CutFrame>
+                  <p className="text-room-small text-muted">{m.body}</p>
+                </Panel>
               </li>
             ))}
           </ul>
@@ -84,14 +75,11 @@ export function AutomationsSections() {
           <div className="flex flex-col gap-4">
             <SectionHead
               id="auto-voice"
-              tone="dark"
               label={voiceCopy.label}
               title={voiceCopy.title}
               lede={voiceCopy.body}
             />
-            <p className="font-display text-display-sm font-semibold room:font-body room:text-room-cta room:font-medium">
-              {voiceCopy.number}
-            </p>
+            <p className="font-body text-room-cta font-medium">{voiceCopy.number}</p>
           </div>
         </Section>
       )}

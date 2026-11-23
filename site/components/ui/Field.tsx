@@ -5,7 +5,7 @@ import type {
   TextareaHTMLAttributes,
 } from "react";
 import { cn } from "@/lib/cn";
-import { CutFrame } from "./CutFrame";
+import { Panel } from "./Panel";
 
 /**
  * ════════════════════════════════════════════════════════════════════
@@ -14,7 +14,7 @@ import { CutFrame } from "./CutFrame";
  *  Input / select / textarea: white fill, 1px ink border, top-left `sm`
  *  cut, min height 48px, Manrope 16px (16px also stops iOS zooming on
  *  focus). Label above in mono caps. The focus ring follows the cut
- *  (CutFrame `ring`).
+ *  (Panel `ring`).
  *
  *  Errors stay in the palette (decision D5): ink text with an
  *  "Error —" prefix, plus a 2px signal bar along the bottom of the
@@ -35,13 +35,12 @@ type FieldMeta = {
   className?: string;
 };
 
-const LABEL =
-  "font-mono text-label-sm uppercase tracking-label-lg text-ink room:font-body room:text-room-small room:font-medium room:normal-case room:tracking-normal room:text-text";
+const LABEL = "font-body text-room-small font-medium text-text";
 
 const CONTROL =
-  "block w-full bg-transparent font-body text-base text-ink placeholder:text-steel focus-visible:shadow-none focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-60 room:rounded-field room:text-text room:placeholder:text-muted room:disabled:text-muted room:disabled:opacity-100";
+  "block w-full bg-transparent font-body text-base disabled:cursor-not-allowed rounded-field text-text placeholder:text-muted disabled:text-muted disabled:opacity-100";
 
-const OPTIONAL = "text-steel room:font-normal room:text-muted";
+const OPTIONAL = "font-normal text-muted";
 
 function describedBy({ id, hint, error }: FieldMeta) {
   const ids = [hint ? `${id}-hint` : null, error ? `${id}-error` : null].filter(Boolean);
@@ -52,7 +51,7 @@ function Messages({ id, hint, error }: FieldMeta) {
   return (
     <>
       {hint && (
-        <p id={`${id}-hint`} className="text-body-xs text-steel room:text-muted">
+        <p id={`${id}-hint`} className="text-body-xs text-muted">
           {hint}
         </p>
       )}
@@ -64,10 +63,7 @@ function Messages({ id, hint, error }: FieldMeta) {
 /** The error line, shared with fieldsets. */
 export function FieldError({ id, children }: { id: string; children: ReactNode }) {
   return (
-    <p
-      id={id}
-      className="font-mono text-label uppercase tracking-label text-ink room:font-body room:text-room-small room:font-medium room:normal-case room:tracking-normal room:text-error"
-    >
+    <p id={id} className="font-body text-room-small font-medium text-error">
       <span className="font-medium">Error —</span> {children}
     </p>
   );
@@ -96,15 +92,12 @@ function Frame({
   className?: string;
 }) {
   return (
-    <CutFrame
-      size="sm"
-      corners={["tl"]}
+    <Panel
       fill="field"
-      ring
       innerClassName={cn(
         // Not bare :disabled: a select's "Choose one" <option> is disabled too.
-        "relative room:border room:has-[:is(input,select,textarea):disabled]:border-dashed room:has-[:is(input,select,textarea):disabled]:bg-raised",
-        invalid ? "room:border-2 room:border-error" : "room:border-muted room:hover:border-text",
+        "relative border has-[:is(input,select,textarea):disabled]:border-dashed has-[:is(input,select,textarea):disabled]:bg-raised",
+        invalid ? "border-2 border-error" : "border-muted hover:border-text",
         className
       )}
     >
@@ -114,10 +107,10 @@ function Frame({
       {invalid && (
         <span
           aria-hidden
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-[2px] bg-signal room:hidden"
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-[2px] bg-amber hidden"
         />
       )}
-    </CutFrame>
+    </Panel>
   );
 }
 
@@ -208,7 +201,7 @@ export function SelectField({
           fill="none"
           stroke="currentColor"
           strokeWidth={1.5}
-          className="pointer-events-none absolute right-4 top-1/2 h-2 w-3 -translate-y-1/2 text-ink room:text-muted"
+          className="pointer-events-none absolute right-4 top-1/2 h-2 w-3 -translate-y-1/2 text-muted"
         >
           <path d="M1 1.5 6 6.5 11 1.5" />
         </svg>
@@ -236,16 +229,16 @@ export function Checkbox({
     <label
       htmlFor={id}
       className={cn(
-        "flex min-h-touch cursor-pointer items-center gap-3 text-body room:has-[:disabled]:cursor-not-allowed room:has-[:disabled]:text-muted",
+        "flex min-h-touch cursor-pointer items-center gap-3 text-body has-[:disabled]:cursor-not-allowed has-[:disabled]:text-muted",
         className
       )}
     >
-      <span className="relative inline-flex size-5 shrink-0 room:size-[22px]">
+      <span className="relative inline-flex shrink-0 size-[22px]">
         <input
           id={id}
           type="checkbox"
           {...rest}
-          className="peer size-5 cursor-pointer appearance-none border border-ink bg-white checked:bg-ink disabled:cursor-not-allowed disabled:opacity-60 room:size-[22px] room:rounded-[5px] room:border-muted room:bg-room room:checked:border-amber room:checked:bg-amber"
+          className="peer cursor-pointer appearance-none border disabled:cursor-not-allowed disabled:opacity-60 size-[22px] rounded-[5px] border-muted bg-room checked:border-amber checked:bg-amber"
         />
         <svg
           aria-hidden
@@ -255,7 +248,7 @@ export function Checkbox({
           stroke="currentColor"
           strokeWidth={2}
           strokeLinecap="square"
-          className="pointer-events-none absolute inset-0 m-auto size-3.5 text-ice opacity-0 peer-checked:opacity-100 room:text-on-amber"
+          className="pointer-events-none absolute inset-0 m-auto size-3.5 opacity-0 peer-checked:opacity-100 text-on-amber"
         >
           <path d="M2.5 7.5 5.5 10.5 11.5 3.5" />
         </svg>

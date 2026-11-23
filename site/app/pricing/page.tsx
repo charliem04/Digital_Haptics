@@ -5,9 +5,8 @@ import { PageHero } from "@/components/page/PageHero";
 import { Section } from "@/components/layout/Section";
 import { SectionHead } from "@/components/page/SectionHead";
 import { CtaBand } from "@/components/page/CtaBand";
-import { CutFrame } from "@/components/ui/CutFrame";
-import { BoxedLabel } from "@/components/ui/BoxedLabel";
-import { Marker } from "@/components/ui/Marker";
+import { Panel } from "@/components/ui/Panel";
+import { SmallLabel } from "@/components/ui/SmallLabel";
 import { Arrow } from "@/components/ui/Arrow";
 
 /**
@@ -44,39 +43,30 @@ export default function PricingPage() {
         >
           {services.map((s) => (
             <li key={s.slug}>
-              <CutFrame
-                size="md"
-                fill="white"
+              <Panel
+                fill="raised"
                 className="h-full"
                 innerClassName="flex h-full flex-col gap-5 p-6 lg:p-8"
               >
-                <BoxedLabel active={s.slug === "automations"}>
+                <SmallLabel>
                   {s.code} — {s.name}
-                </BoxedLabel>
-                <p className="font-display text-heading font-semibold room:font-body room:text-room-card room:font-medium">
-                  {s.price}
-                </p>
-                <p className="text-body-sm text-steel-deep room:text-room-small room:text-muted">
-                  {s.short}
-                </p>
+                </SmallLabel>
+                <p className="font-body text-room-card font-medium">{s.price}</p>
+                <p className="text-room-small text-muted">{s.short}</p>
                 <Link
                   href={`/services/${s.slug}/`}
-                  className="mt-auto inline-flex min-h-touch items-center gap-2 font-mono text-label uppercase tracking-label text-ink no-underline hover:underline hover:decoration-signal hover:decoration-2 hover:underline-offset-4 active:text-steel-deep room:font-body room:text-room-small room:font-medium room:normal-case room:tracking-normal room:text-text room:underline room:underline-offset-[5px] room:hover:decoration-amber room:active:text-muted"
+                  className="mt-auto inline-flex min-h-touch items-center gap-2 hover:underline hover:decoration-2 hover:underline-offset-4 font-body text-room-small font-medium text-text underline underline-offset-[5px] hover:decoration-amber active:text-muted"
                 >
                   What&rsquo;s included
                   <Arrow className="size-3.5" />
                 </Link>
-              </CutFrame>
+              </Panel>
             </li>
           ))}
         </ul>
       </Section>
 
-      <Section
-        tone="frost"
-        className="border-y border-ink room:border-line"
-        aria-labelledby="quote-factors"
-      >
+      <Section tone="frost" className="border-y border-line" aria-labelledby="quote-factors">
         <div className="grid gap-10 lg:grid-cols-2 lg:gap-16">
           <SectionHead
             id="quote-factors"
@@ -84,13 +74,9 @@ export default function PricingPage() {
             title="What affects your quote"
             lede={statement}
           />
-          <ul className="flex flex-col border-t border-ink room:border-line">
+          <ul className="flex flex-col border-t border-line">
             {getQuoteFactors().map((f) => (
-              <li
-                key={f}
-                className="flex items-start gap-3 border-b border-hairline py-4 text-body room:border-line"
-              >
-                <Marker size="dot" className="mt-2.5" />
+              <li key={f} className="flex items-start gap-3 border-b py-4 text-body border-line">
                 {f}
               </li>
             ))}
