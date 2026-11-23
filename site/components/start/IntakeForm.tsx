@@ -209,9 +209,9 @@ export function IntakeForm({
           tabIndex={-1}
           role="alert"
           // deliberate-ignore outline-none
-          className="flex flex-col gap-2 border-l-4 border-signal bg-white p-4 focus:outline-none"
+          className="flex flex-col gap-2 border-l-4 p-4 focus:outline-none rounded-field border-error bg-raised"
         >
-          <p className="font-mono text-label font-medium uppercase tracking-label">
+          <p className="font-medium font-body text-room-small text-error">
             Error — {summary.length === 1 ? "one field needs" : `${summary.length} fields need`} a
             look
           </p>
@@ -220,7 +220,7 @@ export function IntakeForm({
               <li key={f}>
                 <a
                   href={`#intake-${f}`}
-                  className="inline-flex min-h-touch items-center text-body-sm text-ink underline decoration-signal decoration-2 underline-offset-4"
+                  className="inline-flex min-h-touch items-center text-body-sm underline decoration-2 underline-offset-4 text-text decoration-error"
                 >
                   {labelOf(f)}: {errors[f]}
                 </a>
@@ -353,8 +353,11 @@ export function IntakeForm({
       <Turnstile action="intake" />
 
       {(status === "failed" || status === "busy" || status === "check") && (
-        <div role="alert" className="flex flex-col gap-2 border-l-4 border-signal bg-white p-4">
-          <p className="font-mono text-label font-medium uppercase tracking-label">
+        <div
+          role="alert"
+          className="flex flex-col gap-2 border-l-4 p-4 rounded-field border-error bg-raised"
+        >
+          <p className="font-medium font-body text-room-small text-error">
             Error —{" "}
             {status === "busy"
               ? "too many tries"
@@ -362,7 +365,7 @@ export function IntakeForm({
                 ? "we couldn’t verify that"
                 : "that didn’t send"}
           </p>
-          <p className="text-body-sm text-ink">
+          <p className="text-body-sm text-text">
             {status === "busy"
               ? "Wait a minute and try again. "
               : status === "check"
@@ -373,7 +376,7 @@ export function IntakeForm({
               <>
                 {" "}
                 at{" "}
-                <a href={contact.phone.href} className="text-ink underline">
+                <a href={contact.phone.href} className="underline text-text">
                   {contact.phone.display}
                 </a>
               </>
@@ -381,7 +384,7 @@ export function IntakeForm({
             {contact.email && (
               <>
                 {contact.phone ? " or " : " at "}
-                <a href={contact.email.href} className="text-ink underline">
+                <a href={contact.email.href} className="underline text-text">
                   {contact.email.display}
                 </a>
               </>

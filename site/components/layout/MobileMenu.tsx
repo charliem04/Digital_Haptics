@@ -7,7 +7,6 @@ import type { ContactLinks, NavLink } from "@/lib/nav";
 import { Logo } from "@/components/ui/Logo";
 import { Button } from "@/components/ui/Button";
 import { SectionLabel } from "@/components/ui/SectionLabel";
-import { Marker } from "@/components/ui/Marker";
 
 /**
  * ════════════════════════════════════════════════════════════════════
@@ -23,6 +22,9 @@ import { Marker } from "@/components/ui/Marker";
  *  locked while open.
  * ════════════════════════════════════════════════════════════════════
  */
+const ICON_BUTTON =
+  "flex size-12 items-center justify-center transition-colors ease-brand active:translate-y-px rounded-control border border-line bg-surface text-text duration-[160ms] hover:bg-raised";
+
 export function MobileMenu({
   links,
   cta,
@@ -72,7 +74,7 @@ export function MobileMenu({
           dialog.current?.showModal();
           setOpen(true);
         }}
-        className="flex size-12 items-center justify-center bg-ink text-ice transition-colors duration-[250ms] ease-brand hover:bg-steel-deep active:translate-y-px lg:hidden"
+        className={`${ICON_BUTTON} lg:hidden`}
       >
         <span className="sr-only">Open menu</span>
         <svg
@@ -93,17 +95,15 @@ export function MobileMenu({
         id={id}
         aria-label="Menu"
         onClose={() => setOpen(false)}
-        className="fixed inset-0 m-0 h-dvh max-h-none w-screen max-w-none overflow-y-auto bg-ice bg-dots bg-dot-pitch p-0 text-ink backdrop:bg-ink/40 open:flex open:flex-col motion-safe:open:animate-menu-in"
+        className="fixed inset-0 m-0 h-dvh max-h-none w-screen max-w-none overflow-y-auto p-0 backdrop:bg-room/40 open:flex open:flex-col motion-safe:open:animate-menu-in bg-surface text-text bg-none"
       >
+        {/* The dialog is in the top layer, above the page's grain. */}
+        <div aria-hidden className="room-grain block" />
         {/* Same row geometry as the header, so the close button lands
             exactly where the menu button was. */}
-        <div className="page-x flex min-h-[88px] items-center justify-between gap-6 py-5">
+        <div className="page-x flex items-center justify-between gap-6 min-h-20 py-4">
           <Logo />
-          <button
-            type="button"
-            onClick={close}
-            className="flex size-12 items-center justify-center bg-ink text-ice transition-colors duration-[250ms] ease-brand hover:bg-steel-deep active:translate-y-px"
-          >
+          <button type="button" onClick={close} className={ICON_BUTTON}>
             <span className="sr-only">Close menu</span>
             <svg
               aria-hidden
@@ -119,14 +119,14 @@ export function MobileMenu({
           </button>
         </div>
 
-        <div className="page-x flex flex-1 flex-col gap-10 border-t border-ink pb-10 pt-8">
+        <div className="page-x flex flex-1 flex-col gap-10 border-t pb-10 pt-8 border-line">
           <SectionLabel>Menu</SectionLabel>
 
           {links.length > 0 && (
             <nav aria-label="Main">
               <ul className="flex flex-col">
                 {links.map((l) => (
-                  <li key={l.href} className="border-b border-ink/20">
+                  <li key={l.href} className="border-b border-line">
                     <MenuLink href={l.href} current={pathname} onSame={close} big>
                       {l.label}
                     </MenuLink>
@@ -154,14 +154,13 @@ export function MobileMenu({
           )}
 
           {(contact.phone || contact.email) && (
-            <ul className="mt-auto flex flex-col font-mono text-label uppercase tracking-label">
+            <ul className={`mt-auto flex flex-col font-body text-room-small`}>
               {contact.phone && (
                 <li>
                   <a
                     href={contact.phone.href}
-                    className="inline-flex min-h-touch items-center gap-2 text-ink no-underline"
+                    className="inline-flex min-h-touch items-center gap-2 no-underline text-text"
                   >
-                    <Marker size="dot" />
                     {contact.phone.display}
                   </a>
                 </li>
@@ -170,9 +169,8 @@ export function MobileMenu({
                 <li>
                   <a
                     href={contact.email.href}
-                    className="inline-flex min-h-touch items-center gap-2 normal-case tracking-normal text-ink no-underline"
+                    className="inline-flex min-h-touch items-center gap-2 no-underline text-text"
                   >
-                    <Marker size="dot" />
                     {contact.email.display}
                   </a>
                 </li>
@@ -207,8 +205,8 @@ function MenuLink({
       onClick={() => isCurrent && onSame()}
       className={
         big
-          ? "flex min-h-[64px] items-center justify-between font-display text-heading font-semibold uppercase text-ink no-underline aria-[current=page]:underline aria-[current=page]:decoration-signal aria-[current=page]:decoration-2 aria-[current=page]:underline-offset-8"
-          : "inline-flex min-h-touch items-center font-mono text-label uppercase tracking-label text-steel no-underline aria-[current=page]:text-ink"
+          ? "flex items-center justify-between no-underline aria-[current=page]:underline aria-[current=page]:decoration-2 aria-[current=page]:underline-offset-8 min-h-[52px] font-body text-[1.375rem] font-medium text-text aria-[current=page]:decoration-amber"
+          : `inline-flex min-h-touch items-center no-underline font-body text-room-small text-muted aria-[current=page]:text-text`
       }
     >
       {children}

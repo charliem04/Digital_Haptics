@@ -1,0 +1,106 @@
+/* Concept A's typographic overlay. HTML, not canvas, so it is crisp at
+   any pixel ratio and present in the server-rendered fallback. */
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  container-type: size;
+  color: #0b0d10;
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: 12px;
+  line-height: 1.3;
+  letter-spacing: 0.02em;
+  --pad: clamp(12px, 2.4cqw, 28px);
+}
+
+.overlay > * {
+  position: absolute;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.yearStart {
+  top: var(--pad);
+  left: var(--pad);
+}
+
+.yearEnd {
+  top: var(--pad);
+  right: var(--pad);
+}
+
+.yearStart,
+.yearEnd {
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.title {
+  top: var(--pad);
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.edge {
+  top: 50%;
+  right: var(--pad);
+  writing-mode: vertical-rl;
+  transform: translateY(-50%);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.readouts {
+  top: 50%;
+  left: var(--pad);
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+}
+
+.readouts p {
+  margin: 0;
+}
+
+.mark {
+  right: var(--pad);
+  bottom: var(--pad);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+}
+
+.markSquare {
+  width: 10px;
+  height: 10px;
+  background: currentColor;
+}
+
+/* A small card has room for the corners only. */
+@container (max-width: 520px) {
+  .edge,
+  .title {
+    display: none;
+  }
+}
+
+@container (max-height: 260px) {
+  .edge {
+    display: none;
+  }
+}

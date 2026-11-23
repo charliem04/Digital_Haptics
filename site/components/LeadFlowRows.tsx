@@ -19,7 +19,8 @@ export function LeadFlowRows({ steps }: { steps: LeadFlowStep[] }) {
     <motion.ol
       className="flex flex-col gap-2.5"
       initial={still ? false : "hidden"}
-      whileInView="shown"
+      animate={still ? "shown" : undefined}
+      whileInView={still ? undefined : "shown"}
       viewport={viewport.standard}
     >
       {steps.map((s, i) => (
@@ -30,15 +31,17 @@ export function LeadFlowRows({ steps }: { steps: LeadFlowStep[] }) {
             shown: {
               opacity: 1,
               y: 0,
-              transition: { duration: dur.base, ease: ease.out, delay: i * stagger.sequence },
+              transition: still
+                ? { duration: 0 }
+                : { duration: dur.base, ease: ease.out, delay: i * stagger.sequence },
             },
           }}
           className={cn(
             "flex justify-between",
-            i === last && "-mx-1.5 bg-signal px-1.5 py-1 text-ink"
+            i === last && "-mx-1.5 px-1.5 py-1 rounded-notice bg-amber text-on-amber"
           )}
         >
-          <span className={i === last ? undefined : "text-steel"}>{s.key}</span>
+          <span className={i === last ? undefined : "text-muted"}>{s.key}</span>
           <span className={i === last ? "font-medium" : undefined}>{s.value}</span>
         </motion.li>
       ))}

@@ -41,7 +41,7 @@ export default function BlogPage() {
             ))}
           </ul>
         ) : (
-          <p className="text-body text-steel-deep">No posts yet.</p>
+          <p className="text-room-body text-muted">No posts yet.</p>
         )}
       </Section>
       <CtaBand

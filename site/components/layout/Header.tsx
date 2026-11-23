@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/Button";
 import { Container } from "./Container";
 import { NavLinks } from "./NavLinks";
 import { MobileMenu } from "./MobileMenu";
-import { OnHome } from "./OnHome";
 
 /**
  * ════════════════════════════════════════════════════════════════════
@@ -37,14 +36,9 @@ export function HeaderView({
   contact: ContactLinks;
 }) {
   return (
-    <header className="relative z-30">
+    <header className="relative z-30 bg-room">
       <Container>
-        {/* On the home page at xl the hero rail occupies the top-right
-            320px (mockup: nav padding-right 384 = rail + gutter). */}
-        <OnHome
-          home="xl:pr-sidebar"
-          className="flex h-[var(--header-h)] items-center justify-between gap-6"
-        >
+        <div className="flex items-center justify-between gap-6 h-20">
           <Logo />
           {links.length > 0 && (
             <nav aria-label="Main" className="hidden lg:ml-auto lg:block">
@@ -53,16 +47,15 @@ export function HeaderView({
           )}
           <div className="flex items-center gap-3">
             {cta && (
-              // The rail carries the CTA on the home page at xl.
-              <OnHome home="xl:hidden" className="hidden lg:block">
+              <div className="hidden lg:block">
                 <Button href={cta.href} size="sm">
                   {cta.label}
                 </Button>
-              </OnHome>
+              </div>
             )}
             <MobileMenu links={links} cta={cta} contact={contact} />
           </div>
-        </OnHome>
+        </div>
       </Container>
     </header>
   );

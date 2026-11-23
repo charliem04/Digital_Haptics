@@ -1,8 +1,7 @@
 import { flags } from "@/lib/flags";
 import { cn } from "@/lib/cn";
 import { getLeadFlowSteps } from "@/lib/content";
-import { CutFrame } from "./ui/CutFrame";
-import { Marker } from "./ui/Marker";
+import { Panel } from "./ui/Panel";
 import { LeadFlowRows } from "./LeadFlowRows";
 
 /**
@@ -26,20 +25,16 @@ export function LeadFlowPanel({ className }: { className?: string }) {
   if (!flags.automations || steps.length === 0) return null;
 
   return (
-    <CutFrame
-      size="md"
-      fill="frost"
+    <Panel
+      fill="raised"
       className={cn("w-[250px]", className)}
-      innerClassName="flex flex-col gap-2.5 px-[18px] pb-[18px] pt-4 font-mono text-label-sm uppercase tracking-label-xs"
+      innerClassName="flex flex-col gap-2.5 px-[18px] pb-[18px] pt-4 !bg-raised font-body text-room-small"
     >
-      <div className="flex justify-between border-b border-ink pb-2">
+      <div className="flex justify-between border-b pb-2 border-line">
         <span className="font-medium">Lead_flow</span>
-        <span className="flex items-center gap-1.5">
-          <Marker size="dot" />
-          Live
-        </span>
+        <span className="flex items-center gap-1.5">Live</span>
       </div>
       <LeadFlowRows steps={steps} />
-    </CutFrame>
+    </Panel>
   );
 }

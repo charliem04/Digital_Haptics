@@ -12,7 +12,7 @@ import type { NavLink } from "@/lib/nav";
 export function NavLinks({ links }: { links: NavLink[] }) {
   const pathname = usePathname() ?? "/";
   return (
-    <ul className="flex items-center gap-9 font-mono text-label uppercase tracking-label">
+    <ul className="flex items-center gap-8 font-body text-[1rem]">
       {links.map((l) => {
         // Section match (/work/ is current on /work/some-case/), but "/"
         // only matches itself or it would match every page.
@@ -22,7 +22,7 @@ export function NavLinks({ links }: { links: NavLink[] }) {
             <Link
               href={l.href}
               aria-current={current ? "page" : undefined}
-              className="relative inline-flex min-h-touch min-w-[44px] items-center justify-center text-ink no-underline after:absolute after:inset-x-0 after:bottom-2 after:h-[2px] after:origin-left after:scale-x-0 after:bg-signal after:transition-transform after:duration-[250ms] after:ease-brand hover:after:scale-x-100 active:text-steel-deep aria-[current=page]:after:scale-x-100"
+              className="relative inline-flex min-h-touch min-w-[44px] items-center justify-center no-underline after:absolute after:inset-x-0 after:bottom-2 after:h-[2px] after:origin-left after:scale-x-0 after:transition-transform after:ease-brand hover:after:scale-x-100 aria-[current=page]:after:scale-x-100 text-text after:bg-amber after:duration-[160ms] active:text-muted"
             >
               {l.label}
             </Link>

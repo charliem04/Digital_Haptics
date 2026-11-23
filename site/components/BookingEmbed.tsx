@@ -136,15 +136,16 @@ export function BookingEmbed() {
 
   if (!allowed) {
     return (
-      <div ref={boxRef} className="border border-dashed border-ink bg-frost p-8 text-center">
-        <p className="font-mono text-label uppercase tracking-label-lg text-steel">
-          Booking calendar
-        </p>
+      <div
+        ref={boxRef}
+        className="border border-dashed p-8 text-center rounded-panel border-line bg-raised"
+      >
+        <p className="font-body text-room-small text-muted">Booking calendar</p>
         {/* Named, not "a scheduling service": agreeing to a third party
             the visitor cannot identify is not agreement, and /privacy/
             names the same one — both read schedulerName() from
             lib/booking.ts, so swapping bookingUrl renames it in both. */}
-        <p className="mx-auto mt-3 max-w-[46ch]">
+        <p className="mx-auto mt-3 max-w-[28.06em]">
           The calendar is hosted by {schedulerName()}, which sets its own cookies. Load it here, or
           open it in a new tab — your choice.
         </p>
@@ -181,7 +182,7 @@ export function BookingEmbed() {
   return (
     <div
       ref={boxRef}
-      className="relative h-[760px] w-full overflow-hidden border border-ink bg-white md:h-[700px]"
+      className="relative h-[760px] w-full overflow-hidden border md:h-[700px] rounded-panel border-line bg-raised"
     >
       {/* ── The wait ────────────────────────────────────────────────
           The box is drawn at full size before anything arrives in it,
@@ -206,17 +207,17 @@ export function BookingEmbed() {
               in flight, and it stops when the calendar lands.
               deliberate-ignore decorative-motion */}
           <div className="animate-pulse" aria-hidden>
-            <div className="h-3 w-40 bg-hairline" />
+            <div className="h-3 w-40 bg-line" />
             <div className="mt-8 grid grid-cols-7 gap-2">
               {Array.from({ length: 7 }, (_, i) => (
-                <div key={`d${i}`} className="h-2 bg-hairline/60" />
+                <div key={`d${i}`} className="h-2 bg-line/60" />
               ))}
               {Array.from({ length: 35 }, (_, i) => (
-                <div key={i} className="aspect-square bg-hairline/40" />
+                <div key={i} className="aspect-square bg-line/40" />
               ))}
             </div>
           </div>
-          <p className="mt-8 text-center font-mono text-label-sm uppercase tracking-label text-steel">
+          <p className="mt-8 text-center font-body text-room-small text-muted">
             Loading the booking calendar…
           </p>
         </div>

@@ -30,18 +30,35 @@ const FONTS = join(ROOT, "scripts", "og-fonts");
 const HEADLINE = "Websites that book the job.";
 
 const C = {
-  ice: "#E4EEF4",
-  ink: "#0B0D10",
-  steel: "#4A5560",
-  signal: "#FF5A1F",
-  frost: "#F4F8FB",
+  room: "#12161A",
+  text: "#EEF1EE",
+  muted: "#A9B5B2",
+  amber: "#F5A254",
 };
 
 const fonts = [
-  { name: "Chakra", data: readFileSync(join(FONTS, "chakra-petch-600.ttf")), weight: 600 },
+  { name: "Manrope", data: readFileSync(join(FONTS, "manrope-400.ttf")), weight: 400 },
+  { name: "Manrope", data: readFileSync(join(FONTS, "manrope-500.ttf")), weight: 500 },
   { name: "Chakra", data: readFileSync(join(FONTS, "chakra-petch-700.ttf")), weight: 700 },
-  { name: "Mono", data: readFileSync(join(FONTS, "jetbrains-mono.ttf")), weight: 500 },
 ];
+
+/**
+ * The liquid, as a still: one mass from the site's colour ramp, fading
+ * to the solid room before it reaches the text column.
+ */
+const LIQUID = `data:image/svg+xml;base64,${Buffer.from(
+  `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630">
+    <defs>
+      <radialGradient id="haze"><stop offset="0" stop-color="#1c4345"/><stop offset=".6" stop-color="#133236"/><stop offset="1" stop-color="#133236" stop-opacity="0"/></radialGradient>
+      <radialGradient id="mass" cx=".56" cy=".6" r=".62"><stop offset="0" stop-color="#2b141a"/><stop offset=".2" stop-color="#871922"/><stop offset=".42" stop-color="#e22e20"/><stop offset=".6" stop-color="#f56c36"/><stop offset=".76" stop-color="#f5a254"/><stop offset=".86" stop-color="#987d57"/><stop offset=".94" stop-color="#415a54"/><stop offset="1" stop-color="#1c4345" stop-opacity="0"/></radialGradient>
+      <linearGradient id="fade"><stop offset=".66" stop-color="${C.room}"/><stop offset=".78" stop-color="${C.room}" stop-opacity="0"/></linearGradient>
+    </defs>
+    <rect width="1200" height="630" fill="${C.room}"/>
+    <ellipse cx="1010" cy="330" rx="430" ry="470" fill="url(#haze)"/>
+    <ellipse cx="1030" cy="380" rx="250" ry="310" fill="url(#mass)" transform="rotate(14 1030 380)"/>
+    <rect width="1200" height="630" fill="url(#fade)"/>
+  </svg>`
+).toString("base64")}`;
 
 /* ── tiny element helper (satori takes React-shaped objects) ──────── */
 const el = (type, style, children) => ({ type, props: { style, children } });
@@ -67,16 +84,15 @@ const decode = (s) =>
 const meta = (html, prop) =>
   html.match(new RegExp(`<meta property="${prop}" content="([^"]*)"`))?.[1];
 
-/** "/og/services-web-design.png" → "SERVICES". */
+/** "services-web-design" → "Services". */
 function labelFor(slug) {
   if (slug === "home" || slug === "default") return "Web design · Local SEO — Acadiana, LA";
   return slug.split("-")[0].replace(/^\w/, (c) => c.toUpperCase());
 }
 
 function card({ title, label }) {
-  // Long titles step down so they never overflow the frame.
-  const size = title.length > 48 ? 64 : title.length > 28 ? 80 : 96;
-  const abs = (style) => el("div", { position: "absolute", display: "flex", ...style }, []);
+  // Long titles step down so they never reach the liquid.
+  const size = title.length > 48 ? 56 : title.length > 28 ? 68 : 84;
   return el(
     "div",
     {
@@ -84,60 +100,43 @@ function card({ title, label }) {
       height: "100%",
       display: "flex",
       position: "relative",
-      background: C.ice,
-      fontFamily: "Chakra",
+      background: C.room,
+      fontFamily: "Manrope",
     },
     [
-      // Flare, as in the hero: lines first, so the content layer sits on top.
-      abs({ left: 0, right: 0, top: 452, height: 2, background: C.signal }),
-      // Stops above the wordmark row so it never runs through text.
-      abs({ left: 860, top: 0, bottom: 130, width: 2, background: C.signal }),
-      abs({
-        left: 852,
-        top: 444,
-        width: 18,
-        height: 18,
-        borderRadius: 9,
-        background: "#FFF4EC",
-        boxShadow: `0 0 28px 10px ${C.signal}`,
-      }),
-      // Content layer: label top, title middle, wordmark bottom.
+      {
+        type: "img",
+        props: {
+          src: LIQUID,
+          width: 1200,
+          height: 630,
+          style: { position: "absolute", left: 0, top: 0 },
+        },
+      },
       el(
         "div",
         {
           position: "absolute",
           left: 0,
           top: 0,
-          right: 0,
           bottom: 0,
+          width: 660,
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          padding: "64px 72px",
+          padding: "64px 0 64px 72px",
         },
         [
+          el("div", { display: "flex", fontSize: 26, color: C.muted }, label),
           el(
             "div",
             {
               display: "flex",
-              fontFamily: "Mono",
-              fontSize: 22,
-              letterSpacing: 3,
-              color: C.steel,
-              textTransform: "uppercase",
-            },
-            `( ${label} )`
-          ),
-          el(
-            "div",
-            {
-              display: "flex",
-              maxWidth: 760,
               fontSize: size,
-              fontWeight: 600,
-              lineHeight: 0.95,
-              color: C.ink,
-              textTransform: "uppercase",
+              fontWeight: 500,
+              lineHeight: 1.02,
+              letterSpacing: "-0.035em",
+              color: C.text,
             },
             title
           ),
@@ -145,20 +144,29 @@ function card({ title, label }) {
             el("div", { display: "flex", alignItems: "center" }, [
               el(
                 "div",
-                { display: "flex", width: 22, height: 22, background: C.ink, marginRight: 16 },
+                {
+                  display: "flex",
+                  width: 22,
+                  height: 22,
+                  borderRadius: 11,
+                  background: C.amber,
+                  marginRight: 14,
+                },
                 []
               ),
               el(
                 "div",
-                { display: "flex", fontWeight: 700, fontSize: 30, letterSpacing: 4, color: C.ink },
-                "DIGITAL HAPTICS"
+                {
+                  display: "flex",
+                  fontFamily: "Chakra",
+                  fontWeight: 700,
+                  fontSize: 30,
+                  color: C.text,
+                },
+                "Digital Haptics"
               ),
             ]),
-            el(
-              "div",
-              { display: "flex", fontFamily: "Mono", fontSize: 22, letterSpacing: 2, color: C.ink },
-              "digitalhaptics.dev"
-            ),
+            el("div", { display: "flex", fontSize: 24, color: C.muted }, "digitalhaptics.dev"),
           ]),
         ]
       ),
@@ -167,7 +175,7 @@ function card({ title, label }) {
 }
 
 function icon(size) {
-  const inner = Math.round(size * 0.44);
+  const inner = Math.round(size * 0.5);
   return el(
     "div",
     {
@@ -176,9 +184,9 @@ function icon(size) {
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
-      background: C.ink,
+      background: C.room,
     },
-    [el("div", { width: inner, height: inner, background: C.signal }, [])]
+    [el("div", { width: inner, height: inner, borderRadius: inner / 2, background: C.amber }, [])]
   );
 }
 

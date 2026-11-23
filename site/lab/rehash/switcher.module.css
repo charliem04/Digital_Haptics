@@ -1,0 +1,83 @@
+.root {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  background: #2a2f33;
+  color: #f1f3f2;
+  font-family: var(--font-body), system-ui, sans-serif;
+}
+
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 24px;
+  padding: 10px 16px;
+  background: #15191c;
+}
+
+.group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+}
+
+.label {
+  margin-right: 4px;
+  color: #aab4b4;
+  font-size: 13px;
+}
+
+.choice {
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid #47525a;
+  background: transparent;
+  color: #f1f3f2;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.choice:hover {
+  border-color: #f5a254;
+}
+
+.choice:active {
+  transform: translateY(1px);
+}
+
+.choice[aria-pressed="true"] {
+  border-color: #f5a254;
+  background: #f5a254;
+  color: #15191c;
+}
+
+.choice:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+  box-shadow: none;
+}
+
+.note {
+  color: #aab4b4;
+  font-size: 13px;
+}
+
+.stage {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  display: flex;
+  justify-content: safe center;
+}
+
+.frame {
+  flex: none;
+  height: 100%;
+  max-width: none;
+  border: 0;
+  background: #000;
+}

@@ -1,7 +1,6 @@
 import { pad2 } from "@/lib/cn";
 import type { ProcessStep } from "@/content/types";
-import { BoxedLabel } from "@/components/ui/BoxedLabel";
-import { Marker } from "@/components/ui/Marker";
+import { SmallLabel } from "@/components/ui/SmallLabel";
 
 /**
  * A numbered process strip: Call → Build → Launch → Grow on Home, the
@@ -18,13 +17,12 @@ export function StepsStrip({
   headingAs?: "h2" | "h3";
 }) {
   return (
-    <ol className="grid gap-8 border-t border-ink pt-8 md:grid-cols-2 lg:grid-flow-col lg:grid-cols-none lg:auto-cols-fr lg:gap-10">
+    <ol className="grid gap-8 border-line md:grid-cols-2 lg:grid-flow-col lg:grid-cols-none lg:auto-cols-fr lg:gap-10 border-t-0 pt-0">
       {steps.map((s, i) => (
-        <li key={s.name} className="relative flex flex-col gap-3">
-          <Marker className="absolute -top-[36px] left-0" />
-          <BoxedLabel>Step.{pad2(i + 1)}</BoxedLabel>
-          <Heading className="font-display text-subheading font-semibold">{s.name}</Heading>
-          <p className="max-w-[40ch] text-body-sm text-steel-deep">{s.body}</p>
+        <li key={s.name} className="relative flex flex-col gap-2 border-l-2 border-amber pl-5">
+          <SmallLabel>Step.{pad2(i + 1)}</SmallLabel>
+          <Heading className="font-body text-room-step font-medium">{s.name}</Heading>
+          <p className="max-w-[24.4em] text-room-small text-muted">{s.body}</p>
         </li>
       ))}
     </ol>

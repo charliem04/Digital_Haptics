@@ -2,13 +2,13 @@ import type { ButtonHTMLAttributes, ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
 /**
- * Chips (PLAN §4.5): mono caps in a 1px ink box; active is ink-filled
- * with ice text.
- *
- * <Chip> is a static tag. <ChipButton> is a toggle (a filter): a real
- * <button> with aria-pressed, tall enough for the 44px touch target.
+ * Chips (docs/VISUAL_GUIDE.md §8). <Chip> is a static tag. <ChipButton>
+ * is a toggle (a filter): a real <button> with aria-pressed. Both are
+ * at least 44px tall.
  */
-const BOX = "border border-ink px-2.5 py-1.5 font-mono text-label-sm uppercase tracking-label";
+const BOX = "rounded-control border px-4 py-1.5 font-body text-room-small";
+const ON = "border-text bg-text text-room";
+const OFF = "border-line text-text";
 
 export function Chip({
   children,
@@ -20,7 +20,7 @@ export function Chip({
   className?: string;
 }) {
   return (
-    <span className={cn("inline-block", BOX, active ? "bg-ink text-ice" : "text-ink", className)}>
+    <span className={cn("inline-flex min-h-touch items-center", BOX, active ? ON : OFF, className)}>
       {children}
     </span>
   );
@@ -42,7 +42,7 @@ export function ChipButton({
       className={cn(
         "inline-flex min-h-touch items-center transition-[color,background-color,transform] duration-[250ms] ease-brand active:translate-y-px",
         BOX,
-        pressed ? "bg-ink text-ice" : "text-ink hover:bg-ink/10",
+        pressed ? ON : `${OFF} hover:bg-raised`,
         className
       )}
       {...rest}

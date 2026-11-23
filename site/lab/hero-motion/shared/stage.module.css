@@ -1,0 +1,36 @@
+/* Shared shell: a root that fills its parent, a static fallback, and a
+   canvas that fades in over it once the first frame exists. */
+
+.root {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  /* Content layered above the hero must stay clickable. Pointer tracking
+     listens on the hero container instead. */
+  pointer-events: none;
+  contain: strict;
+}
+
+.fallback,
+.canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.canvas {
+  display: block;
+  opacity: 0;
+  transition: opacity 400ms ease-out;
+}
+
+.canvas[data-ready="true"] {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .canvas {
+    transition: none;
+  }
+}

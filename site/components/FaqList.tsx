@@ -13,13 +13,11 @@ import { SectionHead } from "@/components/page/SectionHead";
 export function FaqList({
   faqs,
   id = "faq",
-  index,
   heading = "Questions people ask",
   lede,
 }: {
   faqs: Faq[];
   id?: string;
-  index?: number;
   heading?: string;
   lede?: string;
 }) {
@@ -38,21 +36,21 @@ export function FaqList({
   return (
     <Section aria-labelledby={id}>
       <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:gap-16">
-        <SectionHead id={id} index={index} label="FAQ" title={heading} lede={lede} />
-        <div className="border-t border-ink">
+        <SectionHead id={id} label="FAQ" title={heading} lede={lede} />
+        <div className="border-t border-line">
           {faqs.map((f, i) => (
-            <details key={f.q} open={i === 0} className="group border-b border-ink">
-              <summary className="flex min-h-[64px] cursor-pointer list-none items-center justify-between gap-6 py-4 font-display text-subheading font-semibold text-ink [&::-webkit-details-marker]:hidden">
+            <details key={f.q} open={i === 0} className="group border-b border-line">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-4 [&::-webkit-details-marker]:hidden min-h-14 font-body text-room-step font-medium text-text">
                 {f.q}
                 <span
                   aria-hidden
-                  className="flex size-8 shrink-0 items-center justify-center border border-ink font-mono text-label transition-colors duration-[250ms] group-open:bg-ink group-open:text-ice"
+                  className="flex size-8 shrink-0 items-center justify-center border transition-colors duration-[250ms] rounded-control border-line font-body text-[1rem] group-open:bg-raised group-open:text-text"
                 >
                   <span className="group-open:hidden">+</span>
                   <span className="hidden group-open:inline">−</span>
                 </span>
               </summary>
-              <p className="max-w-[68ch] pb-6 text-body text-steel-deep">{f.a}</p>
+              <p className="max-w-[41.48em] pb-6 text-room-body text-muted">{f.a}</p>
             </details>
           ))}
         </div>

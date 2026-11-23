@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { site } from "@/site.config";
@@ -13,28 +13,22 @@ import { CTA_HREF } from "@/lib/routes";
 import { InteractionTracking } from "@/components/InteractionTracking";
 
 /*
- * Fonts (PLAN §4.2), committed in app/fonts/ and loaded with
- * next/font/local.
+ * Fonts (docs/VISUAL_GUIDE.md §3), committed in app/fonts/ and loaded
+ * with next/font/local: Manrope for all text, Chakra Petch 700 for the
+ * logo.
  *
  * Why local rather than next/font/google: Next 14's Google loader
  * crashes the build when Google Fonts returns an unexpected response,
  * which happened in 2 of 5 Phase 0 builds. Committed files make every
  * build deterministic and need no network. The runtime result is the
  * same: files served from this origin (font-src 'self' in
- * scripts/csp.mjs), preload links, and size-adjusted fallbacks that
- * keep CLS near zero.
+ * scripts/csp.mjs), preload links, and size-adjusted fallbacks.
  *
- * Files are Google Fonts' latin subsets, downloaded 2026-11-02. All
- * three families are SIL OFL 1.1; the licenses sit beside the files.
- * Only the weights the design uses ship (REFACTOR_AUDIT §3.2).
- * Manrope and JetBrains Mono are variable fonts: one file covers both
- * weights.
+ * Files are Google Fonts' latin subsets. Both families are SIL OFL 1.1;
+ * the licenses sit beside the files.
  */
 const display = localFont({
-  src: [
-    { path: "./fonts/chakra-petch-600.woff2", weight: "600", style: "normal" },
-    { path: "./fonts/chakra-petch-700.woff2", weight: "700", style: "normal" },
-  ],
+  src: [{ path: "./fonts/chakra-petch-700.woff2", weight: "700", style: "normal" }],
   variable: "--font-display",
   display: "swap",
   fallback: ["system-ui", "sans-serif"],
@@ -44,17 +38,17 @@ const body = localFont({
   src: [{ path: "./fonts/manrope-variable.woff2", weight: "400 500", style: "normal" }],
   variable: "--font-body",
   display: "swap",
-  fallback: ["system-ui", "sans-serif"],
+  // Matched per weight in globals.css. The automatic fallback set Manrope
+  // too narrow, so lines re-wrapped and moved the page when it loaded.
+  adjustFontFallback: false,
+  fallback: ["Manrope Fallback", "system-ui", "sans-serif"],
 });
 
-const mono = localFont({
-  src: [{ path: "./fonts/jetbrains-mono-variable.woff2", weight: "400 500", style: "normal" }],
-  variable: "--font-mono",
-  display: "swap",
-  fallback: ["ui-monospace", "monospace"],
-  // Labels are small and rarely the largest paint above the fold.
-  preload: false,
-});
+/** Browser chrome and native controls match the dark room. */
+export const viewport: Viewport = {
+  themeColor: "#12161A",
+  colorScheme: "dark",
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
@@ -83,7 +77,7 @@ export const metadata: Metadata = {
  */
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${display.variable} ${body.variable} ${mono.variable}`}>
+    <html lang="en" className={`${display.variable} ${body.variable}`}>
       <body className="flex min-h-dvh flex-col">
         {/*
           Framer serialises each entrance's starting state into the HTML
@@ -96,7 +90,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <noscript>
           <style
             dangerouslySetInnerHTML={{
-              __html: `[style*="opacity:0"]{opacity:1!important;transform:none!important}`,
+              __html: `[style*="opacity:0"]{opacity:1!important;transform:none!important}[data-sticky-waiting]{visibility:visible!important}`,
             }}
           />
         </noscript>
@@ -109,6 +103,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         </main>
         <Footer />
         <StickyCta cta={ctaLink()} />
+        <div aria-hidden className="room-grain" />
         <InteractionTracking ctaHref={CTA_HREF} />
         <JsonLd />
       </body>

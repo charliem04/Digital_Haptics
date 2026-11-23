@@ -38,7 +38,7 @@ export default function WorkPage() {
       />
       <Section spacing="tight" aria-label="Case studies" className="pb-section-sm lg:pb-section">
         {drafts && (
-          <p className="mb-8 font-mono text-label uppercase tracking-label text-steel">
+          <p className="mb-8 font-body text-room-small text-muted">
             Preview build: drafts are shown and marked. Production shows only published cases with
             the client&rsquo;s permission.
           </p>
@@ -46,7 +46,7 @@ export default function WorkPage() {
         {cases.length > 0 ? (
           <CaseGrid cases={cases} />
         ) : (
-          <p className="text-body text-steel-deep">No case studies are published yet.</p>
+          <p className="text-room-body text-muted">No case studies are published yet.</p>
         )}
       </Section>
       <CtaBand

@@ -22,12 +22,12 @@ export function LegalPage({
   return (
     <>
       <PageHero path={path} label="Legal" title={title}>
-        <p className="font-mono text-label uppercase tracking-label text-steel">
+        <p className="font-body text-room-small text-muted">
           {site.name} · Last updated {updated}
         </p>
       </PageHero>
       <Section spacing="tight" aria-label={title} className="pb-section-sm lg:pb-section">
-        <div className="flex max-w-[720px] flex-col gap-4 text-body text-steel-deep [&_a]:text-ink [&_a]:underline [&_a]:decoration-signal [&_a]:decoration-2 [&_a]:underline-offset-4 [&_h2]:mt-8 [&_h2]:font-display [&_h2]:text-subheading [&_h2]:font-semibold [&_h2]:text-ink [&_li]:ml-5 [&_li]:list-disc [&_strong]:text-ink">
+        <div className="flex max-w-[720px] flex-col gap-4 [&_a]:underline [&_a]:decoration-2 [&_a]:underline-offset-4 [&_h2]:mt-8 [&_li]:ml-5 [&_li]:list-disc text-room-body text-muted [&_a]:text-text [&_a]:decoration-amber [&_h2]:font-body [&_h2]:text-room-card [&_h2]:font-medium [&_h2]:text-text [&_strong]:text-text">
           {children}
         </div>
       </Section>

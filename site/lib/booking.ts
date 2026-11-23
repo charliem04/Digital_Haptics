@@ -21,7 +21,7 @@ const bookingUrl: string = site.booking.calUrl;
  * Cal.com: `embed` and `embedType` are what its own embed.js appends;
  * with them the page drops its standalone chrome and renders as a bare
  * calendar. Brand color is a Cal.com account setting (Settings →
- * Appearance), not a URL parameter: set it to signal #FF5A1F.
+ * Appearance), not a URL parameter: set it to amber #F5A254.
  *
  * A scheduler not in this table still works: the iframe loads the bare
  * URL.

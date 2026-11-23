@@ -2,22 +2,17 @@ import Link from "next/link";
 import { site } from "@/site.config";
 import { cn } from "@/lib/cn";
 
-/**
- * Wordmark (PLAN §4.5): 14px square + DIGITAL HAPTICS in Chakra Petch
- * 700, 18px, .12em. Links home. `tone="ice"` is for ink slabs (footer):
- * ice text, signal square.
- */
-export function Logo({ tone = "ink", className }: { tone?: "ink" | "ice"; className?: string }) {
+/** Wordmark: a round amber mark and the name in Chakra Petch 700. Links home. */
+export function Logo({ className }: { className?: string }) {
   return (
     <Link
       href="/"
       className={cn(
-        "inline-flex min-h-touch items-center gap-2.5 font-display text-logo font-bold uppercase no-underline",
-        tone === "ice" ? "text-ice" : "text-ink",
+        "inline-flex min-h-touch items-center gap-2.5 font-logo text-room-logo text-text no-underline",
         className
       )}
     >
-      <span aria-hidden className={cn("block size-3.5", tone === "ice" ? "bg-signal" : "bg-ink")} />
+      <span aria-hidden className="block size-3.5 rounded-control bg-amber" />
       {site.name}
     </Link>
   );

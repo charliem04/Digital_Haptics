@@ -7,8 +7,8 @@ import { Section } from "@/components/layout/Section";
 import { SectionHead } from "@/components/page/SectionHead";
 import { StepsStrip } from "@/components/page/StepsStrip";
 import { FaqList } from "@/components/FaqList";
-import { CutFrame } from "@/components/ui/CutFrame";
-import { BoxedLabel } from "@/components/ui/BoxedLabel";
+import { Panel } from "@/components/ui/Panel";
+import { SmallLabel } from "@/components/ui/SmallLabel";
 import { IntakeForm } from "@/components/start/IntakeForm";
 import { BookingEmbed } from "@/components/BookingEmbed";
 
@@ -47,14 +47,14 @@ export default function StartPage() {
 
       <Section spacing="tight" aria-labelledby="intake" className="pb-section-sm lg:pb-section">
         <div className="grid gap-12 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] lg:gap-16">
-          <CutFrame size="lg" fill="frost" innerClassName="flex flex-col gap-8 p-5 sm:p-8 lg:p-12">
-            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-ink pb-5">
-              <BoxedLabel tone="ink">Intake</BoxedLabel>
-              <span className="font-mono text-label uppercase tracking-label text-steel">
+          <Panel fill="surface" innerClassName="flex flex-col gap-8 p-5 sm:p-8 lg:p-12">
+            <div className="flex flex-wrap items-center justify-between gap-4 border-b pb-5 border-line">
+              <SmallLabel>Intake</SmallLabel>
+              <span className="text-muted font-body text-room-small">
                 All fields required unless marked
               </span>
             </div>
-            <h2 id="intake" className="font-display text-heading font-semibold">
+            <h2 id="intake" className="font-body text-room-form font-medium">
               Project details
             </h2>
             <IntakeForm
@@ -66,7 +66,7 @@ export default function StartPage() {
               sms={options.sms}
               contact={contact}
             />
-          </CutFrame>
+          </Panel>
 
           <aside aria-labelledby="direct" className="flex flex-col gap-6">
             <SectionHead
@@ -79,25 +79,25 @@ export default function StartPage() {
                   : "Same conversation, no form."
               }
             />
-            <ul className="flex flex-col border-t border-ink font-mono text-label uppercase tracking-label">
+            <ul className="flex flex-col border-t border-line font-body text-room-body">
               {contact.phone && (
-                <li className="border-b border-hairline">
+                <li className="border-b border-line">
                   <a
                     href={contact.phone.href}
-                    className="flex min-h-[56px] items-center justify-between gap-4 text-ink no-underline hover:underline active:text-steel-deep"
+                    className="flex min-h-[56px] items-center justify-between gap-4 no-underline hover:underline text-text active:text-muted"
                   >
-                    <span className="text-steel">Phone</span>
+                    <span className="text-muted">Phone</span>
                     {contact.phone.display}
                   </a>
                 </li>
               )}
               {contact.email && (
-                <li className="border-b border-hairline">
+                <li className="border-b border-line">
                   <a
                     href={contact.email.href}
-                    className="flex min-h-[56px] items-center justify-between gap-4 normal-case tracking-normal text-ink no-underline hover:underline active:text-steel-deep"
+                    className="flex min-h-[56px] items-center justify-between gap-4 no-underline hover:underline text-text active:text-muted"
                   >
-                    <span className="uppercase tracking-label text-steel">Email</span>
+                    <span className="text-muted">Email</span>
                     <span className="break-all">{contact.email.display}</span>
                   </a>
                 </li>

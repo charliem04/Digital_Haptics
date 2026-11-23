@@ -1,0 +1,74 @@
+{
+  "look": {
+    "seed": 5,
+    "coverage": 0.46,
+    "flowSpeed": 0.7,
+    "viscosity": 0.7,
+    "warpAmount": 1,
+    "warpScale": 1,
+    "gravity": 0.3,
+    "buoyancy": 1,
+    "stretch": 1,
+    "rimWidth": 0.5,
+    "depthOfField": 0.7,
+    "fogAmount": 0.6,
+    "cameraDrift": 1,
+    "grainAmount": 0.79,
+    "grainSize": 0.95,
+    "grainFps": 15
+  },
+  "desktop": {
+    "blobCount": 12,
+    "renderScale": 0.3
+  },
+  "phone": {
+    "blobCount": 6,
+    "renderScale": 0.24
+  },
+  "ramp": [
+    {
+      "at": 0,
+      "color": "#181c21"
+    },
+    {
+      "at": 0.1,
+      "color": "#133236"
+    },
+    {
+      "at": 0.2,
+      "color": "#1c4345"
+    },
+    {
+      "at": 0.27,
+      "color": "#415a54"
+    },
+    {
+      "at": 0.32,
+      "color": "#987d57"
+    },
+    {
+      "at": 0.37,
+      "color": "#f5a254"
+    },
+    {
+      "at": 0.43,
+      "color": "#ea843e"
+    },
+    {
+      "at": 0.54,
+      "color": "#f56c36"
+    },
+    {
+      "at": 0.66,
+      "color": "#e22e20"
+    },
+    {
+      "at": 0.82,
+      "color": "#871922"
+    },
+    {
+      "at": 1,
+      "color": "#2b141a"
+    }
+  ]
+}

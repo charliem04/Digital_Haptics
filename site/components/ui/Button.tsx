@@ -4,14 +4,14 @@ import { cn } from "@/lib/cn";
 import { Arrow } from "./Arrow";
 
 /**
- * Buttons (PLAN §4.5, REFACTOR_AUDIT §3.6).
+ * Buttons (docs/VISUAL_GUIDE.md §8).
  *
- *   primary  signal fill, ink text, ink ↘      (ink on signal 6.24:1)
- *   accent   ink fill, ice text, signal ↘      (signal on ink 6.24:1)
- *   ghost    transparent, 1px ink border, no arrow
+ *   primary  amber fill, on-amber text and arrow (8.95:1)
+ *   accent   text-colour fill, room text and arrow
+ *   ghost    transparent, 1px text-colour border, no arrow
  *
- * Sizes: md is 52px tall (PLAN), sm is 48px for dense rows (C9). Both
- * clear the 44px touch target.
+ * Sizes: md is 52px tall, sm is 48px for dense rows. Both clear the 44px
+ * touch target.
  *
  * Pass `href` for a link (rendered with next/link), otherwise it is a
  * real <button>. Hover nudges the arrow along its own direction; the
@@ -42,26 +42,22 @@ type AsButton = Common & { href?: undefined } & Omit<
 const BASE =
   // active: a 1px press, so a tap has a visible receipt on touch screens
   // where hover never fires.
-  "group/btn relative inline-flex items-center font-mono font-medium uppercase tracking-label-sm no-underline transition-[color,background-color,transform] duration-[250ms] ease-brand active:translate-y-px disabled:cursor-not-allowed disabled:opacity-50";
+  "group/btn relative inline-flex items-center rounded-control font-body text-[1rem] font-medium no-underline transition-[color,background-color,transform] duration-[160ms] ease-brand active:translate-y-px disabled:cursor-not-allowed disabled:border disabled:border-line disabled:bg-raised disabled:text-muted";
 
 const SIZES: Record<Size, string> = {
-  md: "min-h-button gap-3 px-6 text-label-lg",
-  sm: "min-h-button-sm gap-2.5 px-5 text-label",
+  md: "min-h-button gap-3 px-6 leading-[1.4]",
+  sm: "min-h-button-sm gap-2.5 px-5 leading-[1.6]",
 };
 
 const VARIANTS: Record<Variant, string> = {
-  // Hover: an inset ink edge. Drawn with a pseudo-element, not a
-  // box-shadow, so it never overrides the focus ring's shadow.
-  primary:
-    "bg-signal text-ink after:pointer-events-none after:absolute after:inset-0 after:border-2 after:border-ink after:opacity-0 after:transition-opacity after:duration-[250ms] hover:after:opacity-100",
-  // ice on steel-deep is 7.91:1.
-  accent: "bg-ink text-ice hover:bg-steel-deep",
-  ghost: "border border-ink text-ink hover:bg-ink hover:text-ice",
+  primary: "bg-amber text-on-amber hover:bg-amber-hover",
+  accent: "bg-text text-room hover:bg-muted",
+  ghost: "border border-text text-text hover:bg-raised hover:text-text",
 };
 
 const ARROW: Record<Variant, string | null> = {
-  primary: "text-ink",
-  accent: "text-signal",
+  primary: "text-on-amber group-disabled/btn:text-muted",
+  accent: "text-room group-disabled/btn:text-muted",
   ghost: null,
 };
 

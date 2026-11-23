@@ -2,20 +2,15 @@ import type { Config } from "tailwindcss";
 
 /**
  * ── DESIGN TOKENS ───────────────────────────────────────────────────
- * Values come from PLAN §4 and the Hybrid mockup
- * (docs/design-reference/digital-haptics-design-system/Hybrid.dc.html).
- * The full table, with sources and contrast ratios, is §3 of
- * docs/REFACTOR_AUDIT.md.
+ * Molten Room. The full system, with roles and measured contrast, is
+ * docs/VISUAL_GUIDE.md.
  *
  * Colors resolve to the RGB-channel variables in app/globals.css, so
- * opacity modifiers work (`bg-ink/20`).
+ * opacity modifiers work (`bg-room/40`).
  *
  * `colors`, `borderRadius` and `boxShadow` REPLACE Tailwind's defaults
  * instead of extending them, so a stock `text-indigo-600`, `rounded-lg`
- * or `shadow-md` can't slip in. Radius is 0 everywhere: shape comes
- * from cut corners (PLAN §4.3).
- *
- * Contrast rule (PLAN §4.1): `signal` is never text on a light ground.
+ * or `shadow-md` can't slip in.
  * ────────────────────────────────────────────────────────────────────
  */
 const rgb = (name: string) => `rgb(var(--${name}) / <alpha-value>)`;
@@ -32,60 +27,66 @@ const config: Config = {
       transparent: "transparent",
       current: "currentColor",
       inherit: "inherit",
-      ice: rgb("ice"),
-      frost: rgb("frost"),
-      white: rgb("white"),
-      "steel-panel": rgb("steel-panel"),
-      hairline: rgb("hairline"),
-      ink: rgb("ink"),
-      steel: rgb("steel"),
-      signal: rgb("signal"),
-      // Mockup extras, not listed in PLAN §4.1:
-      "steel-deep": rgb("steel-deep"), // hero subline, sidebar copy
-      "flare-core": rgb("flare-core"), // flare node centre (decorative)
+      room: rgb("room"),
+      surface: rgb("surface"),
+      raised: rgb("raised"),
+      line: rgb("line"), // decorative dividers only
+      text: rgb("text"),
+      muted: rgb("muted"),
+      amber: rgb("amber"),
+      "amber-hover": rgb("amber-hover"),
+      "on-amber": rgb("on-amber"),
+      error: rgb("error"),
     },
     borderRadius: {
       none: "0",
       DEFAULT: "0",
-      // The flare node is the one round element (decision D4). It is
-      // decorative and aria-hidden; nothing interactive uses this.
-      flare: "9999px",
+      // Shape language (VISUAL_GUIDE §4).
+      panel: "28px",
+      field: "12px",
+      notice: "10px",
+      control: "9999px",
     },
     boxShadow: {
       none: "none",
-      // Flare glow: signal at alpha 0x73 (0.45), from the mockup.
-      "flare-v": "0 0 22px 5px rgb(var(--signal) / 0.45)",
-      "flare-h": "0 0 14px 3px rgb(var(--signal) / 0.45)",
-      "flare-node": "0 0 36px 16px rgb(var(--signal) / 0.45)",
     },
     fontFamily: {
-      display: ["var(--font-display)", "system-ui", "sans-serif"],
       body: ["var(--font-body)", "system-ui", "sans-serif"],
-      mono: ["var(--font-mono)", "ui-monospace", "monospace"],
+      // Chakra Petch, for the logo only.
+      logo: ["var(--font-display)", "system-ui", "sans-serif"],
     },
     extend: {
       fontSize: {
-        // Display roles: Chakra Petch 600, uppercase (PLAN §4.2).
-        display: [
-          "clamp(3.375rem, 7.78vw, 7rem)", // 54px → 112px
-          { lineHeight: "0.9", letterSpacing: "-0.01em" },
-        ],
-        "display-sm": [
-          "clamp(2.5rem, 4.86vw, 4.375rem)", // 40px → 70px
-          { lineHeight: "0.9" },
-        ],
-        heading: ["clamp(1.75rem, 2.5vw, 2.25rem)", { lineHeight: "1.1" }], // 28 → 36
-        subheading: ["clamp(1.25rem, 1.67vw, 1.5rem)", { lineHeight: "1.2" }], // 20 → 24
-        // Body roles: Manrope, line-height 1.55.
-        "body-lg": ["clamp(1.0625rem, 1.32vw, 1.1875rem)", { lineHeight: "1.55" }], // 17 → 19
+        // Compact body sizes still used by lists, notes and form rows.
         body: ["clamp(1rem, 1.18vw, 1.0625rem)", { lineHeight: "1.55" }], // 16 → 17
         "body-sm": ["0.9375rem", { lineHeight: "1.55" }], // 15
         "body-xs": ["0.875rem", { lineHeight: "1.55" }], // 14
-        // Label roles: JetBrains Mono, uppercase.
-        "label-lg": ["0.8125rem", { lineHeight: "1.4" }], // 13: buttons
-        label: ["0.75rem", { lineHeight: "1.6" }], // 12: nav, section label, rows
-        "label-sm": ["0.6875rem", { lineHeight: "1.7" }], // 11: boxed labels, panels
-        logo: ["1.125rem", { lineHeight: "1", letterSpacing: "0.12em" }], // 18
+        // Type scale (VISUAL_GUIDE §3). Manrope throughout.
+        "room-display": [
+          "clamp(3rem, 6.6vw, 6.5rem)",
+          { lineHeight: "1", letterSpacing: "-0.035em", fontWeight: "500" },
+        ],
+        "room-title": [
+          "clamp(2.7rem, 6vw, 5.6rem)",
+          { lineHeight: "0.98", letterSpacing: "-0.035em", fontWeight: "500" },
+        ],
+        "room-cta": [
+          "clamp(2rem, 3.6vw, 3.25rem)",
+          { lineHeight: "1.02", letterSpacing: "-0.03em", fontWeight: "500" },
+        ],
+        "room-section": [
+          "clamp(1.9rem, 3vw, 2.9rem)",
+          { lineHeight: "1.08", letterSpacing: "-0.025em", fontWeight: "500" },
+        ],
+        "room-form": ["1.875rem", { lineHeight: "1.1", fontWeight: "500" }], // 30
+        "room-card": ["1.625rem", { lineHeight: "1.1", fontWeight: "500" }], // 26
+        "room-step": ["1.3125rem", { lineHeight: "1.6", fontWeight: "500" }], // 21
+        "room-price": ["1.25rem", { lineHeight: "1.6", fontWeight: "500" }], // 20
+        "room-lede": ["1.1875rem", { lineHeight: "1.6" }], // 19
+        "room-body": ["1.0625rem", { lineHeight: "1.6" }], // 17
+        "room-small": ["0.9375rem", { lineHeight: "1.6" }], // 15
+        "room-caption": ["0.875rem", { lineHeight: "1.6" }], // 14, the minimum
+        "room-logo": ["1.125rem", { lineHeight: "1", fontWeight: "700" }], // 18
       },
       letterSpacing: {
         tight: "-0.01em",
@@ -102,10 +103,9 @@ const config: Config = {
         section: "clamp(96px, 8.33vw, 120px)",
         "section-sm": "clamp(48px, 13vw, 64px)",
         sidebar: "320px",
-        "cut-sm": "var(--cut-sm)",
-        "cut-md": "var(--cut-md)",
-        "cut-lg": "var(--cut-lg)",
-        "cut-xl": "var(--cut-xl)",
+        // Molten Room section padding (VISUAL_GUIDE §4).
+        "room-section": "104px",
+        "room-section-sm": "56px",
       },
       maxWidth: {
         page: "1440px",
@@ -119,33 +119,15 @@ const config: Config = {
         input: "48px",
         touch: "44px",
       },
-      backgroundImage: {
-        dots: "radial-gradient(rgb(var(--ink) / 0.2) 1px, transparent 1.4px)",
-        "dots-dense": "radial-gradient(rgb(var(--ink) / 0.3) 1.1px, transparent 1.5px)",
-      },
-      // Pair each grid with its pitch: `bg-dots bg-dot-pitch`,
-      // `bg-dots-dense bg-dot-pitch-dense`.
-      backgroundSize: {
-        "dot-pitch": "var(--dot-size) var(--dot-size)",
-        "dot-pitch-dense": "10px 10px",
-      },
-      // Flare glow pulse (PLAN §4.6). Opacity only, so it stays on the
-      // compositor. Curve = ease.inOut in lib/motion.ts. Use it as
-      // `motion-safe:animate-flare-pulse` so reduced motion never runs it.
       keyframes: {
         // Mobile menu opening: a quick fade (dur.quick, ease.out).
         "menu-in": {
           from: { opacity: "0" },
           to: { opacity: "1" },
         },
-        "flare-pulse": {
-          "0%, 100%": { opacity: "1" },
-          "50%": { opacity: "0.7" },
-        },
       },
       animation: {
         "menu-in": "menu-in 250ms cubic-bezier(0.21, 0.65, 0.36, 1)",
-        "flare-pulse": "flare-pulse 4.8s cubic-bezier(0.65, 0, 0.35, 1) infinite",
       },
       transitionTimingFunction: {
         // Same curve as `ease.out` in lib/motion.ts; change both together.

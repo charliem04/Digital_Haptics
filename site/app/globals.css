@@ -3,93 +3,108 @@
 @tailwind utilities;
 
 /* ── DESIGN TOKENS ───────────────────────────────────────────────────
-   Source: PLAN §4 and the Hybrid mockup. Full table with contrast
-   ratios: docs/REFACTOR_AUDIT.md §3.
+   Molten Room. Roles and measured contrast: docs/VISUAL_GUIDE.md §2.
 
    Colors are space-separated RGB channels so Tailwind opacity works
-   (`bg-ink/20`). tailwind.config.ts maps every utility onto these.
-
-   Contrast (WCAG): ink on ice 16.5:1 · steel on ice 6.46, on frost
-   7.13, on steel-panel 5.36 · steel-deep on steel-panel 6.56 · ink on
-   signal 6.24 · signal on ink 6.24. Signal on ice is 2.65:1, so signal
-   is NEVER text on a light ground (PLAN §4.1). */
+   (`bg-room/40`). tailwind.config.ts maps every utility onto these. */
 :root {
-  --ice: 228 238 244; /* #E4EEF4  page ground, dot grid */
-  --frost: 244 248 251; /* #F4F8FB  panels, section frames */
-  --white: 255 255 255; /* #FFFFFF  cards, inputs */
-  --steel-panel: 207 218 226; /* #CFDAE2  hero sidebar, secondary bands */
-  --hairline: 201 213 222; /* #C9D5DE  row dividers (decorative) */
-  --ink: 11 13 16; /* #0B0D10  text, borders, accent fills */
-  --steel: 74 85 96; /* #4A5560  secondary text, labels */
-  --signal: 255 90 31; /* #FF5A1F  actions, flare, markers */
-  --steel-deep: 62 72 82; /* #3E4852  mockup: hero subline, sidebar copy */
-  --flare-core: 255 244 236; /* #FFF4EC  mockup: flare node centre */
+  --room: 18 22 26; /* #12161A  page ground, header, input fill */
+  --surface: 26 32 37; /* #1A2025  alternate sections, form, footer */
+  --raised: 35 44 48; /* #232C30  cards, disabled fills */
+  --line: 59 72 71; /* #3B4847  decorative dividers only */
+  --text: 238 241 238; /* #EEF1EE  headings, body, focus ring */
+  --muted: 169 181 178; /* #A9B5B2  secondary text, input borders */
+  --amber: 245 162 84; /* #F5A254  primary action, brand marks */
+  --amber-hover: 249 184 120; /* #F9B878  primary hover */
+  --on-amber: 23 19 16; /* #171310  text and icons on amber */
+  --error: 255 157 138; /* #FF9D8A  error text and field border */
 
-  /* Cut corners (PLAN §4.4). xl is the hero sidebar's cut (mockup). */
-  --cut-sm: 10px;
-  --cut-md: 16px;
-  --cut-lg: 24px;
-  --cut-xl: 56px;
-
-  /* Dot grid pitch: 16px desktop, 14px mobile (PLAN §4.4). */
-  --dot-size: 14px;
-
-  /* Header row height. The home hero reads it to start its rail and
-     flare at the very top of the page, behind the header (mockup). */
-  --header-h: 88px;
+  /* Film grain (VISUAL_GUIDE §5): a 128px tile with its 0.08 strength
+     built into the alpha channel, used as a mask by .room-grain. */
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 .128 -.024'/%3E%3C/filter%3E%3Crect width='128' height='128' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-@media (min-width: 768px) {
-  :root {
-    --dot-size: 16px;
-  }
+/* ── FONT FALLBACK ───────────────────────────────────────────────────
+   A system font sized to set this site's text at Manrope's width, so
+   lines wrap the same before and after the web font loads (CLS). The
+   ratios are measured on the real copy, per weight. */
+@font-face {
+  font-family: "Manrope Fallback";
+  src: local("Arial"), local("Roboto"), local("Helvetica");
+  font-weight: 400;
+  size-adjust: 102.2%;
+  ascent-override: 104.3%;
+  descent-override: 29.4%;
+  line-gap-override: 0%;
 }
 
-@media (min-width: 1024px) {
-  :root {
-    --header-h: 108px;
-  }
+@font-face {
+  font-family: "Manrope Fallback";
+  src: local("Arial"), local("Roboto"), local("Helvetica");
+  font-weight: 500;
+  size-adjust: 104.4%;
+  ascent-override: 102.1%;
+  descent-override: 28.7%;
+  line-gap-override: 0%;
 }
 
 /* ── BASE ──────────────────────────────────────────────────────────── */
 
 html {
+  color-scheme: dark;
   scroll-behavior: smooth;
-  scrollbar-color: rgb(var(--steel)) rgb(var(--frost));
+  scrollbar-color: rgb(var(--muted)) rgb(var(--surface));
 }
 
 body {
-  @apply bg-ice bg-dots bg-dot-pitch font-body text-body text-ink antialiased;
+  background-color: rgb(var(--room));
+  color: rgb(var(--text));
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 ::selection {
-  background: rgb(var(--ink));
-  color: rgb(var(--ice));
+  background: rgb(var(--amber));
+  color: rgb(var(--on-amber));
 }
 
 input,
 textarea,
 select {
-  caret-color: rgb(var(--ink));
+  caret-color: rgb(var(--text));
 }
 
 a {
-  color: rgb(var(--ink));
+  color: inherit;
 }
 
-/* ── FOCUS ─────────────────────────────────────────────────────────
-   Two-tone ring: 2px signal, then a 2px ink edge (REFACTOR_AUDIT C10).
-   Signal alone is 2.65:1 on ice and fails the 3:1 a focus indicator
-   needs; the ink edge carries the contrast (16.5:1) and the signal
-   keeps the brand color PLAN §4.5 asks for.
-
-   Elements clipped with clip-path lose their outline. Cut-corner
-   components (Phase 1) draw their ring on the outer frame layer with
-   :focus-within instead. */
+/* 3px text-colour ring (VISUAL_GUIDE §8). */
 :focus-visible {
-  outline: 2px solid rgb(var(--signal));
-  outline-offset: 2px;
-  box-shadow: 0 0 0 6px rgb(var(--ink));
+  outline: 3px solid rgb(var(--text));
+  outline-offset: 3px;
+}
+
+/* ── FILM GRAIN ──────────────────────────────────────────────────────
+   One decorative layer over the page. A mask on a solid fill, not a
+   background image: browsers count a textured background on a card as
+   the page's main content, and LCP would then measure the grain. */
+.room-grain {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  background-color: rgb(128 128 128);
+  -webkit-mask-image: var(--grain);
+  mask-image: var(--grain);
+}
+
+@media print {
+  .room-grain {
+    display: none;
+  }
 }
 
 /* ── MOTION ────────────────────────────────────────────────────────── */
@@ -123,9 +138,5 @@ a {
 @layer components {
   .page-x {
     @apply mx-auto w-full max-w-page px-gutter-sm lg:px-gutter;
-  }
-
-  .section-y {
-    @apply py-section-sm lg:py-section;
   }
 }

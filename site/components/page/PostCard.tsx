@@ -1,33 +1,31 @@
 import Link from "next/link";
 import type { Post } from "@/lib/content";
-import { CutFrame } from "@/components/ui/CutFrame";
+import { Panel } from "@/components/ui/Panel";
 import { Arrow } from "@/components/ui/Arrow";
 
 /** A blog post card: date and reading time, title, summary. One link, ring follows the cut. */
 export function PostCard({ post }: { post: Post }) {
   return (
-    <CutFrame
+    <Panel
       as={Link}
       href={`/blog/${post.slug}/`}
-      size="md"
-      fill="white"
-      ring
-      className="block h-full text-ink no-underline"
+      fill="raised"
+      className="block h-full no-underline text-text"
       innerClassName="flex h-full flex-col gap-4 p-6"
     >
-      <p className="flex flex-wrap gap-x-3 font-mono text-label-sm uppercase tracking-label text-steel">
+      <p className="flex flex-wrap gap-x-3 font-body text-room-small text-muted">
         <time dateTime={post.date}>{formatDate(post.date)}</time>
         <span aria-hidden>·</span>
         <span>{post.readingMinutes} min read</span>
-        {post.draft && <span className="text-ink">· Draft</span>}
+        {post.draft && <span className="text-text">· Draft</span>}
       </p>
-      <h3 className="font-display text-subheading font-semibold">{post.title}</h3>
-      <p className="text-body-sm text-steel-deep">{post.description}</p>
-      <span className="mt-auto inline-flex items-center gap-2 pt-2 font-mono text-label uppercase tracking-label">
+      <h3 className="font-body text-room-card font-medium">{post.title}</h3>
+      <p className="text-room-small text-muted">{post.description}</p>
+      <span className="mt-auto inline-flex items-center gap-2 pt-2 font-body text-room-small font-medium text-text underline underline-offset-[5px] group-hover/panel:decoration-2">
         Read
-        <Arrow className="size-3.5 transition-transform duration-[250ms] ease-brand group-hover/cut:translate-x-0.5 group-hover/cut:translate-y-0.5" />
+        <Arrow className="size-3.5 transition-transform duration-[250ms] ease-brand group-hover/panel:translate-x-0.5 group-hover/panel:translate-y-0.5" />
       </span>
-    </CutFrame>
+    </Panel>
   );
 }
 

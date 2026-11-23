@@ -10,9 +10,8 @@ import { SectionHead } from "@/components/page/SectionHead";
 import { CtaBand } from "@/components/page/CtaBand";
 import { Mdx } from "@/components/page/Mdx";
 import { Chip } from "@/components/ui/Chip";
-import { BoxedLabel } from "@/components/ui/BoxedLabel";
-import { CutFrame } from "@/components/ui/CutFrame";
-import { Marker } from "@/components/ui/Marker";
+import { SmallLabel } from "@/components/ui/SmallLabel";
+import { Panel } from "@/components/ui/Panel";
 import { Arrow } from "@/components/ui/Arrow";
 
 /**
@@ -73,16 +72,16 @@ export default function CasePage({ params }: { params: { slug: string } }) {
         lead={meta.summary}
       >
         {meta.draft && (
-          <p className="self-start border border-ink bg-frost px-3 py-2 font-mono text-label uppercase tracking-label">
+          <p className="self-start border px-3 py-2 rounded-notice border-line bg-surface font-body text-room-small">
             Draft: not published. Shown on preview builds only.
           </p>
         )}
-        <dl className="grid gap-x-10 gap-y-4 border-t border-ink pt-6 font-mono text-label uppercase tracking-label sm:grid-cols-[auto_1fr]">
-          <dt className="text-steel">Trade</dt>
+        <dl className="grid gap-x-10 gap-y-4 border-t pt-6 sm:grid-cols-[auto_1fr] border-line font-body text-room-body">
+          <dt className="text-muted">Trade</dt>
           <dd>{meta.trade}</dd>
-          <dt className="text-steel">Location</dt>
+          <dt className="text-muted">Location</dt>
           <dd>{meta.location}</dd>
-          <dt className="text-steel">Systems</dt>
+          <dt className="text-muted">Systems</dt>
           <dd className="flex flex-wrap gap-2">
             {meta.systems.map((s) => (
               <Chip key={s}>{s}</Chip>
@@ -90,12 +89,12 @@ export default function CasePage({ params }: { params: { slug: string } }) {
           </dd>
           {meta.liveUrl && (
             <>
-              <dt className="text-steel">Live site</dt>
+              <dt className="text-muted">Live site</dt>
               <dd>
                 <a
                   href={meta.liveUrl}
                   rel="noopener"
-                  className="inline-flex min-h-touch items-center gap-2 normal-case text-ink underline decoration-signal decoration-2 underline-offset-4"
+                  className="inline-flex min-h-touch items-center gap-2 underline decoration-2 underline-offset-4 text-text decoration-amber"
                 >
                   {meta.liveUrl.replace(/^https?:\/\//, "")}
                   <Arrow className="size-3.5" />
@@ -108,7 +107,7 @@ export default function CasePage({ params }: { params: { slug: string } }) {
 
       {meta.heroImage && (
         <Section spacing="none" aria-label="Screenshot">
-          <CutFrame size="lg" fill="white" innerClassName="overflow-hidden">
+          <Panel fill="raised" innerClassName="overflow-hidden">
             <Image
               src={meta.heroImage.src}
               alt={meta.heroImage.alt}
@@ -116,7 +115,7 @@ export default function CasePage({ params }: { params: { slug: string } }) {
               height={meta.heroImage.height}
               className="h-auto w-full"
             />
-          </CutFrame>
+          </Panel>
         </Section>
       )}
 
@@ -126,31 +125,25 @@ export default function CasePage({ params }: { params: { slug: string } }) {
         </article>
       </Section>
 
-      <Section tone="frost" className="border-y border-ink" aria-labelledby="systems">
+      <Section tone="frost" className="border-y border-line" aria-labelledby="systems">
         <div className="grid gap-10 lg:grid-cols-2">
           <div className="flex flex-col gap-6">
             <SectionHead id="systems" label="Systems running" title="What's running now" />
             <ul className="flex flex-wrap gap-2">
               {meta.systems.map((s) => (
                 <li key={s}>
-                  <BoxedLabel size="md">{s}</BoxedLabel>
+                  <SmallLabel className="font-medium">{s}</SmallLabel>
                 </li>
               ))}
             </ul>
           </div>
           <div className="flex flex-col gap-6">
             <SectionHead id="results" label="Results" title="What changed" />
-            <dl className="border-t border-ink font-mono text-label">
+            <dl className="border-t border-line font-body text-room-body">
               {meta.results.map((r) => (
-                <div
-                  key={r.label}
-                  className="flex justify-between gap-6 border-b border-hairline py-3"
-                >
-                  <dt className="uppercase text-steel">{r.label}</dt>
-                  <dd className="flex items-center gap-2 font-medium">
-                    <Marker size="dot" />
-                    {r.value}
-                  </dd>
+                <div key={r.label} className="flex justify-between gap-6 border-b py-3 border-line">
+                  <dt className="text-muted">{r.label}</dt>
+                  <dd className="flex items-center gap-2 font-medium">{r.value}</dd>
                 </div>
               ))}
             </dl>
@@ -162,17 +155,15 @@ export default function CasePage({ params }: { params: { slug: string } }) {
         <Section spacing="tight" aria-label="Next case study">
           <Link
             href={`/work/${next.slug}/`}
-            className="group flex min-h-touch items-center justify-between gap-6 border-y border-ink py-6 text-ink no-underline active:text-steel-deep"
+            className="group flex min-h-touch items-center justify-between gap-6 border-y py-6 no-underline border-line text-text active:text-muted"
           >
             <span className="flex flex-col gap-1">
-              <span className="font-mono text-label uppercase tracking-label text-steel">
-                Next case study
-              </span>
-              <span className="font-display text-subheading font-semibold">
+              <span className="font-body text-room-small text-muted">Next case study</span>
+              <span className="font-body text-room-card font-medium">
                 {next.client} — {next.trade}
               </span>
             </span>
-            <Arrow className="size-6 transition-transform duration-[250ms] ease-brand group-hover:translate-x-1 group-hover:translate-y-1" />
+            <Arrow className="size-6 transition-transform duration-[250ms] ease-brand group-hover:translate-x-1 group-hover:translate-y-1 text-amber" />
           </Link>
         </Section>
       )}
