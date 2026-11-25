@@ -5,6 +5,7 @@ import { Section } from "@/components/layout/Section";
 import { Container } from "@/components/layout/Container";
 import { MotionText } from "@/components/motion/MotionText";
 import type { CtaCopy } from "@/content/types";
+import { PagePane } from "./PagePane";
 
 /**
  * The band that closes a page (PLAN §5 "Final CTA band"): a heading in
@@ -18,10 +19,13 @@ export function CtaBand({
   copy,
   id = "cta",
   opening = false,
+  glass = false,
 }: {
   copy: CtaCopy;
   id?: string;
   opening?: boolean;
+  /** A glass pane in a PaneStack, for the redesigned inner pages. */
+  glass?: boolean;
 }) {
   const cta = ctaLink();
   if (!cta) return null;
@@ -49,6 +53,14 @@ export function CtaBand({
       </div>
     </div>
   );
+
+  if (glass) {
+    return (
+      <PagePane labelledBy={id} track="cta-band">
+        {content}
+      </PagePane>
+    );
+  }
 
   if (opening) {
     return (

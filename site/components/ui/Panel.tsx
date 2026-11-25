@@ -14,6 +14,7 @@ const FILLS = {
   surface: "bg-surface",
   raised: "bg-raised",
   field: "bg-room",
+  clear: "bg-transparent",
 } as const;
 
 export type PanelFill = keyof typeof FILLS;

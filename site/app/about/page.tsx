@@ -3,14 +3,14 @@ import { site } from "@/site.config";
 import { pageMetadata } from "@/lib/meta";
 import { getAbout, getProcessSteps } from "@/lib/content";
 import { PageHero } from "@/components/page/PageHero";
-import { Section } from "@/components/layout/Section";
 import { SectionHead } from "@/components/page/SectionHead";
 import { StepsStrip } from "@/components/page/StepsStrip";
 import { CtaBand } from "@/components/page/CtaBand";
-import { Panel } from "@/components/ui/Panel";
 import { SmallLabel } from "@/components/ui/SmallLabel";
 import { Chip } from "@/components/ui/Chip";
 import { pad2 } from "@/lib/cn";
+import { PageGlow } from "@/components/page/MoltenArt";
+import { PagePane, PaneStack } from "@/components/page/PagePane";
 
 /**
  * ════════════════════════════════════════════════════════════════════
@@ -38,92 +38,89 @@ export default function AboutPage() {
         label="About"
         title="Built by someone who's worked the job"
         lead={about.lead}
-        art="pool"
       />
 
-      <Section tone="frost" className="border-y border-line" aria-labelledby="story">
-        <div className="grid gap-12 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:gap-16">
-          <div className="flex flex-col gap-6">
-            <SectionHead id="story" label="The short version" title="Why trades" />
-            <div className="flex max-w-[640px] flex-col gap-4">
-              {about.story.map((p) => (
-                <p key={p} className="text-room-body text-muted">
-                  {p}
-                </p>
-              ))}
-            </div>
-            <p className="font-body text-room-small">
-              {about.name} · <span className="text-muted">{about.role}</span>
-            </p>
-          </div>
-          {about.photo && (
-            <Panel fill="raised" widget hover innerClassName="overflow-hidden">
-              <Image
-                src={about.photo.src}
-                alt={about.photo.alt}
-                width={about.photo.width}
-                height={about.photo.height}
-                className="h-auto w-full"
-              />
-            </Panel>
-          )}
-        </div>
-      </Section>
-
-      <Section aria-labelledby="principles">
-        <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)] lg:gap-16">
-          <SectionHead id="principles" label="How we work" title="What working together is like" />
-          <ol className="grid gap-4 sm:grid-cols-2">
-            {about.principles.map((p, i) => (
-              <li key={p}>
-                <Panel
-                  fill="raised"
-                  widget
-                  hover
-                  className="h-full"
-                  innerClassName="flex h-full flex-col gap-3 p-6"
-                >
-                  <p className="font-body text-[2rem] font-medium leading-none text-amber">
-                    {pad2(i + 1)}
+      <PageGlow />
+      <PaneStack>
+        <PagePane labelledBy="story">
+          <div className="grid gap-10 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:gap-16">
+            <div className="flex flex-col gap-6">
+              <SectionHead id="story" label="The short version" title="Why trades" />
+              <div className="flex max-w-[640px] flex-col gap-4">
+                {about.story.map((p) => (
+                  <p key={p} className="text-room-body text-muted">
+                    {p}
                   </p>
-                  <p className="text-room-body">{p}</p>
-                </Panel>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </Section>
+                ))}
+              </div>
+              <p className="font-body text-room-small">
+                {about.name} · <span className="text-muted">{about.role}</span>
+              </p>
+            </div>
+            {about.photo && (
+              <div className="overflow-hidden rounded-panel border border-text/[0.14]">
+                <Image
+                  src={about.photo.src}
+                  alt={about.photo.alt}
+                  width={about.photo.width}
+                  height={about.photo.height}
+                  className="h-auto w-full"
+                />
+              </div>
+            )}
+          </div>
+        </PagePane>
 
-      <Section aria-labelledby="process">
-        <div className="flex flex-col gap-12">
+        <div className="grid gap-6 lg:grid-cols-12 lg:gap-8">
+          <PagePane labelledBy="principles" className="lg:col-span-7">
+            <SectionHead
+              id="principles"
+              label="How we work"
+              title="What working together is like"
+            />
+            <ol className="grid gap-4 sm:grid-cols-2">
+              {about.principles.map((p, i) => (
+                <li key={p}>
+                  <div className="flex h-full flex-col gap-3 rounded-panel border border-text/[0.14] p-6">
+                    <p className="font-body text-[2rem] font-medium leading-none text-amber">
+                      {pad2(i + 1)}
+                    </p>
+                    <p className="text-room-body">{p}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </PagePane>
+
+          <PagePane labelledBy="local" className="lg:col-span-5">
+            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-line pb-5">
+              <SmallLabel>Local</SmallLabel>
+              <span className="font-body text-room-small text-muted">{site.serviceArea.label}</span>
+            </div>
+            <SectionHead id="local" label="Acadiana" title="Local, and remote" lede={about.local} />
+            <ul className="mt-auto flex flex-wrap gap-2">
+              {site.serviceArea.cities.map((c) => (
+                <li key={c}>
+                  <Chip>{c}</Chip>
+                </li>
+              ))}
+            </ul>
+          </PagePane>
+        </div>
+
+        <PagePane labelledBy="process">
           <SectionHead id="process" label="Process" title="How a project runs" />
           <StepsStrip steps={getProcessSteps()} />
-        </div>
-      </Section>
+        </PagePane>
 
-      <Section aria-labelledby="local">
-        <Panel fill="surface" innerClassName="flex flex-col gap-8 p-6 lg:p-12">
-          <div className="flex flex-wrap items-center justify-between gap-4 border-b pb-5 border-line">
-            <SmallLabel>Local</SmallLabel>
-            <span className="font-body text-room-small text-muted">{site.serviceArea.label}</span>
-          </div>
-          <SectionHead id="local" label="Acadiana" title="Local, and remote" lede={about.local} />
-          <ul className="flex flex-wrap gap-2">
-            {site.serviceArea.cities.map((c) => (
-              <li key={c}>
-                <Chip>{c}</Chip>
-              </li>
-            ))}
-          </ul>
-        </Panel>
-      </Section>
-
-      <CtaBand
-        copy={{
-          heading: "Let's talk about your business.",
-          body: `Tell us what you need. We'll reach out within ${site.intake.responseTime}.`,
-        }}
-      />
+        <CtaBand
+          glass
+          copy={{
+            heading: "Let's talk about your business.",
+            body: `Tell us what you need. We'll reach out within ${site.intake.responseTime}.`,
+          }}
+        />
+      </PaneStack>
     </>
   );
 }

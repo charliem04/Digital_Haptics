@@ -6,13 +6,14 @@ import { pageMetadata } from "@/lib/meta";
 import { getCase, getCases, getNextCase, getTradeByName } from "@/lib/content";
 import { MoreLink } from "@/components/MoreLink";
 import { PageHero } from "@/components/page/PageHero";
-import { Section } from "@/components/layout/Section";
 import { SectionHead } from "@/components/page/SectionHead";
 import { CtaBand } from "@/components/page/CtaBand";
 import { Mdx } from "@/components/page/Mdx";
 import { Chip } from "@/components/ui/Chip";
 import { cn } from "@/lib/cn";
 import { Arrow } from "@/components/ui/Arrow";
+import { PageGlow } from "@/components/page/MoltenArt";
+import { PagePane, PaneStack } from "@/components/page/PagePane";
 
 /**
  * ════════════════════════════════════════════════════════════════════
@@ -114,9 +115,13 @@ export default function CasePage({ params }: { params: { slug: string } }) {
         </dl>
       </PageHero>
 
-      {meta.heroImage && (
-        <Section spacing="none" aria-label="Screenshots">
-          <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,4fr)_minmax(0,1fr)]">
+      <PageGlow />
+      <PaneStack>
+        {meta.heroImage && (
+          <section
+            aria-label="Screenshots"
+            className="grid items-start gap-6 lg:grid-cols-[minmax(0,4fr)_minmax(0,1fr)]"
+          >
             <div className={FRAME}>
               <Image
                 src={meta.heroImage.src}
@@ -137,81 +142,83 @@ export default function CasePage({ params }: { params: { slug: string } }) {
                 />
               </div>
             )}
-          </div>
-        </Section>
-      )}
+          </section>
+        )}
 
-      <Section aria-label="The project">
-        <article className="max-w-[720px]">
-          <Mdx source={body} />
-          {trade && (
-            <div className="mt-10">
-              <MoreLink href={`/trades/${trade.slug}/`}>Websites for {trade.audience}</MoreLink>
-            </div>
-          )}
-        </article>
-      </Section>
+        <div className="grid items-start gap-6 lg:grid-cols-12 lg:gap-8">
+          <PagePane label="The project" className="lg:col-span-8">
+            <article className="max-w-[720px]">
+              <Mdx source={body} />
+              {trade && (
+                <div className="mt-10">
+                  <MoreLink href={`/trades/${trade.slug}/`}>Websites for {trade.audience}</MoreLink>
+                </div>
+              )}
+            </article>
+          </PagePane>
 
-      {/* No gray band: results as outlined tiles on the page's own dark
-          ground, so this section matches the rest of the site. */}
-      <Section aria-labelledby="results">
-        <div className="flex flex-col gap-10">
-          <SectionHead
-            id="results"
-            label={meta.demo ? "Status" : "Results"}
-            title={meta.demo ? "Where it stands" : "What changed"}
-          />
-          <dl className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {meta.results.map((r) => (
-              <div
-                key={r.label}
-                className="flex flex-col-reverse gap-2 rounded-panel border border-line p-6 lg:p-8"
-              >
-                <dt className="text-room-small text-muted">{r.label}</dt>
-                <dd className="font-body text-[clamp(1.5rem,2.4vw,2rem)] font-medium leading-tight text-amber">
-                  {r.value}
-                </dd>
-              </div>
-            ))}
-          </dl>
-          <div className="flex flex-col gap-4 border-t pt-8 border-line">
-            <h3 id="systems" className="text-room-small text-muted">
-              {meta.demo ? "What's in the demo" : "What's running now"}
-            </h3>
-            <ul className="flex flex-wrap gap-2">
-              {meta.systems.map((s) => (
-                <li key={s}>
-                  <Chip>{s}</Chip>
-                </li>
+          {/* Results beside the story on desktop, as outlined tiles. */}
+          <PagePane labelledBy="results" className="lg:sticky lg:top-24 lg:col-span-4">
+            <SectionHead
+              id="results"
+              label={meta.demo ? "Status" : "Results"}
+              title={meta.demo ? "Where it stands" : "What changed"}
+            />
+            <dl className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
+              {meta.results.map((r) => (
+                <div
+                  key={r.label}
+                  className="flex flex-col-reverse gap-2 rounded-panel border border-text/[0.14] p-5"
+                >
+                  <dt className="text-room-small text-muted">{r.label}</dt>
+                  <dd className="font-body text-[clamp(1.375rem,2vw,1.75rem)] font-medium leading-tight text-amber">
+                    {r.value}
+                  </dd>
+                </div>
               ))}
-            </ul>
-          </div>
+            </dl>
+            <div className="flex flex-col gap-4 border-t border-line pt-6">
+              <h3 id="systems" className="text-room-small text-muted">
+                {meta.demo ? "What's in the demo" : "What's running now"}
+              </h3>
+              <ul className="flex flex-wrap gap-2">
+                {meta.systems.map((s) => (
+                  <li key={s}>
+                    <Chip>{s}</Chip>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </PagePane>
         </div>
-      </Section>
 
-      {next && (
-        <Section spacing="tight" aria-label="Next case study">
-          <Link
-            href={`/work/${next.slug}/`}
-            className="group flex min-h-touch items-center justify-between gap-6 border-y py-6 no-underline border-line text-text active:text-muted"
-          >
-            <span className="flex flex-col gap-1">
-              <span className="font-body text-room-small text-muted">Next case study</span>
-              <span className="font-body text-room-card font-medium">
-                {next.client} — {next.trade}
+        {next && (
+          <PagePane label="Next case study" innerClassName="py-2 lg:py-2">
+            <Link
+              href={`/work/${next.slug}/`}
+              className="group flex min-h-touch items-center justify-between gap-6 py-4 no-underline text-text active:text-muted"
+            >
+              <span className="flex flex-col gap-1">
+                <span className="font-body text-room-small text-muted">Next case study</span>
+                <span className="font-body text-room-card font-medium">
+                  {next.client} — {next.trade}
+                </span>
               </span>
-            </span>
-            <Arrow className="size-6 transition-transform duration-[250ms] ease-brand group-hover:translate-x-1 group-hover:translate-y-1 text-amber" />
-          </Link>
-        </Section>
-      )}
+              <span className="flex size-12 shrink-0 items-center justify-center rounded-control border border-line transition-colors duration-[160ms] group-hover:border-text">
+                <Arrow className="size-4" />
+              </span>
+            </Link>
+          </PagePane>
+        )}
 
-      <CtaBand
-        copy={{
-          heading: "Have a job like this?",
-          body: "Tell us about your business and what it needs.",
-        }}
-      />
+        <CtaBand
+          glass
+          copy={{
+            heading: "Have a job like this?",
+            body: "Tell us about your business and what it needs.",
+          }}
+        />
+      </PaneStack>
     </>
   );
 }

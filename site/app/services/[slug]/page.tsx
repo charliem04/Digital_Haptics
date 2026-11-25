@@ -4,13 +4,14 @@ import { pageMetadata } from "@/lib/meta";
 import { isIndexable } from "@/lib/routes";
 import { getCasesFor, getService, getServices, getTrades } from "@/lib/content";
 import { PageHero } from "@/components/page/PageHero";
-import { Section } from "@/components/layout/Section";
 import { SectionHead } from "@/components/page/SectionHead";
 import { CaseGrid } from "@/components/page/CaseGrid";
 import { CtaBand } from "@/components/page/CtaBand";
 import { FaqList } from "@/components/FaqList";
 import { MoreLink } from "@/components/MoreLink";
 import { AutomationsSections } from "@/components/automations/AutomationsSections";
+import { PageGlow } from "@/components/page/MoltenArt";
+import { PagePane, PaneStack } from "@/components/page/PagePane";
 
 /**
  * ════════════════════════════════════════════════════════════════════
@@ -51,48 +52,47 @@ export default function ServicePage({ params }: { params: { slug: string } }) {
         label={`${s.code} — ${s.name}`}
         title={s.name}
         lead={s.lead}
-        art="arc"
       />
 
-      <Section tone="frost" className="border-y border-line" aria-labelledby="included">
-        <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
-          <div className="flex flex-col gap-6">
+      <PageGlow />
+      <PaneStack>
+        <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
+          <PagePane labelledBy="included">
             <SectionHead id="included" label="Included" title="What you get" />
             <ul className="flex flex-col border-t border-line">
               {s.included.map((item) => (
                 <li
                   key={item}
-                  className="flex items-start gap-3 border-b py-3 text-body border-line"
+                  className="flex items-start gap-3 border-b border-line py-3 text-body"
                 >
                   {item}
                 </li>
               ))}
             </ul>
-          </div>
-          <div className="flex flex-col gap-6">
+          </PagePane>
+          <PagePane labelledBy="for-who">
             <SectionHead id="for-who" label="Who it's for" title="A good fit if" />
             <ul className="flex flex-col border-t border-line">
               {s.forWho.map((item) => (
                 <li
                   key={item}
-                  className="flex items-start gap-3 border-b py-3 text-body border-line"
+                  className="flex items-start gap-3 border-b border-line py-3 text-body"
                 >
                   {item}
                 </li>
               ))}
             </ul>
-            <div>
+            <div className="mt-auto">
               <MoreLink href="/pricing/">Where pricing starts</MoreLink>
             </div>
-          </div>
+          </PagePane>
         </div>
-      </Section>
 
-      {s.slug === "automations" && <AutomationsSections />}
+        {/* 🚩 Flag off today. Its sections still use the full-width bands. */}
+        {s.slug === "automations" && <AutomationsSections />}
 
-      {s.slug === "web-design" && (
-        <Section aria-labelledby="by-trade">
-          <div className="flex flex-col gap-8">
+        {s.slug === "web-design" && (
+          <PagePane labelledBy="by-trade">
             <SectionHead id="by-trade" label="Trades" title="Built around your trade" />
             <ul className="flex flex-wrap gap-x-10 gap-y-3">
               {getTrades().map((t) => (
@@ -101,27 +101,26 @@ export default function ServicePage({ params }: { params: { slug: string } }) {
                 </li>
               ))}
             </ul>
-          </div>
-        </Section>
-      )}
+          </PagePane>
+        )}
 
-      {cases.length > 0 && (
-        <Section aria-labelledby="cases">
-          <div className="flex flex-col gap-10">
+        {cases.length > 0 && (
+          <PagePane labelledBy="cases">
             <SectionHead id="cases" label="Work" title={`${s.name} projects`} />
             <CaseGrid cases={cases.slice(0, 3)} />
-          </div>
-        </Section>
-      )}
+          </PagePane>
+        )}
 
-      <FaqList faqs={s.faq} heading={`${s.name} questions`} />
+        <FaqList glass faqs={s.faq} heading={`${s.name} questions`} />
 
-      <CtaBand
-        copy={{
-          heading: `Talk to us about ${s.name.toLowerCase()}.`,
-          body: "A short form, then a short call. Every project is quoted after the call.",
-        }}
-      />
+        <CtaBand
+          glass
+          copy={{
+            heading: `Talk to us about ${s.name.toLowerCase()}.`,
+            body: "A short form, then a short call. Every project is quoted after the call.",
+          }}
+        />
+      </PaneStack>
     </>
   );
 }

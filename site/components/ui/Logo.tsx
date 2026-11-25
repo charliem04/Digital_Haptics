@@ -13,7 +13,8 @@ export function Logo({ className }: { className?: string }) {
       )}
     >
       <span aria-hidden className="block size-3.5 rounded-control bg-amber" />
-      {site.name}
+      {/* Its own span, so the shrunk header can fold the name away. */}
+      <span className="logo-name">{site.name}</span>
     </Link>
   );
 }

@@ -5,8 +5,13 @@ import { useEffect, useRef } from "react";
 
 /** Long enough for the slowest text style, including its stagger. */
 const TEXT_SETTLE_MS = 2200;
-/** The card, its stagger, then its text. */
-const WIDGET_SETTLE_MS = 2600;
+/** After its stagger delay: the card, then its text. */
+const WIDGET_SETTLE_MS = 2400;
+/** A section pane only fades, so it settles sooner. */
+const PANE_SETTLE_MS = 1000;
+/** Gap between widgets in a cascade, and the longest any one waits. */
+const CASCADE_STEP_MS = 110;
+const CASCADE_MAX_MS = 660;
 /** Lets the page transition start uncovering before text plays. */
 const AFTER_NAV_DELAY = "180ms";
 
@@ -71,17 +76,36 @@ export function MotionRuntime() {
       armedWidgets.delete(el);
     };
     const armedWidgets = new Set<HTMLElement>();
+    // A cascade: widgets that arrive together go one after another, top to
+    // bottom and left to right. Ones that arrive while a cascade is still
+    // running join the end of it, so fast scrolling still reads as a flow.
+    let nextSlot = 0;
+    const offset = initial ? 0 : 180;
     const widgetObserver = new IntersectionObserver(
       (entries) => {
-        for (const entry of entries) {
-          if (!entry.isIntersecting) continue;
+        const arriving = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort(
+            (a, b) =>
+              a.boundingClientRect.top - b.boundingClientRect.top ||
+              a.boundingClientRect.left - b.boundingClientRect.left
+          );
+        const now = performance.now();
+        for (const entry of arriving) {
           const el = entry.target as HTMLElement;
           widgetObserver.unobserve(el);
+          const delay = Math.min(Math.max(nextSlot - now, 0), CASCADE_MAX_MS);
+          nextSlot = now + delay + CASCADE_STEP_MS;
+          el.style.setProperty("--w-delay", `${Math.round(delay) + offset}ms`);
           el.dataset.wState = "in";
-          const timer = window.setTimeout(() => {
-            timers.delete(timer);
-            settleWidget(el);
-          }, WIDGET_SETTLE_MS);
+          const settleAfter = el.dataset.widget === "pane" ? PANE_SETTLE_MS : WIDGET_SETTLE_MS;
+          const timer = window.setTimeout(
+            () => {
+              timers.delete(timer);
+              settleWidget(el);
+            },
+            delay + offset + settleAfter
+          );
           timers.add(timer);
         }
       },
@@ -89,9 +113,6 @@ export function MotionRuntime() {
     );
     document.querySelectorAll<HTMLElement>("[data-widget]").forEach((el) => {
       if (initial && el.getBoundingClientRect().top < window.innerHeight) return;
-      const item = el.closest("li") ?? el;
-      const index = item.parentElement ? Array.from(item.parentElement.children).indexOf(item) : 0;
-      el.style.setProperty("--w-delay", `${Math.min(index, 5) * 90 + (initial ? 0 : 180)}ms`);
       el.dataset.wState = "armed";
       armedWidgets.add(el);
       widgetObserver.observe(el);

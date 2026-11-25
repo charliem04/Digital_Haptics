@@ -53,6 +53,7 @@
 html {
   color-scheme: dark;
   scroll-behavior: smooth;
+  scroll-padding-top: 88px;
   scrollbar-color: rgb(var(--muted)) rgb(var(--surface));
 }
 
@@ -146,6 +147,156 @@ a {
 @layer components {
   .page-x {
     @apply mx-auto w-full max-w-page px-gutter-sm lg:px-gutter;
+  }
+}
+
+/* ── HEADER ──────────────────────────────────────────────────────────
+   Sticky "islands" header (components/layout/Header.tsx). Its box stays
+   80px tall in every state, so the page never shifts; only the bar
+   inside it changes. The empty band around the bar lets clicks through.
+
+     top      open and transparent; the links sit in their own glass pill
+     compact  scrolling down: a small glass capsule docked at the top edge
+     full     scrolling up: full size again, on one glass bar               */
+.site-header,
+.site-header-static {
+  position: relative;
+  z-index: 30;
+  height: 80px;
+}
+.site-header {
+  position: sticky;
+  top: 0;
+  pointer-events: none;
+}
+.site-header-bar {
+  pointer-events: auto;
+  height: 80px;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 9999px;
+  background-color: rgb(var(--room) / 0);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0),
+    0 12px 32px -12px rgb(0 0 0 / 0);
+  transition:
+    height 560ms var(--header-ease),
+    max-width 560ms var(--header-ease),
+    margin 560ms var(--header-ease),
+    padding 560ms var(--header-ease),
+    background-color 400ms ease,
+    border-color 400ms ease,
+    box-shadow 400ms ease,
+    backdrop-filter 400ms ease;
+  --header-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+.site-header-links {
+  padding: 4px;
+  border: 1px solid rgb(var(--text) / 0.12);
+  border-radius: 9999px;
+  background-color: rgb(var(--room) / 0.55);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.12),
+    0 12px 32px -12px rgb(0 0 0 / 0.6);
+  backdrop-filter: blur(24px) saturate(1.5);
+  transition:
+    background-color 400ms ease,
+    border-color 400ms ease,
+    box-shadow 400ms ease,
+    backdrop-filter 400ms ease;
+}
+
+.site-header:is([data-nav-state="compact"], [data-nav-state="full"]) .site-header-bar {
+  margin-top: 10px;
+  border-color: rgb(var(--text) / 0.12);
+  background-color: rgb(var(--room) / 0.62);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.1),
+    0 12px 32px -12px rgb(0 0 0 / 0.6);
+  backdrop-filter: blur(24px) saturate(1.5);
+}
+/* Inside the glass bar the links lose their own pill. */
+.site-header:is([data-nav-state="compact"], [data-nav-state="full"]) .site-header-links {
+  border-color: transparent;
+  background-color: rgb(var(--room) / 0);
+  box-shadow: none;
+  backdrop-filter: none;
+}
+/* Compact: tiny buttons. The logo folds to its amber dot, the links
+   shrink to small type, and "Start a Project" folds to a round amber
+   arrow. Everything stays a real link with its full accessible name, and
+   every target stays at least 24px (WCAG 2.2 AA). */
+.site-header[data-nav-state="compact"] .site-header-bar {
+  height: 40px;
+  max-width: 400px;
+  padding: 0 4px 0 12px;
+}
+@media (max-width: 1023.98px) {
+  .site-header[data-nav-state="compact"] .site-header-bar {
+    max-width: 96px;
+  }
+}
+.logo-name,
+.site-header-cta a > span:first-child {
+  display: inline-block;
+  max-width: 12em;
+  overflow: hidden;
+  white-space: nowrap;
+  vertical-align: bottom;
+  transition:
+    max-width 560ms var(--header-ease, ease),
+    opacity 300ms ease;
+}
+.site-header-bar > a,
+.site-header-links a,
+.site-header-cta a,
+.site-header [data-menu-button] {
+  transition-property: color, background-color, transform, min-height, height, width, padding, gap,
+    font-size;
+  transition-duration: 160ms, 160ms, 160ms, 560ms, 560ms, 560ms, 560ms, 560ms, 560ms;
+  transition-timing-function: var(--header-ease, ease);
+}
+.site-header[data-nav-state="compact"] .logo-name,
+.site-header[data-nav-state="compact"] .site-header-cta a > span:first-child {
+  max-width: 0;
+  opacity: 0;
+}
+.site-header[data-nav-state="compact"] .site-header-bar > a {
+  gap: 0;
+  min-width: 24px;
+  /* Below the bar height, so the row stays centred in the 40px bar. */
+  min-height: 30px;
+  justify-content: center;
+}
+.site-header[data-nav-state="compact"] .site-header-links {
+  padding: 0;
+}
+.site-header[data-nav-state="compact"] .site-header-links a {
+  min-height: 30px;
+  min-width: 24px;
+  padding-inline: 10px;
+  font-size: 13px;
+}
+.site-header[data-nav-state="compact"] .site-header-cta a {
+  min-height: 32px;
+  padding-inline: 8px;
+  gap: 0;
+}
+.site-header[data-nav-state="compact"] [data-menu-button] {
+  width: 32px;
+  height: 32px;
+}
+.site-header[data-nav-state="full"] .site-header-bar {
+  height: 64px;
+  padding: 0 8px 0 24px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-header-bar,
+  .site-header-links {
+    transition: none;
   }
 }
 

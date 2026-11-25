@@ -2,9 +2,10 @@ import { pageMetadata } from "@/lib/meta";
 import { isIndexable } from "@/lib/routes";
 import { getCases } from "@/lib/content";
 import { PageHero } from "@/components/page/PageHero";
-import { Section } from "@/components/layout/Section";
 import { CaseGrid } from "@/components/page/CaseGrid";
 import { CtaBand } from "@/components/page/CtaBand";
+import { PageGlow } from "@/components/page/MoltenArt";
+import { PagePane, PaneStack } from "@/components/page/PagePane";
 
 /**
  * Work index (PLAN §5): a grid of case cards.
@@ -35,27 +36,30 @@ export default function WorkPage() {
         label="Work"
         title="Case studies"
         lead="Sites and systems built for trades businesses: what wasn't working, what we built, and what changed."
-        art="ember"
       />
-      <Section spacing="tight" aria-label="Case studies" className="pb-section-sm lg:pb-section">
-        {drafts && (
-          <p className="mb-8 font-body text-room-small text-muted">
-            Preview build: drafts are shown and marked. Production shows only published cases with
-            the client&rsquo;s permission.
-          </p>
-        )}
-        {cases.length > 0 ? (
-          <CaseGrid cases={cases} priority />
-        ) : (
-          <p className="text-room-body text-muted">No case studies are published yet.</p>
-        )}
-      </Section>
-      <CtaBand
-        copy={{
-          heading: "Your job could be next.",
-          body: "Tell us what the business needs and we'll take it from there.",
-        }}
-      />
+      <PageGlow />
+      <PaneStack>
+        <PagePane label="Case studies">
+          {drafts && (
+            <p className="font-body text-room-small text-muted">
+              Preview build: drafts are shown and marked. Production shows only published cases with
+              the client&rsquo;s permission.
+            </p>
+          )}
+          {cases.length > 0 ? (
+            <CaseGrid cases={cases} priority />
+          ) : (
+            <p className="text-room-body text-muted">No case studies are published yet.</p>
+          )}
+        </PagePane>
+        <CtaBand
+          glass
+          copy={{
+            heading: "Your job could be next.",
+            body: "Tell us what the business needs and we'll take it from there.",
+          }}
+        />
+      </PaneStack>
     </>
   );
 }

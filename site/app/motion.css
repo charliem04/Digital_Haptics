@@ -482,6 +482,13 @@ html:not([data-motion-widget="none"]) [data-w-state="armed"] {
 html[data-motion-widget="rise"] [data-w-state="in"] {
   animation-name: widget-rise;
 }
+/* Soft cascade: a slow fade and a short drift up. The runtime staggers
+   everything that arrives together, top to bottom, left to right. */
+html[data-motion-widget="cascade"] [data-w-state="in"] {
+  animation-name: widget-cascade;
+  animation-duration: 900ms;
+  animation-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
 html[data-motion-widget="settle"] [data-w-state="in"] {
   animation-name: widget-settle;
 }
@@ -498,6 +505,12 @@ html[data-motion-widget="tilt"] [data-w-state="in"] {
   from {
     opacity: 0;
     transform: translateY(36px);
+  }
+}
+@keyframes widget-cascade {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
   }
 }
 @keyframes widget-settle {
@@ -521,16 +534,20 @@ html[data-motion-widget="tilt"] [data-w-state="in"] {
   }
 }
 
-/* The text inside waits for the card. */
-[data-w-state="armed"] :is(h2, h3, p, dl, ul):not([data-w-state] :is(dl, ul) *),
-[data-w-state="in"] :is(h2, h3, p, dl, ul):not([data-w-state] :is(dl, ul) *) {
+/* The text inside waits for the card. A whole section pane
+   (data-widget="pane") only fades: its heading has its own text motion. */
+[data-w-state="armed"]:not([data-widget="pane"])
+  :is(h2, h3, p, dl, ul):not([data-w-state] :is(dl, ul) *),
+[data-w-state="in"]:not([data-widget="pane"])
+  :is(h2, h3, p, dl, ul):not([data-w-state] :is(dl, ul) *) {
   --w-text: calc(var(--w-delay, 0ms) + 380ms);
 }
-[data-w-state="in"] :is(h2, h3, p, dl, ul):not([data-w-state] :is(dl, ul) *) {
+[data-w-state="in"]:not([data-widget="pane"])
+  :is(h2, h3, p, dl, ul):not([data-w-state] :is(dl, ul) *) {
   animation: motion-word 560ms var(--w-text) var(--motion-ease) both;
 }
 html[data-motion-text="sweep"]
-  [data-w-state="in"]
+  [data-w-state="in"]:not([data-widget="pane"])
   :is(h2, h3, p, dl, ul):not([data-w-state] :is(dl, ul) *) {
   -webkit-mask-image: linear-gradient(90deg, #000 42%, transparent 58%);
   mask-image: linear-gradient(90deg, #000 42%, transparent 58%);
@@ -616,6 +633,37 @@ html:is([data-motion-hover="glow"], [data-motion-hover="ring"]) [data-hover]:foc
   animation-play-state: running;
 }
 
+/* The page glow: the same drifting masses, fixed behind an inner page
+   and dimmed. Behind everything in the page (z-index -1), so solid
+   blocks such as the footer cover it. */
+.page-glow {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  opacity: 0.55;
+  pointer-events: none;
+}
+.page-glow > span {
+  position: absolute;
+  inset: -28%;
+  animation: molten-drift 40s ease-in-out infinite alternate paused;
+}
+.page-glow > span:nth-child(3) {
+  animation-duration: 52s;
+  animation-direction: alternate-reverse;
+  mix-blend-mode: screen;
+  opacity: 0.8;
+}
+.page-glow > .page-glow-cool {
+  opacity: 0.9;
+  animation-duration: 64s;
+  animation-direction: alternate-reverse;
+}
+.page-glow[data-motion-live="on"] > span {
+  animation-play-state: running;
+}
+
 @keyframes molten-drift {
   from {
     transform: translate(-7%, 5%) scale(1) rotate(-5deg);
@@ -631,7 +679,8 @@ html:is([data-motion-hover="glow"], [data-motion-hover="ring"]) [data-hover]:foc
     transform: none !important;
   }
 
-  .molten-art > span {
+  .molten-art > span,
+  .page-glow > span {
     animation: none !important;
   }
 }

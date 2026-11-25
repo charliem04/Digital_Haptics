@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { cn } from "@/lib/cn";
 import type { Service } from "@/content/types";
 import { Panel } from "@/components/ui/Panel";
 import { Arrow } from "@/components/ui/Arrow";
@@ -22,10 +23,13 @@ export function ServiceCard({
     <Panel
       as={Link}
       href={`/services/${service.slug}/`}
-      fill={detailed ? "raised" : "surface"}
+      fill="clear"
       widget
-      hover
-      className="block h-full no-underline text-text"
+      className={cn(
+        "block h-full no-underline text-text",
+        // On glass: a hairline, like the case cards.
+        "rounded-panel border border-text/[0.14] transition-colors duration-200 hover:border-text/40"
+      )}
       innerClassName="flex h-full flex-col gap-5 p-6 lg:p-8"
     >
       <Heading className="font-body text-room-card font-medium">{service.name}</Heading>

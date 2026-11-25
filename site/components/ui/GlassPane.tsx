@@ -91,10 +91,14 @@ function buildMap(width: number, height: number, radius: number, squircle: boole
 export function GlassPane({
   className,
   innerClassName,
+  widget = false,
   children,
 }: {
   className?: string;
   innerClassName?: string;
+  /** Fade in with the site's widget cascade (on the pane itself, since a
+   *  fading parent would cut the glass off from the liquid behind it). */
+  widget?: boolean;
   children: ReactNode;
 }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -143,6 +147,7 @@ export function GlassPane({
       ref={ref}
       data-liquid-opening
       data-glass-pane
+      data-widget={widget ? "pane" : undefined}
       className={cn(
         "relative overflow-hidden rounded-[var(--r-glass)] border border-[rgb(255_255_255/0.16)] border-t-[rgb(255_255_255/0.4)] shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_16px_40px_-16px_rgba(0,0,0,0.5)]",
         className

@@ -9,17 +9,21 @@ import { jsonLd } from "@/lib/json-ld";
 import type { Faq } from "@/content/types";
 import { Section } from "@/components/layout/Section";
 import { SectionHead } from "@/components/page/SectionHead";
+import { PagePane } from "@/components/page/PagePane";
 
 export function FaqList({
   faqs,
   id = "faq",
   heading = "Questions people ask",
   lede,
+  glass = false,
 }: {
   faqs: Faq[];
   id?: string;
   heading?: string;
   lede?: string;
+  /** A glass pane in a PaneStack, for the redesigned inner pages. */
+  glass?: boolean;
 }) {
   if (faqs.length === 0) return null;
 
@@ -33,8 +37,10 @@ export function FaqList({
     })),
   };
 
+  const Wrap = glass ? PagePane : Section;
+  const wrapProps = glass ? { labelledBy: id } : { "aria-labelledby": id };
   return (
-    <Section aria-labelledby={id}>
+    <Wrap {...wrapProps}>
       <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:gap-16">
         <SectionHead id={id} label="FAQ" title={heading} lede={lede} />
         <div className="border-t border-line">
@@ -56,6 +62,6 @@ export function FaqList({
         </div>
       </div>
       <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(data)} />
-    </Section>
+    </Wrap>
   );
 }

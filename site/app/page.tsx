@@ -56,6 +56,7 @@ function Pane({
   return (
     <section aria-labelledby={id} data-track-loc={track} className={cn("min-w-0", className)}>
       <GlassPane
+        widget
         className="h-full"
         innerClassName={cn("flex h-full flex-col gap-8 p-6 lg:p-10", innerClassName)}
       >
@@ -81,7 +82,7 @@ export default function Home() {
     <>
       <Hero />
 
-      <div className="page-x relative z-10 flex flex-col gap-6 py-room-section-sm lg:gap-8 lg:py-room-section">
+      <div className="page-x relative z-10 flex flex-col gap-6 pb-40 pt-room-section-sm lg:gap-8 lg:pb-[clamp(200px,28vh,320px)] lg:pt-room-section">
         {featured.length > 0 && (
           <Pane id="proof">
             <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">

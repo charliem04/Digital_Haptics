@@ -7,11 +7,12 @@ import { getCases, getCities, getCity, getServices, getTradeByName } from "@/lib
 import { CaseGrid } from "@/components/page/CaseGrid";
 import { MoreLink } from "@/components/MoreLink";
 import { PageHero } from "@/components/page/PageHero";
-import { Section } from "@/components/layout/Section";
 import { SectionHead } from "@/components/page/SectionHead";
 import { ServiceCard } from "@/components/page/ServiceCard";
 import { CtaBand } from "@/components/page/CtaBand";
 import { Chip } from "@/components/ui/Chip";
+import { PageGlow } from "@/components/page/MoltenArt";
+import { PagePane, PaneStack } from "@/components/page/PagePane";
 
 /**
  * ════════════════════════════════════════════════════════════════════
@@ -68,72 +69,77 @@ export default function CityPage({ params }: { params: { city: string } }) {
         )}
       </PageHero>
 
-      <Section tone="frost" className="border-y border-line" aria-labelledby="market">
-        <div className="grid gap-10 lg:grid-cols-2 lg:gap-16">
-          <SectionHead id="market" label={c.name} title="The local market" lede={c.market} />
-          <div className="flex flex-col gap-6">
-            {c.work && (
-              <SectionHead id="work-nearby" label="Nearby" title="Work in the area" lede={c.work} />
-            )}
-            {c.workLink && (
-              <div>
-                <MoreLink href={c.workLink.href}>{c.workLink.label}</MoreLink>
+      <PageGlow />
+      <PaneStack>
+        <PagePane labelledBy="market">
+          <div className="grid gap-10 lg:grid-cols-2 lg:gap-16">
+            <SectionHead id="market" label={c.name} title="The local market" lede={c.market} />
+            <div className="flex flex-col gap-6">
+              {c.work && (
+                <SectionHead
+                  id="work-nearby"
+                  label="Nearby"
+                  title="Work in the area"
+                  lede={c.work}
+                />
+              )}
+              {c.workLink && (
+                <div>
+                  <MoreLink href={c.workLink.href}>{c.workLink.label}</MoreLink>
+                </div>
+              )}
+              <div className="flex flex-col gap-3">
+                <p className="font-body text-room-small text-muted">Trades we work with here</p>
+                <ul className="flex flex-wrap gap-2">
+                  {c.trades.map((t) => {
+                    const page = getTradeByName(t);
+                    return (
+                      <li key={t}>
+                        {page ? (
+                          <Link
+                            href={`/trades/${page.slug}/`}
+                            className="inline-flex min-h-touch items-center border no-underline active:translate-y-px rounded-control border-line px-4 font-body text-room-small text-text hover:bg-raised hover:text-text"
+                          >
+                            {t}
+                          </Link>
+                        ) : (
+                          <Chip>{t}</Chip>
+                        )}
+                      </li>
+                    );
+                  })}
+                </ul>
               </div>
-            )}
-            <div className="flex flex-col gap-3">
-              <p className="font-body text-room-small text-muted">Trades we work with here</p>
-              <ul className="flex flex-wrap gap-2">
-                {c.trades.map((t) => {
-                  const page = getTradeByName(t);
-                  return (
-                    <li key={t}>
-                      {page ? (
-                        <Link
-                          href={`/trades/${page.slug}/`}
-                          className="inline-flex min-h-touch items-center border no-underline active:translate-y-px rounded-control border-line px-4 font-body text-room-small text-text hover:bg-raised hover:text-text"
-                        >
-                          {t}
-                        </Link>
-                      ) : (
-                        <Chip>{t}</Chip>
-                      )}
-                    </li>
-                  );
-                })}
-              </ul>
             </div>
           </div>
-        </div>
-      </Section>
+        </PagePane>
 
-      {project && (
-        <Section aria-labelledby="city-work">
-          <div className="flex flex-col gap-10">
+        {project && (
+          <PagePane labelledBy="city-work">
             <SectionHead id="city-work" label="Local work" title={`Our work in ${c.name}`} />
             <CaseGrid cases={[project]} />
-          </div>
-        </Section>
-      )}
+          </PagePane>
+        )}
 
-      <Section aria-labelledby="city-services">
-        <div className="flex flex-col gap-10">
+        <PagePane labelledBy="city-services">
           <SectionHead id="city-services" label="Services" title={`What we do in ${c.name}`} />
-          <ul className="grid gap-6 md:grid-cols-3">
+          <ul className="grid gap-4 md:grid-cols-3 lg:gap-6">
             {getServices().map((s) => (
               <li key={s.slug}>
                 <ServiceCard service={s} />
               </li>
             ))}
           </ul>
-        </div>
-      </Section>
+        </PagePane>
 
-      <CtaBand
-        copy={{
-          heading: `Work in ${c.name}? Let's talk.`,
-          body: `Tell us about your business. We'll reach out within ${site.intake.responseTime}.`,
-        }}
-      />
+        <CtaBand
+          glass
+          copy={{
+            heading: `Work in ${c.name}? Let's talk.`,
+            body: `Tell us about your business. We'll reach out within ${site.intake.responseTime}.`,
+          }}
+        />
+      </PaneStack>
     </>
   );
 }

@@ -121,7 +121,8 @@ Static surfaces carry the film grain, so the identity continues where the liquid
 | Page | Treatment |
 |---|---|
 | Home | **Live.** One fixed canvas seen through the hero, a wide band after Work, a side window beside Process, and the final CTA (owner's choice, 2026-11-23) |
-| Pricing, Work, case study, Services, About, Blog, cities | **None** by default. Final CTA is a solid `surface` band |
+| Work, case studies, Services and service pages, Pricing, About, Trades, cities | **Page glow** (owner's pick, 2026-11-25): a dim, slowly drifting CSS view of the liquid fixed behind the page (`PageGlow`), with a cool blue-grey wash of deep teal, teal and sage under two warm masses. Every section is a squircle glass pane (`PagePane`) in a stack with room above the footer (`PaneStack`), cards are hairline, and the final CTA is a glass pane. No WebGL |
+| Blog, posts | **None.** Plain `room` ground and the solid `surface` CTA band |
 | `/start`, thanks | **None.** Nothing competes with the form |
 | Legal, 404 | **None** |
 | Open Graph images | **Still** (R7) |
@@ -145,7 +146,7 @@ The Stage 1 demo also opened the CTA on Pricing and the case study. This guide n
 - **Desktop hero:** the liquid fills the whole hero, edge to edge and up under the header. Copy sits in the left column directly on the liquid, with no shade (owner's call, 2026-11-25). **Known accessibility trade-off:** when bright amber passes behind the copy, contrast drops below WCAG AA (muted label about 1.2:1, headline about 1.9:1 at worst). The owner was shown this and chose the bare look; a soft full-height fade from the left edge is the fix if it is revisited.
 - **Phone hero:** the liquid fills the band at the top, behind the header. A vertical gradient reaches solid `room` at 45vh, and the copy starts there.
 - **Final CTA:** copy sits on a solid `room` plate with a 28px radius.
-- **Header:** transparent "islands": logo free on the left, links in one glass pill in the centre, "Start a Project" free on the right (owner's pick, 2026-11-25). On Home it floats over the liquid; elsewhere over `room`.
+- **Header:** transparent "islands": logo free on the left, links in one glass pill in the centre, "Start a Project" free on the right (owner's pick, 2026-11-25). On Home it floats over the liquid; elsewhere over `room`. It is sticky and turns into one glass bar once you scroll (§7).
 - A two-minute frame scan peaked at luma 190 on the amber rim, where `text` would fail. So the rule is structural: no scrim-over-liquid text, at any opacity.
 
 ## 7. Motion
@@ -161,6 +162,8 @@ The Stage 1 demo also opened the CTA on Pricing and the case study. This guide n
 | Section headings and ledes: light sweep | 950ms, once, on entering view | Static |
 | Toned sections: rising embers, at the outer edges | Continuous, only while on screen | None |
 | Section dividers: heat seam | 4.2s loop, only while on screen | Static line |
+| Widgets: soft cascade | Cards and Home's glass panes fade in over 900ms with a 14px drift up. Everything that arrives together goes one after another, 110ms apart, top to bottom and left to right (longest wait 660ms) (owner's pick, 2026-11-25) | Shown at once |
+| Header: shrink on scroll | Sticky. Scrolling down shrinks it into a tiny 40px glass capsule 10px below the top edge (400px wide on desktop, 96px on phones): the logo folds to its amber dot, the links shrink to 13px type, "Start a Project" folds to a round amber arrow and the phone menu button to 32px. All stay clickable, with targets of 24px or more and their full names for screen readers; scrolling up grows it back to a full-width 64px glass bar; at the top of the page it opens out again. 560ms ease-out; the header's 80px box never changes, so nothing moves (owner's pick, 2026-11-25) | Changes without animating |
 
 **Owner's picks, 2026-11-22.** `site/motion.config.ts` selects them. All 16 options stay built in `site/app/motion.css` and `site/components/motion/`, and can be compared at `/lab/motion` under `npm run dev`.
 
