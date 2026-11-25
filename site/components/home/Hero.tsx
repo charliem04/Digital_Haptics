@@ -14,12 +14,10 @@ import { LiquidBackdrop } from "./liquid/LiquidBackdrop";
  *
  *  The hero is an opening onto the page's fixed liquid layer. It pulls
  *  up under the transparent header, so the liquid runs to the top.
- *  On phones (below 768px) the liquid shows as a band at the top and
- *  the copy starts where it has faded to solid `room`; the solid area
- *  fades out again below the buttons, so there is no hard line.
- *  From 768px (tablets) the copy sits directly on the liquid, with no
- *  shade behind it, and from 1024px it holds the left column (owner's
- *  calls, 2026-11-25). KNOWN TRADE-OFF:
+ *  At every size the copy sits directly on the liquid, with no shade
+ *  behind it (owner's calls, 2026-11-25: desktop, then tablets, then
+ *  phones). On phones and tablets it starts under the top of the
+ *  liquid; from 1024px it holds the left column. KNOWN TRADE-OFF:
  *  when the bright amber passes behind the copy it drops below WCAG AA
  *  (muted label about 1.2:1, headline about 1.9:1 at worst). The owner
  *  was told and chose the bare look. See VISUAL_GUIDE §6.
@@ -52,10 +50,6 @@ export function Hero({ backdrop = <LiquidBackdrop /> }: { backdrop?: ReactNode }
       className="relative -mt-20 overflow-hidden"
     >
       {backdrop}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,transparent_0,transparent_32svh,rgb(var(--room))_45svh,rgb(var(--room))_calc(100%-72px),transparent_100%)] md:bg-none"
-      />
 
       <div className="page-x relative flex flex-col pb-14 pt-[45svh] lg:min-h-[100svh] lg:justify-center lg:pb-16 lg:pt-36">
         <div className="flex flex-col gap-[22px] lg:max-w-[min(700px,calc(56vw-88px))]">

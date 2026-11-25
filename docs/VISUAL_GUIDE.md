@@ -144,7 +144,7 @@ The Stage 1 demo also opened the CTA on Pricing and the case study. This guide n
 ### 6.4 How text is protected
 
 - **Desktop hero:** the liquid fills the whole hero, edge to edge and up under the header. Copy sits in the left column directly on the liquid, with no shade (owner's call, 2026-11-25). **Known accessibility trade-off:** when bright amber passes behind the copy, contrast drops below WCAG AA (muted label about 1.2:1, headline about 1.9:1 at worst). The owner was shown this and chose the bare look; a soft full-height fade from the left edge is the fix if it is revisited.
-- **Phone hero:** the liquid fills the band at the top, behind the header. A vertical gradient reaches solid `room` at 45vh, and the copy starts there.
+- **Phone and tablet hero:** the liquid fills the whole hero, behind the header, and the copy starts 45vh down, directly on the liquid with no solid block behind it (owner's call, 2026-11-25). Same readability trade-off as the desktop hero.
 - **Final CTA:** copy sits on a solid `room` plate with a 28px radius.
 - **Header:** transparent "islands": logo free on the left, links in one glass pill in the centre, "Start a Project" free on the right (owner's pick, 2026-11-25). On Home it floats over the liquid; elsewhere over `room`. It is sticky and turns into one glass bar once you scroll (§7).
 - A two-minute frame scan peaked at luma 190 on the amber rim, where `text` would fail. So the rule is structural: no scrim-over-liquid text, at any opacity.
