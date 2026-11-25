@@ -5,6 +5,8 @@ import { useEffect, useRef } from "react";
 
 /** Long enough for the slowest text style, including its stagger. */
 const TEXT_SETTLE_MS = 2200;
+/** The card, its stagger, then its text. */
+const WIDGET_SETTLE_MS = 2600;
 /** Lets the page transition start uncovering before text plays. */
 const AFTER_NAV_DELAY = "180ms";
 
@@ -62,6 +64,39 @@ export function MotionRuntime() {
       textObserver.observe(el);
     });
 
+    // Widgets: the card arrives, then its text plays (app/motion.css).
+    const settleWidget = (el: HTMLElement) => {
+      delete el.dataset.wState;
+      el.style.removeProperty("--w-delay");
+      armedWidgets.delete(el);
+    };
+    const armedWidgets = new Set<HTMLElement>();
+    const widgetObserver = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          const el = entry.target as HTMLElement;
+          widgetObserver.unobserve(el);
+          el.dataset.wState = "in";
+          const timer = window.setTimeout(() => {
+            timers.delete(timer);
+            settleWidget(el);
+          }, WIDGET_SETTLE_MS);
+          timers.add(timer);
+        }
+      },
+      { rootMargin: "0px 0px -6% 0px" }
+    );
+    document.querySelectorAll<HTMLElement>("[data-widget]").forEach((el) => {
+      if (initial && el.getBoundingClientRect().top < window.innerHeight) return;
+      const item = el.closest("li") ?? el;
+      const index = item.parentElement ? Array.from(item.parentElement.children).indexOf(item) : 0;
+      el.style.setProperty("--w-delay", `${Math.min(index, 5) * 90 + (initial ? 0 : 180)}ms`);
+      el.dataset.wState = "armed";
+      armedWidgets.add(el);
+      widgetObserver.observe(el);
+    });
+
     // Watch each section, since a 1px divider is a poor intersection target.
     const liveObserver = new IntersectionObserver(
       (entries) => {
@@ -79,11 +114,42 @@ export function MotionRuntime() {
 
     return () => {
       textObserver.disconnect();
+      widgetObserver.disconnect();
       liveObserver.disconnect();
       timers.forEach((timer) => window.clearTimeout(timer));
       armed.forEach(settle);
+      armedWidgets.forEach(settleWidget);
     };
   }, [pathname]);
+
+  // Tells the glow and tilt hovers where the pointer is on the card.
+  useEffect(() => {
+    if (!window.matchMedia("(hover: hover) and (prefers-reduced-motion: no-preference)").matches) {
+      return;
+    }
+    let frame = 0;
+    const onMove = (event: PointerEvent) => {
+      if (frame) return;
+      const { clientX, clientY, target } = event;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        const el = (target as Element | null)?.closest?.<HTMLElement>("[data-hover]");
+        if (!el) return;
+        const box = el.getBoundingClientRect();
+        const x = (clientX - box.left) / box.width;
+        const y = (clientY - box.top) / box.height;
+        el.style.setProperty("--hx", `${(x * 100).toFixed(1)}%`);
+        el.style.setProperty("--hy", `${(y * 100).toFixed(1)}%`);
+        el.style.setProperty("--ry", `${((x - 0.5) * 7).toFixed(2)}deg`);
+        el.style.setProperty("--rx", `${((0.5 - y) * 7).toFixed(2)}deg`);
+      });
+    };
+    document.addEventListener("pointermove", onMove, { passive: true });
+    return () => {
+      document.removeEventListener("pointermove", onMove);
+      cancelAnimationFrame(frame);
+    };
+  }, []);
 
   return null;
 }

@@ -17,6 +17,8 @@ export function PostCard({
       as={Link}
       href={`/blog/${post.slug}/`}
       fill="raised"
+      widget
+      hover
       className="block h-full no-underline text-text"
       innerClassName="flex h-full flex-col gap-4 p-6"
     >

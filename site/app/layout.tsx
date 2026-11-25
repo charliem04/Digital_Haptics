@@ -86,6 +86,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       className={`${display.variable} ${body.variable}`}
       data-motion-page={motionConfig.page}
       data-motion-text={motionConfig.text}
+      data-motion-widget={motionConfig.widget}
+      data-motion-hover={motionConfig.hover}
     >
       <body className="flex min-h-dvh flex-col">
         {/*

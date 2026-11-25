@@ -43,6 +43,8 @@ export const services: (Service & { flag?: FlagName })[] = [
       },
     ],
     price: "Websites from $1,000",
+    priceFrom: "$1,000",
+    priceUnit: "per project",
     system: "Site",
   },
   {
@@ -74,6 +76,8 @@ export const services: (Service & { flag?: FlagName })[] = [
       },
     ],
     price: "Local SEO from $100/mo",
+    priceFrom: "$100",
+    priceUnit: "per month",
     system: "SEO",
   },
   {
@@ -120,6 +124,8 @@ export const services: (Service & { flag?: FlagName })[] = [
     ],
     // Charles, 2026-11-23: also starting at $100 a month.
     price: "Google Business Profile from $100/mo",
+    priceFrom: "$100",
+    priceUnit: "per month",
     system: "Google Business Profile",
   },
   {
@@ -144,6 +150,8 @@ export const services: (Service & { flag?: FlagName })[] = [
     ],
     faq: [],
     price: "Automations from $500/mo",
+    priceFrom: "$500",
+    priceUnit: "per month",
     system: "SMS",
     flag: "automations",
   },

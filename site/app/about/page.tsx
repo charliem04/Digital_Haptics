@@ -10,6 +10,7 @@ import { CtaBand } from "@/components/page/CtaBand";
 import { Panel } from "@/components/ui/Panel";
 import { SmallLabel } from "@/components/ui/SmallLabel";
 import { Chip } from "@/components/ui/Chip";
+import { pad2 } from "@/lib/cn";
 
 /**
  * ════════════════════════════════════════════════════════════════════
@@ -37,6 +38,7 @@ export default function AboutPage() {
         label="About"
         title="Built by someone who's worked the job"
         lead={about.lead}
+        art="pool"
       />
 
       <Section tone="frost" className="border-y border-line" aria-labelledby="story">
@@ -55,7 +57,7 @@ export default function AboutPage() {
             </p>
           </div>
           {about.photo && (
-            <Panel fill="raised" innerClassName="overflow-hidden">
+            <Panel fill="raised" widget hover innerClassName="overflow-hidden">
               <Image
                 src={about.photo.src}
                 alt={about.photo.alt}
@@ -69,15 +71,26 @@ export default function AboutPage() {
       </Section>
 
       <Section aria-labelledby="principles">
-        <div className="grid gap-10 lg:grid-cols-2 lg:gap-16">
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)] lg:gap-16">
           <SectionHead id="principles" label="How we work" title="What working together is like" />
-          <ul className="flex flex-col border-t border-line">
-            {about.principles.map((p) => (
-              <li key={p} className="flex items-start gap-3 border-b py-4 text-body border-line">
-                {p}
+          <ol className="grid gap-4 sm:grid-cols-2">
+            {about.principles.map((p, i) => (
+              <li key={p}>
+                <Panel
+                  fill="raised"
+                  widget
+                  hover
+                  className="h-full"
+                  innerClassName="flex h-full flex-col gap-3 p-6"
+                >
+                  <p className="font-body text-[2rem] font-medium leading-none text-amber">
+                    {pad2(i + 1)}
+                  </p>
+                  <p className="text-room-body">{p}</p>
+                </Panel>
               </li>
             ))}
-          </ul>
+          </ol>
         </div>
       </Section>
 

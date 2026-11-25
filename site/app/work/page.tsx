@@ -35,6 +35,7 @@ export default function WorkPage() {
         label="Work"
         title="Case studies"
         lead="Sites and systems built for trades businesses: what wasn't working, what we built, and what changed."
+        art="ember"
       />
       <Section spacing="tight" aria-label="Case studies" className="pb-section-sm lg:pb-section">
         {drafts && (

@@ -68,6 +68,10 @@ export type Service = {
   faq: Faq[];
   /** Pricing page line, e.g. "Websites from [PRICE]". */
   price: string;
+  /** The figure alone, for the pricing page: "$1,000". */
+  priceFrom: string;
+  /** What the figure is per: "per project", "per month". */
+  priceUnit: string;
   /** Case-study `systems` value that marks a case as relevant here. */
   system: string;
 };

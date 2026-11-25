@@ -11,10 +11,11 @@ const WINDOW = 90;
 /** Average frame interval that triggers the step down. */
 const SLOW_MS = 24;
 /**
- * After the step down, only freeze below about 25 fps. Low-power modes
- * cap animation at 30 fps, and a steady 30 is fine for slow liquid.
+ * After the step down, only freeze below about 11 fps. iPhones in Low
+ * Power Mode cap animation at 30 fps and dip below it, and slow liquid
+ * still looks right at those rates, so they should keep playing.
  */
-const FREEZE_MS = 40;
+const FREEZE_MS = 90;
 /** Longer gaps are a throttled or backgrounded tab, not a slow device. */
 const IGNORE_MS = 250;
 const MAX_DT = 1 / 20;

@@ -16,7 +16,7 @@ import { LiquidBackdrop } from "./liquid/LiquidBackdrop";
  *  sits on it: on phones the liquid shows as a band under the header
  *  and the copy starts where it has faded to solid `room`.
  *  From 1024px the copy holds the left column, capped so it always ends
- *  inside the solid part of the gradient (56% of the width).
+ *  inside the solid part of the gradient (54.5% of the width).
  *
  *  The headline is the LCP element: server-rendered, never animated,
  *  and independent of the canvas.
@@ -48,7 +48,7 @@ export function Hero({ backdrop = <LiquidBackdrop /> }: { backdrop?: ReactNode }
       {backdrop}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,transparent_0,transparent_32svh,rgb(var(--room))_45svh)] lg:bg-[linear-gradient(90deg,rgb(var(--room))_0,rgb(var(--room))_56%,transparent_80%)]"
+        className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,transparent_0,transparent_32svh,rgb(var(--room))_45svh)] lg:bg-[linear-gradient(90deg,rgb(var(--room))_0,rgb(var(--room))_54.5%,transparent_66%)]"
       />
 
       <div className="page-x relative flex flex-col pb-14 pt-[45svh] lg:min-h-[calc(100svh-80px)] lg:justify-center lg:py-16">

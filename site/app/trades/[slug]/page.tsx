@@ -53,6 +53,8 @@ export default function TradePage({ params }: { params: { slug: string } }) {
               <li key={n.title} className="flex">
                 <Panel
                   fill="raised"
+                  widget
+                  hover
                   className="w-full"
                   innerClassName="flex h-full flex-col gap-3 p-6 lg:p-8"
                 >

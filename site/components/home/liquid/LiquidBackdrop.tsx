@@ -29,8 +29,30 @@ function shouldAnimate(): boolean {
   const device = navigator as DeviceInfo;
   if (device.connection?.saveData) return false;
   if (device.deviceMemory !== undefined && device.deviceMemory < 4) return false;
-  if (navigator.hardwareConcurrency > 0 && navigator.hardwareConcurrency <= 4) return false;
+  // Safari deliberately under-reports cores, so a capable iPhone can look
+  // like a budget phone. It's exempt, and the frame governor protects it.
+  const safari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+  if (!safari && navigator.hardwareConcurrency > 0 && navigator.hardwareConcurrency <= 4) {
+    return false;
+  }
   return true;
+}
+
+/**
+ * Can a worker draw WebGL2 here? Some Safari versions have OffscreenCanvas
+ * without WebGL2 on it. Checked first because handing a canvas to a worker
+ * can't be undone.
+ */
+function canRenderInWorker(canvas: HTMLCanvasElement): boolean {
+  if (!("transferControlToOffscreen" in canvas) || typeof Worker !== "function") return false;
+  if (typeof OffscreenCanvas === "undefined") return false;
+  try {
+    const gl = new OffscreenCanvas(1, 1).getContext("webgl2");
+    gl?.getExtension("WEBGL_lose_context")?.loseContext();
+    return !!gl;
+  } catch {
+    return false;
+  }
 }
 
 /** Run after `load`, once the main thread is idle. */
@@ -56,6 +78,7 @@ export function LiquidBackdrop() {
   const rootRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [live, setLive] = useState(false);
+  const [mainThread, setMainThread] = useState(false);
 
   useEffect(() => {
     const root = rootRef.current;
@@ -68,15 +91,20 @@ export function LiquidBackdrop() {
       try {
         // Off the main thread wherever the browser allows it, so the
         // liquid can never hold up scrolling or taps.
-        const run =
-          "transferControlToOffscreen" in canvas && typeof Worker === "function"
-            ? (await import("./runLiquidWorker")).runLiquidWorker
-            : (await import("./runLiquid")).runLiquid;
+        const useWorker = !mainThread && canRenderInWorker(canvas);
+        const run = useWorker
+          ? (await import("./runLiquidWorker")).runLiquidWorker
+          : (await import("./runLiquid")).runLiquid;
         if (dead) return;
         const openings = Array.from(document.querySelectorAll("[data-liquid-opening]"));
         const dispose = await run(canvas, root, openings, {
           onReady: () => setLive(true),
-          onLost: () => setLive(false),
+          onLost: () => {
+            setLive(false);
+            // A failed worker gets one retry on the main thread, on a
+            // fresh canvas because the first now belongs to the worker.
+            if (useWorker) setMainThread(true);
+          },
         });
         if (dead) dispose();
         else stop = dispose;
@@ -104,7 +132,7 @@ export function LiquidBackdrop() {
       cancel();
       stop?.();
     };
-  }, []);
+  }, [mainThread]);
 
   return (
     <div
@@ -122,6 +150,7 @@ export function LiquidBackdrop() {
       }}
     >
       <canvas
+        key={mainThread ? "main" : "worker"}
         ref={canvasRef}
         className={cn(
           "absolute inset-0 size-full opacity-0 transition-opacity duration-[600ms] ease-out motion-reduce:transition-none",

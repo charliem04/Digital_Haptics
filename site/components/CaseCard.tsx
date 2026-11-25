@@ -60,6 +60,8 @@ export function CaseCard({
       as={Link}
       href={href}
       fill="raised"
+      widget
+      hover
       className={cn("block no-underline text-text", className)}
       innerClassName="flex flex-col overflow-hidden"
     >

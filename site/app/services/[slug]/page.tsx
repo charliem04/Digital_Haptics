@@ -51,6 +51,7 @@ export default function ServicePage({ params }: { params: { slug: string } }) {
         label={`${s.code} — ${s.name}`}
         title={s.name}
         lead={s.lead}
+        art="arc"
       />
 
       <Section tone="frost" className="border-y border-line" aria-labelledby="included">

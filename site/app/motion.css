@@ -470,6 +470,183 @@ html[data-motion-text="underline"] [data-mt-state="in"] .motion-key {
   }
 }
 
+/* ── Widget entrances: the card arrives, then its text plays ───────── */
+html:not([data-motion-widget="none"]) [data-w-state="armed"] {
+  opacity: 0;
+}
+
+[data-w-state="in"] {
+  animation: 640ms var(--w-delay, 0ms) var(--motion-ease) both;
+}
+
+html[data-motion-widget="rise"] [data-w-state="in"] {
+  animation-name: widget-rise;
+}
+html[data-motion-widget="settle"] [data-w-state="in"] {
+  animation-name: widget-settle;
+}
+html[data-motion-widget="wipe"] [data-w-state="in"] {
+  animation-name: widget-wipe;
+  animation-duration: 760ms;
+}
+html[data-motion-widget="tilt"] [data-w-state="in"] {
+  animation-name: widget-tilt;
+  transform-origin: 50% 100%;
+}
+
+@keyframes widget-rise {
+  from {
+    opacity: 0;
+    transform: translateY(36px);
+  }
+}
+@keyframes widget-settle {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+}
+@keyframes widget-wipe {
+  from {
+    clip-path: inset(0 0 100% 0 round 28px);
+  }
+  to {
+    clip-path: inset(0 0 0 0 round 28px);
+  }
+}
+@keyframes widget-tilt {
+  from {
+    opacity: 0;
+    transform: perspective(900px) rotateX(16deg) translateY(28px);
+  }
+}
+
+/* The text inside waits for the card. */
+[data-w-state="armed"] :is(h2, h3, p, dl, ul):not([data-w-state] :is(dl, ul) *),
+[data-w-state="in"] :is(h2, h3, p, dl, ul):not([data-w-state] :is(dl, ul) *) {
+  --w-text: calc(var(--w-delay, 0ms) + 380ms);
+}
+[data-w-state="in"] :is(h2, h3, p, dl, ul):not([data-w-state] :is(dl, ul) *) {
+  animation: motion-word 560ms var(--w-text) var(--motion-ease) both;
+}
+html[data-motion-text="sweep"]
+  [data-w-state="in"]
+  :is(h2, h3, p, dl, ul):not([data-w-state] :is(dl, ul) *) {
+  -webkit-mask-image: linear-gradient(90deg, #000 42%, transparent 58%);
+  mask-image: linear-gradient(90deg, #000 42%, transparent 58%);
+  -webkit-mask-size: 260% 100%;
+  mask-size: 260% 100%;
+  animation: motion-sweep 820ms var(--w-text) var(--motion-ease) both;
+}
+
+/* ── Widget hover: add `hover` to a Panel, or data-hover to anything ── */
+[data-hover] {
+  transition: transform 260ms var(--motion-ease);
+}
+
+[data-hover]::after {
+  position: absolute;
+  z-index: 3;
+  border-radius: inherit;
+  content: "";
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 220ms ease-out;
+}
+
+html[data-motion-hover="glow"] [data-hover]::after {
+  background: radial-gradient(
+    340px circle at var(--hx, 50%) var(--hy, 50%),
+    rgb(245 162 84 / 0.2),
+    rgb(226 46 32 / 0.07) 45%,
+    transparent 70%
+  );
+}
+html[data-motion-hover="ring"] [data-hover]::after {
+  box-shadow: inset 0 0 0 2px rgb(var(--amber));
+}
+
+@media (hover: hover) {
+  html:is([data-motion-hover="glow"], [data-motion-hover="ring"]) [data-hover]:hover::after {
+    opacity: 1;
+  }
+  html[data-motion-hover="glow"] [data-hover]:hover {
+    transform: translateY(-3px);
+  }
+  html[data-motion-hover="lift"] [data-hover]:hover {
+    transform: translateY(-8px);
+  }
+  html[data-motion-hover="ring"] [data-hover]:hover {
+    transform: scale(1.012);
+  }
+  html[data-motion-hover="tilt"] [data-hover]:hover {
+    transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+    transition-duration: 90ms;
+  }
+}
+
+html:is([data-motion-hover="glow"], [data-motion-hover="ring"]) [data-hover]:focus-visible::after {
+  opacity: 1;
+}
+
+/* ── Molten art: a slow CSS view of the liquid for inner pages (no WebGL) */
+.molten-art {
+  position: relative;
+  overflow: hidden;
+  min-height: 200px;
+  border-radius: 28px;
+  background: #181c21;
+}
+
+.molten-art > span {
+  position: absolute;
+  inset: -28%;
+  animation: molten-drift 26s ease-in-out infinite alternate paused;
+}
+
+.molten-art > span:nth-child(2) {
+  animation-duration: 34s;
+  animation-direction: alternate-reverse;
+  mix-blend-mode: screen;
+  opacity: 0.8;
+}
+
+.molten-art[data-motion-live="on"] > span {
+  animation-play-state: running;
+}
+
+@keyframes molten-drift {
+  from {
+    transform: translate(-7%, 5%) scale(1) rotate(-5deg);
+  }
+  to {
+    transform: translate(8%, -6%) scale(1.14) rotate(7deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-hover],
+  [data-hover]:hover {
+    transform: none !important;
+  }
+
+  .molten-art > span {
+    animation: none !important;
+  }
+}
+
+@media print {
+  [data-w-state] {
+    opacity: 1 !important;
+  }
+
+  [data-w-state] * {
+    -webkit-mask: none !important;
+    mask: none !important;
+  }
+}
+
 /* ── Lead-flow panel 🚩: each row is one step in the story ─────────── */
 .lead-flow > li {
   animation: motion-word 700ms var(--motion-ease) both;
