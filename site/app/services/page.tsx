@@ -32,7 +32,7 @@ import { Arrow } from "@/components/ui/Arrow";
 export const metadata = pageMetadata({
   title: "Services",
   description:
-    "Web design, local SEO and Google Business Profile management for trades businesses in Acadiana, Louisiana: built for phones and made to get found.",
+    "Web design, local SEO, Google Business Profile management and integrations for trades businesses in Acadiana, Louisiana: built for phones and made to get found.",
   path: "/services/",
 });
 
@@ -116,7 +116,9 @@ function ServicePane({ s, index, work }: { s: Service; index: number; work: Case
           {/* The deliverables, numbered, so it reads as a list of things
               you get rather than a feature checklist. */}
           <div className="flex flex-col gap-4">
-            <p className="font-body text-room-small text-muted">What you get</p>
+            <p className="font-body text-room-small text-muted">
+              {s.addOns ? "With every website" : "What you get"}
+            </p>
             <ol className="grid gap-3 sm:grid-cols-2">
               {s.included.map((item, i) => (
                 <li
@@ -131,6 +133,25 @@ function ServicePane({ s, index, work }: { s: Service; index: number; work: Case
               ))}
             </ol>
           </div>
+
+          {s.addOns && (
+            <div className="flex flex-col gap-4">
+              <p className="font-body text-room-small text-muted">Add when you need them</p>
+              <ul className="grid gap-3 sm:grid-cols-2">
+                {s.addOns.map((item) => (
+                  <li
+                    key={item}
+                    className="flex items-start gap-4 rounded-field border border-dashed border-text/[0.2] p-4"
+                  >
+                    <span aria-hidden className="font-body text-room-small font-medium text-amber">
+                      +
+                    </span>
+                    <span className="text-room-small">{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           <Link
             href={`/services/${s.slug}/`}

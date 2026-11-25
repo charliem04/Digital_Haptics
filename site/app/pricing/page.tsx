@@ -31,7 +31,7 @@ import { PagePane, PaneStack } from "@/components/page/PagePane";
 export const metadata = pageMetadata({
   title: "Pricing",
   description:
-    "Where web design, local SEO and Google Business Profile pricing starts for trades businesses in Acadiana. Every project is quoted after a short call.",
+    "Where web design, local SEO, Google Business Profile and integration pricing starts for Acadiana trades businesses. Quoted after a short call.",
   path: "/pricing/",
 });
 
@@ -54,7 +54,11 @@ function Check({ className }: { className?: string }) {
 }
 
 export default function PricingPage() {
-  const services = getServices();
+  // One-time project prices on the top row (Web Design, Integrations),
+  // monthly services below (owner's call, 2026-11-25).
+  const ORDER = ["web-design", "integrations", "local-seo", "google-business-profile"];
+  const rank = (slug: string) => (ORDER.includes(slug) ? ORDER.indexOf(slug) : ORDER.length);
+  const services = [...getServices()].sort((a, b) => rank(a.slug) - rank(b.slug));
   const statement = getQuoteStatement();
   const cta = ctaLink();
 
@@ -73,7 +77,8 @@ export default function PricingPage() {
           <ul
             className={cn(
               "grid items-stretch gap-4 lg:gap-6",
-              services.length > 2 && "lg:grid-cols-3"
+              // Four services read best as two rows of two.
+              services.length === 4 ? "md:grid-cols-2" : services.length > 2 && "lg:grid-cols-3"
             )}
           >
             {services.map((s, i) => {
@@ -111,6 +116,16 @@ export default function PricingPage() {
                       <p className={cn("font-body text-room-body", !lead && "text-muted")}>
                         {s.priceUnit}
                       </p>
+                      {s.pricingNote && (
+                        <p
+                          className={cn(
+                            "pt-2 font-body text-room-small",
+                            lead ? "text-on-amber" : "text-text"
+                          )}
+                        >
+                          {s.pricingNote}
+                        </p>
+                      )}
                     </div>
 
                     <p className={cn("text-room-body", !lead && "text-muted")}>{s.short}</p>
@@ -121,7 +136,8 @@ export default function PricingPage() {
                         lead ? "border-on-amber/25" : "border-line text-text"
                       )}
                     >
-                      {s.included.slice(0, 4).map((item) => (
+                      {/* What the price buys: the add-ons, where a service has them. */}
+                      {(s.addOns ?? s.included).slice(0, 4).map((item) => (
                         <li key={item} className="flex items-start gap-3">
                           <Check className={lead ? "text-on-amber" : "text-amber"} />
                           {item}
@@ -131,7 +147,7 @@ export default function PricingPage() {
 
                     <div className="mt-auto flex flex-col gap-3 pt-2">
                       {cta && (
-                        <Button href={cta.href} block variant={lead ? "accent" : "primary"}>
+                        <Button href={cta.href} block variant={lead ? "glass" : "primary"}>
                           {cta.label}
                         </Button>
                       )}

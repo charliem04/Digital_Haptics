@@ -123,7 +123,7 @@ export default function CityPage({ params }: { params: { city: string } }) {
 
         <PagePane labelledBy="city-services">
           <SectionHead id="city-services" label="Services" title={`What we do in ${c.name}`} />
-          <ul className="grid gap-4 md:grid-cols-3 lg:gap-6">
+          <ul className="grid gap-4 md:grid-cols-2 lg:gap-6 xl:grid-cols-4">
             {getServices().map((s) => (
               <li key={s.slug}>
                 <ServiceCard service={s} />

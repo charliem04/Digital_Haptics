@@ -129,10 +129,59 @@ export const services: (Service & { flag?: FlagName })[] = [
     system: "Google Business Profile",
   },
   {
+    // Charles, 2026-11-25: basics included with every website; add-ons
+    // from $500 each, one-time. CTL is the example of major integrations.
+    slug: "integrations",
+    code: "ACT.04",
+    name: "Integrations",
+    short: "Your site connected to the tools your business runs on.",
+    lead: "A website does more when it plugs into the rest of the business: customers book a time, quote requests land where you'll see them, and your Google reviews do some of the selling. Every site we build comes with the basics connected. Bigger hookups are added when you need them.",
+    included: [
+      "Online booking built into the site, with Calendly or Cal.com",
+      "Quote and contact forms sent straight to your email",
+      "Spam protection on every form",
+      "Your Google reviews, map and Business Profile linked from the site",
+    ],
+    addOns: [
+      "Form leads sent into your CRM or a spreadsheet",
+      "Online deposits and invoice payments",
+      "Financing calculators or lender links",
+      "Custom tools, such as a hiring portal or a project gallery you can update",
+    ],
+    forWho: [
+      "Owners who want bookings and quote requests without phone tag",
+      "Businesses that take deposits or offer financing",
+      "Anyone copying leads from email into another system by hand",
+    ],
+    faq: [
+      {
+        q: "What comes with every website?",
+        a: "Online booking, quote and contact forms sent to your email, spam protection, and your Google reviews, map and profile linked from the site. There's no extra charge for those.",
+      },
+      {
+        q: "What does an add-on cost?",
+        a: "From $500 each, one-time. We quote it after the call, once we know which tools you use and what they need to do.",
+      },
+      {
+        q: "Do I pay for the tools themselves?",
+        a: "Yes, directly. Plans like Calendly or Cal.com, card fees from Stripe or Square, and CRM subscriptions are billed to you by the provider. The accounts are yours; we set them up and connect them.",
+      },
+      {
+        q: "I already use a tool. Can you connect it?",
+        a: "Usually. We look at what you have on the first call, connect it where we can, and tell you plainly if it can't do what you need.",
+      },
+    ],
+    price: "Integration add-ons from $500",
+    priceFrom: "$500",
+    priceUnit: "per add-on, one-time",
+    pricingNote: "Booking, forms and Google reviews come with every website.",
+    system: "Integrations",
+  },
+  {
     // 🚩 FEATURE_AUTOMATIONS. The full page (modules detail, the demo)
     // is Phase 4; this entry gives it a card, a sub-page and a price.
     slug: "automations",
-    code: "ACT.04",
+    code: "ACT.05",
     name: "Automations",
     short: "Every form and missed call gets a reply in seconds.",
     lead: "Leads go cold while you are on a roof or under a sink. Automations reply to every form and missed call for you, alert you right away, and keep the lead warm until you can call back.",
@@ -159,6 +208,6 @@ export const services: (Service & { flag?: FlagName })[] = [
 
 /** The overview note (PLAN §5 Services), per flag state. */
 export const combineNote = {
-  off: "Most clients combine them: a site worth finding, the local search work that gets it found, and a Google listing kept current.",
-  on: "Most clients combine them: a site worth finding, the local search work that gets it found, a Google listing kept current, and automations that answer every lead.",
+  off: "Most clients combine them: a site worth finding, the local search work that gets it found, a Google listing kept current, and the tools it all connects to.",
+  on: "Most clients combine them: a site worth finding, the local search work that gets it found, a Google listing kept current, the tools it all connects to, and automations that answer every lead.",
 };

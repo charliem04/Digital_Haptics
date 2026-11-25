@@ -74,7 +74,7 @@ export default function TradePage({ params }: { params: { slug: string } }) {
 
         <PagePane labelledBy="trade-services">
           <SectionHead id="trade-services" label="Services" title="How we can help" />
-          <ul className="grid gap-4 md:grid-cols-3 lg:gap-6">
+          <ul className="grid gap-4 md:grid-cols-2 lg:gap-6 xl:grid-cols-4">
             {getServices().map((s) => (
               <li key={s.slug}>
                 <ServiceCard service={s} />

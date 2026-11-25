@@ -71,6 +71,7 @@ export const nav: RouteNode[] = [
         live: true,
         priority: 0.8,
       },
+      { href: "/services/integrations/", label: "Integrations", live: true, priority: 0.8 },
       {
         href: "/services/automations/",
         label: "Automations",

@@ -74,6 +74,13 @@ export type Service = {
   priceUnit: string;
   /** Case-study `systems` value that marks a case as relevant here. */
   system: string;
+  /**
+   * Extras sold on top of what's included (Integrations): `included` is
+   * then what every client gets, and the price applies to these.
+   */
+  addOns?: string[];
+  /** One line under the price on /pricing, e.g. what comes free. */
+  pricingNote?: string;
 };
 
 /** One step of a process strip (PLAN §5). */

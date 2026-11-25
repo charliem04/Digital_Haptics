@@ -58,7 +58,11 @@ export default function ServicePage({ params }: { params: { slug: string } }) {
       <PaneStack>
         <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
           <PagePane labelledBy="included">
-            <SectionHead id="included" label="Included" title="What you get" />
+            <SectionHead
+              id="included"
+              label="Included"
+              title={s.addOns ? "With every website" : "What you get"}
+            />
             <ul className="flex flex-col border-t border-line">
               {s.included.map((item) => (
                 <li
@@ -87,6 +91,30 @@ export default function ServicePage({ params }: { params: { slug: string } }) {
             </div>
           </PagePane>
         </div>
+
+        {s.addOns && (
+          <PagePane labelledBy="add-ons">
+            <SectionHead
+              id="add-ons"
+              label="Add-ons"
+              title="Add when you need them"
+              lede={`From ${s.priceFrom} ${s.priceUnit}, quoted after the call. Tool plans and card fees are billed to you by the provider.`}
+            />
+            <ul className="grid gap-3 sm:grid-cols-2">
+              {s.addOns.map((item) => (
+                <li
+                  key={item}
+                  className="flex items-start gap-4 rounded-field border border-dashed border-text/[0.2] p-4 text-body"
+                >
+                  <span aria-hidden className="font-medium text-amber">
+                    +
+                  </span>
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </PagePane>
+        )}
 
         {/* 🚩 Flag off today. Its sections still use the full-width bands. */}
         {s.slug === "automations" && <AutomationsSections />}

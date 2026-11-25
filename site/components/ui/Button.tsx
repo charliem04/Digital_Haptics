@@ -9,6 +9,7 @@ import { Arrow } from "./Arrow";
  *   primary  amber fill, on-amber text and arrow (8.95:1)
  *   accent   text-colour fill, room text and arrow
  *   ghost    transparent, 1px text-colour border, no arrow
+ *   glass    frosted white over an amber surface, on-amber text and arrow
  *
  * Sizes: md is 52px tall, sm is 48px for dense rows. Both clear the 44px
  * touch target.
@@ -18,7 +19,7 @@ import { Arrow } from "./Arrow";
  * global reduced-motion rule in app/globals.css stills it.
  */
 
-type Variant = "primary" | "accent" | "ghost";
+type Variant = "primary" | "accent" | "ghost" | "glass";
 type Size = "md" | "sm";
 
 type Common = {
@@ -53,12 +54,16 @@ const VARIANTS: Record<Variant, string> = {
   primary: "bg-amber text-on-amber hover:bg-amber-hover",
   accent: "bg-text text-room hover:bg-muted",
   ghost: "border border-text text-text hover:bg-raised hover:text-text",
+  // For use on amber (the lead pricing card): see-through, frosted.
+  glass:
+    "border border-[rgb(255_255_255/0.45)] bg-[rgb(255_255_255/0.25)] text-on-amber shadow-[inset_0_1px_0_rgb(255_255_255/0.55),0_8px_24px_-12px_rgb(0_0_0/0.35)] backdrop-blur-md hover:bg-[rgb(255_255_255/0.36)]",
 };
 
 const ARROW: Record<Variant, string | null> = {
   primary: "text-on-amber group-disabled/btn:text-muted",
   accent: "text-room group-disabled/btn:text-muted",
   ghost: null,
+  glass: "text-on-amber",
 };
 
 export function Button(props: AsLink | AsButton) {
