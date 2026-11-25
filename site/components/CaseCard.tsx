@@ -4,16 +4,16 @@ import type { CSSProperties } from "react";
 import { motionConfig } from "@/motion.config";
 import { cn } from "@/lib/cn";
 import type { Photo } from "@/content/types";
-import { Panel } from "./ui/Panel";
 import { Arrow } from "./ui/Arrow";
 
 /**
  * ════════════════════════════════════════════════════════════════════
  *  CASE CARD: the screenshot, who it's for, and one result.
  *
- *  Kept deliberately simple (owner's request, 2026-11-25): an inset
- *  screenshot with a status pill, the client's name, trade and town, and
- *  the headline result. Everything else lives on the case study page.
+ *  Kept deliberately simple (owner's request, 2026-11-25): a clear card
+ *  with a thin outline and squircle corners (lab option C), the
+ *  screenshot edge to edge across the top with a status pill, then the
+ *  client's name, trade and town, and the headline result. Everything else lives on the case study page.
  *  The whole card is one link.
  *
  *  Never pass invented client names or results (PLAN, top). Until a
@@ -50,13 +50,13 @@ export function CaseCard({
   className,
 }: CaseCardProps) {
   return (
-    <Panel
-      as={Link}
+    <Link
       href={href}
-      fill="raised"
-      widget
-      className={cn("block no-underline text-text", className)}
-      innerClassName="flex flex-col gap-1 p-2"
+      data-widget=""
+      className={cn(
+        "group/panel relative isolate flex flex-col overflow-hidden rounded-panel border no-underline transition-colors duration-200 border-text/[0.14] text-text hover:border-text/40",
+        className
+      )}
     >
       {/* The glowing edge from motion.config.ts, off by default now. */}
       {motionConfig.card === "rim" && (
@@ -68,7 +68,7 @@ export function CaseCard({
         />
       )}
 
-      <div className="relative aspect-[16/10] overflow-hidden rounded-[20px] bg-room">
+      <div className="relative aspect-[16/10] overflow-hidden bg-room">
         {image ? (
           <Image
             src={image.src}
@@ -83,12 +83,12 @@ export function CaseCard({
             [ Project screenshot ]
           </div>
         )}
-        <span className="absolute left-3 top-3 rounded-control bg-room/85 px-3 py-1 font-body text-room-caption text-text">
+        <span className="absolute left-5 top-5 rounded-control bg-room/85 px-3 py-1 font-body text-room-caption text-text">
           {status}
         </span>
       </div>
 
-      <div className="flex items-start justify-between gap-4 px-4 pb-4 pt-4">
+      <div className="flex items-start justify-between gap-4 p-5">
         <div className="flex min-w-0 flex-col gap-1.5">
           <p className="font-body text-room-step font-medium leading-snug">{client}</p>
           <p className="font-body text-room-small text-muted">
@@ -101,6 +101,6 @@ export function CaseCard({
           <span className="sr-only">Read the case study</span>
         </span>
       </div>
-    </Panel>
+    </Link>
   );
 }

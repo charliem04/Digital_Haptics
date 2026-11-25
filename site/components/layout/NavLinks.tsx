@@ -5,14 +5,14 @@ import { usePathname } from "next/navigation";
 import type { NavLink } from "@/lib/nav";
 
 /**
- * Desktop nav links: mono 12px, .12em, 36px apart (mockup). The current
- * section gets aria-current and a 2px signal bar under it; hover shows
- * the same bar. Client-side only for the pathname.
+ * Desktop nav links, as pills inside the header's glass track. Hover
+ * lights a soft pill; the current section gets aria-current and a
+ * brighter pill. Client-side only for the pathname.
  */
 export function NavLinks({ links }: { links: NavLink[] }) {
   const pathname = usePathname() ?? "/";
   return (
-    <ul className="flex items-center gap-8 font-body text-[1rem]">
+    <ul className="flex items-center gap-1 font-body text-[1rem]">
       {links.map((l) => {
         // Section match (/work/ is current on /work/some-case/), but "/"
         // only matches itself or it would match every page.
@@ -22,7 +22,7 @@ export function NavLinks({ links }: { links: NavLink[] }) {
             <Link
               href={l.href}
               aria-current={current ? "page" : undefined}
-              className="relative inline-flex min-h-touch min-w-[44px] items-center justify-center no-underline after:absolute after:inset-x-0 after:bottom-2 after:h-[2px] after:origin-left after:scale-x-0 after:transition-transform after:ease-brand hover:after:scale-x-100 aria-[current=page]:after:scale-x-100 text-text after:bg-amber after:duration-[160ms] active:text-muted"
+              className="inline-flex min-h-touch min-w-[44px] items-center justify-center rounded-control px-4 no-underline text-text transition-colors duration-[160ms] ease-brand hover:bg-text/10 active:text-muted aria-[current=page]:bg-text/[0.14]"
             >
               {l.label}
             </Link>

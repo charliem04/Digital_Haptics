@@ -11,8 +11,7 @@ import { SectionHead } from "@/components/page/SectionHead";
 import { CtaBand } from "@/components/page/CtaBand";
 import { Mdx } from "@/components/page/Mdx";
 import { Chip } from "@/components/ui/Chip";
-import { SmallLabel } from "@/components/ui/SmallLabel";
-import { Panel } from "@/components/ui/Panel";
+import { cn } from "@/lib/cn";
 import { Arrow } from "@/components/ui/Arrow";
 
 /**
@@ -38,6 +37,9 @@ export const dynamicParams = false;
  * case is published.
  */
 const NONE = "_";
+
+/** Screenshot frame: thin outline, squircle corners, like the case cards. */
+const FRAME = "overflow-hidden rounded-panel border border-text/[0.14] bg-room";
 
 export function generateStaticParams() {
   const slugs = getCases().map((c) => ({ slug: c.slug }));
@@ -115,7 +117,7 @@ export default function CasePage({ params }: { params: { slug: string } }) {
       {meta.heroImage && (
         <Section spacing="none" aria-label="Screenshots">
           <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,4fr)_minmax(0,1fr)]">
-            <Panel fill="raised" innerClassName="overflow-hidden">
+            <div className={FRAME}>
               <Image
                 src={meta.heroImage.src}
                 alt={meta.heroImage.alt}
@@ -123,13 +125,9 @@ export default function CasePage({ params }: { params: { slug: string } }) {
                 height={meta.heroImage.height}
                 className="h-auto w-full"
               />
-            </Panel>
+            </div>
             {meta.mobileImage && (
-              <Panel
-                fill="raised"
-                className="mx-auto w-full max-w-[280px]"
-                innerClassName="overflow-hidden"
-              >
+              <div className={cn(FRAME, "mx-auto w-full max-w-[280px]")}>
                 <Image
                   src={meta.mobileImage.src}
                   alt={meta.mobileImage.alt}
@@ -137,7 +135,7 @@ export default function CasePage({ params }: { params: { slug: string } }) {
                   height={meta.mobileImage.height}
                   className="h-auto w-full"
                 />
-              </Panel>
+              </div>
             )}
           </div>
         </Section>
@@ -154,36 +152,39 @@ export default function CasePage({ params }: { params: { slug: string } }) {
         </article>
       </Section>
 
-      <Section tone="frost" className="border-y border-line" aria-labelledby="systems">
-        <div className="grid gap-10 lg:grid-cols-2">
-          <div className="flex flex-col gap-6">
-            <SectionHead
-              id="systems"
-              label={meta.demo ? "Systems built" : "Systems running"}
-              title={meta.demo ? "What's in the demo" : "What's running now"}
-            />
+      {/* No gray band: results as outlined tiles on the page's own dark
+          ground, so this section matches the rest of the site. */}
+      <Section aria-labelledby="results">
+        <div className="flex flex-col gap-10">
+          <SectionHead
+            id="results"
+            label={meta.demo ? "Status" : "Results"}
+            title={meta.demo ? "Where it stands" : "What changed"}
+          />
+          <dl className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {meta.results.map((r) => (
+              <div
+                key={r.label}
+                className="flex flex-col-reverse gap-2 rounded-panel border border-line p-6 lg:p-8"
+              >
+                <dt className="text-room-small text-muted">{r.label}</dt>
+                <dd className="font-body text-[clamp(1.5rem,2.4vw,2rem)] font-medium leading-tight text-amber">
+                  {r.value}
+                </dd>
+              </div>
+            ))}
+          </dl>
+          <div className="flex flex-col gap-4 border-t pt-8 border-line">
+            <h3 id="systems" className="text-room-small text-muted">
+              {meta.demo ? "What's in the demo" : "What's running now"}
+            </h3>
             <ul className="flex flex-wrap gap-2">
               {meta.systems.map((s) => (
                 <li key={s}>
-                  <SmallLabel className="font-medium">{s}</SmallLabel>
+                  <Chip>{s}</Chip>
                 </li>
               ))}
             </ul>
-          </div>
-          <div className="flex flex-col gap-6">
-            <SectionHead
-              id="results"
-              label={meta.demo ? "Status" : "Results"}
-              title={meta.demo ? "Where it stands" : "What changed"}
-            />
-            <dl className="border-t border-line font-body text-room-body">
-              {meta.results.map((r) => (
-                <div key={r.label} className="flex justify-between gap-6 border-b py-3 border-line">
-                  <dt className="text-muted">{r.label}</dt>
-                  <dd className="flex items-center gap-2 font-medium">{r.value}</dd>
-                </div>
-              ))}
-            </dl>
           </div>
         </div>
       </Section>

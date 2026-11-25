@@ -42,9 +42,10 @@ const config: Config = {
       none: "0",
       DEFAULT: "0",
       // Shape language (VISUAL_GUIDE §4).
-      panel: "28px",
-      field: "12px",
-      notice: "10px",
+      // Variables so squircle browsers can scale them (globals.css).
+      panel: "var(--r-panel)",
+      field: "var(--r-field)",
+      notice: "var(--r-notice)",
       control: "9999px",
     },
     boxShadow: {

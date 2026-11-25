@@ -21,9 +21,9 @@ Four rules decide most questions:
 
 | Token | Hex | Role |
 |---|---|---|
-| `room` | `#12161A` | Page ground, header, input fill |
+| `room` | `#12161A` | Page ground, input fill |
 | `surface` | `#1A2025` | Alternate sections, form panel, footer |
-| `raised` | `#232C30` | Service and case cards, disabled fills |
+| `raised` | `#232C30` | Service cards, disabled fills |
 | `line` | `#3B4847` | Decorative dividers only |
 | `text` | `#EEF1EE` | Headings, body, focus ring |
 | `muted` | `#A9B5B2` | Secondary text, input borders, placeholders |
@@ -84,6 +84,8 @@ Each cell shows the flat ratio, then the worst case under the grain layer, where
 | Item | Rule |
 |---|---|
 | Panels and cards | Radius 28px, solid fill, no border, no shadow |
+| Case frames | Case cards and case-page screenshots: clear, 1px `text` at 14% outline (40% on hover) |
+| Corner shape | Squircle on every section, panel, card, glass pane, field and notice (`corner-shape: squircle` where supported; radius tokens rise to 48 / 20 / 17px, glass 60px, so they read the same size). Elsewhere plain 28 / 12 / 10px, glass 36px. Buttons, chips and pills stay fully round |
 | Buttons, chips, menu button | Fully round (`999px`) |
 | Inputs, selects, textareas | Radius 12px, 1px `muted` border, `room` fill |
 | Small notices | Radius 10px, 1px `line` border |
@@ -140,10 +142,10 @@ The Stage 1 demo also opened the CTA on Pricing and the case study. This guide n
 
 ### 6.4 How text is protected
 
-- **Desktop hero:** copy sits in the left column. A gradient runs solid `room` to 56% of the width, then fades to transparent at 80%. Measured at 1440px: copy ends at 764px and the solid area ends at 798px.
-- **Phone hero:** the liquid fills the band under the header. A vertical gradient reaches solid `room` at 45vh, and the copy starts there.
+- **Desktop hero:** the liquid fills the whole hero, edge to edge and up under the header. Copy sits in the left column directly on the liquid, with no shade (owner's call, 2026-11-25). **Known accessibility trade-off:** when bright amber passes behind the copy, contrast drops below WCAG AA (muted label about 1.2:1, headline about 1.9:1 at worst). The owner was shown this and chose the bare look; a soft full-height fade from the left edge is the fix if it is revisited.
+- **Phone hero:** the liquid fills the band at the top, behind the header. A vertical gradient reaches solid `room` at 45vh, and the copy starts there.
 - **Final CTA:** copy sits on a solid `room` plate with a 28px radius.
-- **Header:** always solid `room`.
+- **Header:** transparent "islands": logo free on the left, links in one glass pill in the centre, "Start a Project" free on the right (owner's pick, 2026-11-25). On Home it floats over the liquid; elsewhere over `room`.
 - A two-minute frame scan peaked at luma 190 on the amber rim, where `text` would fail. So the rule is structural: no scrim-over-liquid text, at any opacity.
 
 ## 7. Motion
@@ -179,8 +181,8 @@ Every interactive element has a visible focus state: a **3px `text` outline with
 | Checkbox | 22px, `amber` accent, 44px row | n/a | n/a | Native | |
 | Chip | 1px `line` border, pill, 15px | `raised` fill if a link | 1px down | n/a | Static city chips do not react |
 | Service card | `surface`, 28px radius | Link underline | n/a | n/a | Name, short line, link. Prices stay on Pricing, as they do today |
-| Case card | `raised`, image area, key/value rows, footer link | Footer underline | 1px down | n/a | Draft and anonymised rules unchanged |
-| Header | Solid `room`, 80px, logo with round amber mark | Nav underline in `amber` | n/a | n/a | Inset logic for the old hero rail is removed |
+| Case card | Clear with a hairline outline and squircle corners; screenshot edge to edge on top, then client, trade · town, result in amber, round arrow | Outline brightens, screenshot zooms 3% | n/a | n/a | Draft and anonymised rules unchanged |
+| Header | Transparent, 80px; logo with round amber mark; links in a glass pill (`room` at 55%, blur, 12% `text` outline) | Link lights as a `text` 10% pill; current page 14% | n/a | n/a | Mobile: logo and round menu button |
 | Mobile menu | Keeps native `<dialog>`, `surface`, 22px links, 52px rows | n/a | n/a | n/a | Keyboard behaviour unchanged |
 | Sticky CTA | Full-width `amber`, 56px, phone only | n/a | n/a | n/a | Hidden on `/start` and while the hero's button is visible |
 | Footer | `surface`, five columns collapsing to one | Link turns `amber` | n/a | n/a | All links unchanged |

@@ -148,3 +148,40 @@ a {
     @apply mx-auto w-full max-w-page px-gutter-sm lg:px-gutter;
   }
 }
+
+/* ── SQUIRCLE CORNERS ────────────────────────────────────────────────
+   Every section, panel, card, field and notice has smooth "squircle"
+   corners (owner's pick, 2026-11-25). Buttons, chips and other pills
+   (`rounded-control`) stay fully round, and so do dots.
+
+   The radius tokens are variables. Browsers with `corner-shape`
+   (Chromium 139+) get the squircle, with each radius raised about 1.7x
+   because a squircle reads tighter than a circular corner of the same
+   radius. Everyone else keeps the plain 28 / 12 / 10px corners.
+   Borders, shadows and overflow clipping all follow the shape. */
+:root {
+  --r-panel: 28px;
+  --r-field: 12px;
+  --r-notice: 10px;
+  --r-glass: 36px;
+}
+
+@supports (corner-shape: squircle) {
+  :root {
+    --r-panel: 48px;
+    --r-field: 20px;
+    --r-notice: 17px;
+    --r-glass: 60px;
+  }
+
+  .rounded-panel,
+  .rounded-field,
+  .rounded-notice,
+  .liquid-cutout,
+  .motion-trim,
+  .molten-art,
+  [data-glass-pane],
+  [data-hover]::after {
+    corner-shape: squircle;
+  }
+}

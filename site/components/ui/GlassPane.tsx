@@ -18,9 +18,11 @@ import { cn } from "@/lib/cn";
  *
  *  It marks itself as a liquid opening, so the liquid keeps running
  *  while a pane is on screen.
+ *
+ *  Corners are squircles where the browser supports `corner-shape`
+ *  (globals.css), and the bending rim is drawn to the same shape.
  * ════════════════════════════════════════════════════════════════════
  */
-const RADIUS = 36;
 const RIM = 15;
 const BEND = 40;
 const FROST = 6.5;
@@ -36,7 +38,7 @@ const SPREADS = [1, 1 + SPLIT * 0.2, 1 + SPLIT * 0.4];
 const FALLBACK = `blur(${FROST}px) saturate(1.25)`;
 
 /** Neutral everywhere except a curved rim that pushes outward. */
-function buildMap(width: number, height: number): string {
+function buildMap(width: number, height: number, radius: number, squircle: boolean): string {
   const canvas = document.createElement("canvas");
   canvas.width = width;
   canvas.height = height;
@@ -48,11 +50,16 @@ function buildMap(width: number, height: number): string {
 
   const hw = width / 2;
   const hh = height / 2;
-  const r = Math.min(RADIUS, hw, hh);
+  const r = Math.min(radius, hw, hh);
+  // Distance to the edge: a round corner is a circle (power 2); a
+  // squircle corner is a superellipse of power 4, as CSS draws it.
+  const corner = squircle
+    ? (x: number, y: number) => Math.sqrt(Math.sqrt(x ** 4 + y ** 4))
+    : Math.hypot;
   const sdf = (px: number, py: number) => {
     const qx = Math.abs(px - hw) - (hw - r);
     const qy = Math.abs(py - hh) - (hh - r);
-    return Math.hypot(Math.max(qx, 0), Math.max(qy, 0)) + Math.min(Math.max(qx, qy), 0) - r;
+    return corner(Math.max(qx, 0), Math.max(qy, 0)) + Math.min(Math.max(qx, qy), 0) - r;
   };
 
   // Only the band near the edge can bend, so only that band is computed.
@@ -105,8 +112,12 @@ export function GlassPane({
       const w = Math.round(el.offsetWidth);
       const h = Math.round(el.offsetHeight);
       if (!w || !h) return;
+      const radius = parseFloat(getComputedStyle(el).borderTopLeftRadius) || 36;
+      const squircle = CSS.supports("corner-shape", "squircle");
       setMap((prev) =>
-        prev && prev.w === w && prev.h === h ? prev : { url: buildMap(w, h), w, h }
+        prev && prev.w === w && prev.h === h
+          ? prev
+          : { url: buildMap(w, h, radius, squircle), w, h }
       );
     };
     // After first paint, so the map never competes with loading the page.
@@ -131,12 +142,12 @@ export function GlassPane({
     <div
       ref={ref}
       data-liquid-opening
+      data-glass-pane
       className={cn(
-        "relative overflow-hidden border border-[rgb(255_255_255/0.16)] border-t-[rgb(255_255_255/0.4)] shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_16px_40px_-16px_rgba(0,0,0,0.5)]",
+        "relative overflow-hidden rounded-[var(--r-glass)] border border-[rgb(255_255_255/0.16)] border-t-[rgb(255_255_255/0.4)] shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_16px_40px_-16px_rgba(0,0,0,0.5)]",
         className
       )}
       style={{
-        borderRadius: RADIUS,
         backdropFilter: map ? `url(#${id}) saturate(1.2)` : FALLBACK,
         WebkitBackdropFilter: FALLBACK,
       }}

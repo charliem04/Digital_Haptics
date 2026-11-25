@@ -12,11 +12,16 @@ import { LiquidBackdrop } from "./liquid/LiquidBackdrop";
  *  HOME HERO (PLAN §5 Home 1, docs/VISUAL_GUIDE.md §6, §10). Copy is
  *  PLAN §5 verbatim, both flag states.
  *
- *  The hero is an opening onto the page's fixed liquid layer. Text never
- *  sits on it: on phones the liquid shows as a band under the header
- *  and the copy starts where it has faded to solid `room`.
- *  From 1024px the copy holds the left column, capped so it always ends
- *  inside the solid part of the gradient (54.5% of the width).
+ *  The hero is an opening onto the page's fixed liquid layer. It pulls
+ *  up under the transparent header, so the liquid runs to the top.
+ *  On phones the liquid shows as a band at the top and the copy starts
+ *  where it has faded to solid `room`; the solid area fades out again
+ *  below the buttons, so there is no hard line.
+ *  From 1024px the copy holds the left column directly on the liquid,
+ *  with no shade behind it (owner's call, 2026-11-25). KNOWN TRADE-OFF:
+ *  when the bright amber passes behind the copy it drops below WCAG AA
+ *  (muted label about 1.2:1, headline about 1.9:1 at worst). The owner
+ *  was told and chose the bare look. See VISUAL_GUIDE §6.
  *
  *  The headline is the LCP element: server-rendered, never animated,
  *  and independent of the canvas.
@@ -43,15 +48,15 @@ export function Hero({ backdrop = <LiquidBackdrop /> }: { backdrop?: ReactNode }
       aria-labelledby="hero-title"
       data-track-loc="hero"
       data-liquid-opening
-      className="relative overflow-hidden"
+      className="relative -mt-20 overflow-hidden"
     >
       {backdrop}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,transparent_0,transparent_32svh,rgb(var(--room))_45svh)] lg:bg-[linear-gradient(90deg,rgb(var(--room))_0,rgb(var(--room))_54.5%,transparent_66%)]"
+        className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,transparent_0,transparent_32svh,rgb(var(--room))_45svh,rgb(var(--room))_calc(100%-72px),transparent_100%)] lg:bg-none"
       />
 
-      <div className="page-x relative flex flex-col pb-14 pt-[45svh] lg:min-h-[calc(100svh-80px)] lg:justify-center lg:py-16">
+      <div className="page-x relative flex flex-col pb-14 pt-[45svh] lg:min-h-[100svh] lg:justify-center lg:pb-16 lg:pt-36">
         <div className="flex flex-col gap-[22px] lg:max-w-[min(700px,calc(56vw-88px))]">
           <SectionLabel>{COPY.label}</SectionLabel>
           <h1 id="hero-title" className="text-room-display">
