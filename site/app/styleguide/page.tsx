@@ -432,7 +432,6 @@ export default function StyleguidePage() {
                   href="/"
                   client="[Client name]"
                   trade={TRADES[n - 1]}
-                  systems="Site / SEO"
                   result="[RESULT]"
                 />
               </li>

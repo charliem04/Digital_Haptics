@@ -34,7 +34,7 @@ export const motionConfig: {
   page: "molten",
   text: "sweep",
   passive: "embers",
-  card: "rim",
+  card: "none",
   widget: "rise",
   hover: "glow",
   divider: "seam",
