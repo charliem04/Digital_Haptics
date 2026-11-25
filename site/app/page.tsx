@@ -6,22 +6,16 @@ import { pageMetadata } from "@/lib/meta";
 import { contactLinks, ctaLink } from "@/lib/nav";
 import { citySlug, isLive } from "@/lib/routes";
 import { cn, pad2 } from "@/lib/cn";
-import {
-  getCombineNote,
-  getFeaturedCases,
-  getPosts,
-  getProcessSteps,
-  getServices,
-} from "@/lib/content";
+import { getCombineNote, getCases, getPosts, getProcessSteps, getServices } from "@/lib/content";
 import { Hero } from "@/components/home/Hero";
 import { GlassPane } from "@/components/ui/GlassPane";
 import { SectionHead } from "@/components/page/SectionHead";
-import { CaseGrid } from "@/components/page/CaseGrid";
 import { formatDate } from "@/components/page/PostCard";
 import { MoreLink } from "@/components/MoreLink";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { Arrow } from "@/components/ui/Arrow";
+import { CaseReel } from "@/components/page/CaseReel";
 
 /**
  * ════════════════════════════════════════════════════════════════════
@@ -70,7 +64,8 @@ const ROW_LINK =
   "group flex items-center justify-between gap-6 py-5 no-underline text-text transition-colors duration-[160ms] hover:text-text";
 
 export default function Home() {
-  const featured = getFeaturedCases();
+  // Every published case (Matt included), drifting in the reel.
+  const work = getCases();
   const services = getServices();
   const steps = getProcessSteps();
   const posts = getPosts().slice(0, 3);
@@ -83,13 +78,13 @@ export default function Home() {
       <Hero />
 
       <div className="page-x relative z-10 flex flex-col gap-6 pb-40 pt-room-section-sm lg:gap-8 lg:pb-[clamp(200px,28vh,320px)] lg:pt-room-section">
-        {featured.length > 0 && (
+        {work.length > 0 && (
           <Pane id="proof">
             <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
               <SectionHead id="proof" label="Work" title="Recent work" />
               <MoreLink href="/work/">All case studies</MoreLink>
             </div>
-            <CaseGrid cases={featured} />
+            <CaseReel cases={work} />
           </Pane>
         )}
 

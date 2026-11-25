@@ -121,13 +121,13 @@ Static surfaces carry the film grain, so the identity continues where the liquid
 | Page | Treatment |
 |---|---|
 | Home | **Live.** One fixed canvas seen through the hero, a wide band after Work, a side window beside Process, and the final CTA (owner's choice, 2026-11-23) |
-| Work, case studies, Services and service pages, Pricing, About, Trades, cities | **Page glow** (owner's pick, 2026-11-25): a dim, slowly drifting CSS view of the liquid fixed behind the page (`PageGlow`), with a cool blue-grey wash of deep teal, teal and sage under two warm masses. Every section is a squircle glass pane (`PagePane`) in a stack with room above the footer (`PaneStack`), cards are hairline, and the final CTA is a glass pane. No WebGL |
+| Work, case studies, Services and service pages, Pricing, About, Trades, cities | **Live, dimmed** (owner's pick, 2026-11-25): Home's own liquid (`PageLiquid` wraps `LiquidBackdrop`), fixed behind the page with `room` at 70% over it. That is the lightest dim where muted text still reads 4.6:1 over the brightest amber (headings 8.5:1). Loads after idle like Home; Lighthouse stays 98–100. Every section is a squircle glass pane (`PagePane`) in a stack with room above the footer (`PaneStack`), cards are hairline, and the final CTA is a glass pane. The older CSS-only `PageGlow` stays in the code, unused |
 | Blog, posts | **None.** Plain `room` ground and the solid `surface` CTA band |
 | `/start`, thanks | **None.** Nothing competes with the form |
 | Legal, 404 | **None** |
 | Open Graph images | **Still** (R7) |
 
-The Stage 1 demo also opened the CTA on Pricing and the case study. This guide narrows live liquid to Home, so those pages load no WebGL at all. That follows "rare and expensive" and protects the plain-content pages.
+The Stage 1 demo also opened the CTA on Pricing and the case study. This guide narrows live liquid to Home, so those pages load no WebGL at all. That followed "rare and expensive"; since 2026-11-25 the main inner pages share Home's liquid (dimmed), and only blog, legal, `/start` and 404 stay without it.
 
 ### 6.3 Settings
 
@@ -163,6 +163,7 @@ The Stage 1 demo also opened the CTA on Pricing and the case study. This guide n
 | Toned sections: rising embers, at the outer edges | Continuous, only while on screen | None |
 | Section dividers: heat seam | 4.2s loop, only while on screen | Static line |
 | Widgets: soft cascade | Cards and Home's glass panes fade in over 900ms with a 14px drift up. Everything that arrives together goes one after another, 110ms apart, top to bottom and left to right (longest wait 660ms) (owner's pick, 2026-11-25) | Shown at once |
+| Home Recent work: case reel | Every published case drifts sideways in an endless loop, about 37px a second, with soft fades at the pane edges. Drag it with the mouse or swipe it with a thumb; it glides briefly after release. It holds still under the mouse, while a card has keyboard focus, while off screen, and for about 2s after a swipe. No pause button (owner's call, 2026-11-25). The looped copy is hidden from screen readers and the keyboard | Doesn't drift; can still be dragged |
 | Header: shrink on scroll | Sticky. Scrolling down shrinks it into a tiny 40px glass capsule 10px below the top edge (400px wide on desktop, 96px on phones): the logo folds to its amber dot, the links shrink to 13px type, "Start a Project" folds to a round amber arrow and the phone menu button to 32px. All stay clickable, with targets of 24px or more and their full names for screen readers; scrolling up grows it back to a full-width 64px glass bar; at the top of the page it opens out again. 560ms ease-out; the header's 80px box never changes, so nothing moves (owner's pick, 2026-11-25) | Changes without animating |
 
 **Owner's picks, 2026-11-22.** `site/motion.config.ts` selects them. All 16 options stay built in `site/app/motion.css` and `site/components/motion/`, and can be compared at `/lab/motion` under `npm run dev`.
@@ -184,7 +185,7 @@ Every interactive element has a visible focus state: a **3px `text` outline with
 | Checkbox | 22px, `amber` accent, 44px row | n/a | n/a | Native | |
 | Chip | 1px `line` border, pill, 15px | `raised` fill if a link | 1px down | n/a | Static city chips do not react |
 | Service card | `surface`, 28px radius | Link underline | n/a | n/a | Name, short line, link. Prices stay on Pricing, as they do today |
-| Case card | Clear with a hairline outline and squircle corners; screenshot edge to edge on top, then client, trade · town, result in amber, round arrow | Outline brightens, screenshot zooms 3% | n/a | n/a | Draft and anonymised rules unchanged |
+| Case card | Clear with a hairline outline and squircle corners; screenshot edge to edge on top, then fixed rows so cards line up: trade · town (one line), client name (a two-line slot), and the result in amber with the round arrow pinned to the bottom above a hairline | Outline brightens, screenshot zooms 3% | n/a | n/a |
 | Header | Transparent, 80px; logo with round amber mark; links in a glass pill (`room` at 55%, blur, 12% `text` outline) | Link lights as a `text` 10% pill; current page 14% | n/a | n/a | Mobile: logo and round menu button |
 | Mobile menu | Keeps native `<dialog>`, `surface`, 22px links, 52px rows | n/a | n/a | n/a | Keyboard behaviour unchanged |
 | Sticky CTA | Full-width `amber`, 56px, phone only | n/a | n/a | n/a | Hidden on `/start` and while the hero's button is visible |

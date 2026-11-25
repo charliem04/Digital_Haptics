@@ -34,6 +34,8 @@ export type CaseCardProps = {
   image?: Photo;
   /** Load the screenshot right away, for a card at the top of a page. */
   priority?: boolean;
+  /** Fade in with the widget cascade. Off in the reel, where the pane fades instead. */
+  widget?: boolean;
   className?: string;
 };
 
@@ -47,12 +49,13 @@ export function CaseCard({
   status = "Live site",
   image,
   priority = false,
+  widget = true,
   className,
 }: CaseCardProps) {
   return (
     <Link
       href={href}
-      data-widget=""
+      data-widget={widget ? "" : undefined}
       className={cn(
         "group/panel relative isolate flex flex-col overflow-hidden rounded-panel border no-underline transition-colors duration-200 border-text/[0.14] text-text hover:border-text/40",
         className
@@ -88,18 +91,27 @@ export function CaseCard({
         </span>
       </div>
 
-      <div className="flex items-start justify-between gap-4 p-5">
+      {/* Fixed rows, so cards side by side line up: the category on one
+          line, the name in a two-line slot, and the key result with the
+          arrow pinned to the bottom. */}
+      <div className="flex flex-1 flex-col gap-4 p-5">
         <div className="flex min-w-0 flex-col gap-1.5">
-          <p className="font-body text-room-step font-medium leading-snug">{client}</p>
-          <p className="font-body text-room-small text-muted">
+          <p className="truncate font-body text-room-small text-muted">
             {location ? `${trade} · ${location}` : trade}
           </p>
-          <p className="pt-1 font-body text-room-small font-medium text-amber">{result}</p>
+          <p className="line-clamp-2 min-h-[2lh] font-body text-room-step font-medium leading-snug">
+            {client}
+          </p>
         </div>
-        <span className="mt-1 flex size-10 shrink-0 items-center justify-center rounded-control border border-line transition-colors duration-[160ms] group-hover/panel:border-text group-hover/panel:bg-room">
-          <Arrow className="size-3.5" />
-          <span className="sr-only">Read the case study</span>
-        </span>
+        <div className="mt-auto flex items-center justify-between gap-4 border-t border-line pt-4">
+          <p className="min-w-0 truncate font-body text-room-small font-medium text-amber">
+            {result}
+          </p>
+          <span className="flex size-10 shrink-0 items-center justify-center rounded-control border border-line transition-colors duration-[160ms] group-hover/panel:border-text group-hover/panel:bg-room">
+            <Arrow className="size-3.5" />
+            <span className="sr-only">Read the case study</span>
+          </span>
+        </div>
       </div>
     </Link>
   );

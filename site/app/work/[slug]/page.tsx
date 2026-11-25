@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import type { CSSProperties } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -12,8 +13,9 @@ import { Mdx } from "@/components/page/Mdx";
 import { Chip } from "@/components/ui/Chip";
 import { cn } from "@/lib/cn";
 import { Arrow } from "@/components/ui/Arrow";
-import { PageGlow } from "@/components/page/MoltenArt";
+import { PageLiquid } from "@/components/page/PageLiquid";
 import { PagePane, PaneStack } from "@/components/page/PagePane";
+import { ZoomShot } from "@/components/page/ZoomShot";
 
 /**
  * ════════════════════════════════════════════════════════════════════
@@ -40,7 +42,27 @@ export const dynamicParams = false;
 const NONE = "_";
 
 /** Screenshot frame: thin outline, squircle corners, like the case cards. */
-const FRAME = "overflow-hidden rounded-panel border border-text/[0.14] bg-room";
+const FRAME = "overflow-hidden border border-text/[0.14] bg-room";
+
+/**
+ * The two screenshots form one "device pair" at every size: the desktop
+ * shot on the left, the phone shot overlapping its right edge, a little
+ * lower (owner's request 2026-11-25). Capped at 1080px wide and centred
+ * on desktop. The box's proportions come from the screenshots' own sizes.
+ */
+const PAIR = { desktop: 0.8, phone: 0.25, phoneDrop: 0.12 };
+function pairGeometry(
+  desktop: { width: number; height: number },
+  phone: { width: number; height: number }
+) {
+  const deskH = (PAIR.desktop * desktop.height) / desktop.width;
+  const phoneH = (PAIR.phone * phone.height) / phone.width;
+  const total = Math.max(deskH, PAIR.phoneDrop + phoneH);
+  return {
+    "--pair-aspect": String(1 / total),
+    "--phone-top": `${(PAIR.phoneDrop / total) * 100}%`,
+  } as CSSProperties;
+}
 
 export function generateStaticParams() {
   const slugs = getCases().map((c) => ({ slug: c.slug }));
@@ -115,32 +137,54 @@ export default function CasePage({ params }: { params: { slug: string } }) {
         </dl>
       </PageHero>
 
-      <PageGlow />
+      <PageLiquid />
       <PaneStack>
         {meta.heroImage && (
           <section
             aria-label="Screenshots"
-            className="grid items-start gap-6 lg:grid-cols-[minmax(0,4fr)_minmax(0,1fr)]"
+            style={meta.mobileImage ? pairGeometry(meta.heroImage, meta.mobileImage) : undefined}
+            className={
+              meta.mobileImage
+                ? "device-pair relative mx-auto aspect-[var(--pair-aspect)] w-full max-w-[1080px]"
+                : undefined
+            }
           >
-            <div className={FRAME}>
+            <ZoomShot
+              label={`Desktop screenshot of ${meta.client}`}
+              shuffleWith=".device-phone"
+              className={cn(
+                FRAME,
+                "rounded-panel",
+                meta.mobileImage && "device-desk absolute left-0 top-0 w-[80%]"
+              )}
+            >
               <Image
                 src={meta.heroImage.src}
                 alt={meta.heroImage.alt}
                 width={meta.heroImage.width}
                 height={meta.heroImage.height}
+                sizes="(min-width: 1350px) 864px, 80vw"
                 className="h-auto w-full"
               />
-            </div>
+            </ZoomShot>
             {meta.mobileImage && (
-              <div className={cn(FRAME, "mx-auto w-full max-w-[280px]")}>
+              <ZoomShot
+                label={`Phone screenshot of ${meta.client}`}
+                className={cn(
+                  FRAME,
+                  // Corners scale with the shot, so it never looks like a pill.
+                  "device-phone absolute right-0 top-[var(--phone-top)] z-10 w-[25%] rounded-[clamp(12px,3vw,28px)] shadow-[0_24px_60px_-18px_rgb(0_0_0/0.85)]"
+                )}
+              >
                 <Image
                   src={meta.mobileImage.src}
                   alt={meta.mobileImage.alt}
                   width={meta.mobileImage.width}
                   height={meta.mobileImage.height}
+                  sizes="(min-width: 1350px) 270px, 25vw"
                   className="h-auto w-full"
                 />
-              </div>
+              </ZoomShot>
             )}
           </section>
         )}
@@ -157,8 +201,9 @@ export default function CasePage({ params }: { params: { slug: string } }) {
             </article>
           </PagePane>
 
-          {/* Results beside the story on desktop, as outlined tiles. */}
-          <PagePane labelledBy="results" className="lg:sticky lg:top-24 lg:col-span-4">
+          {/* Results beside the story on desktop, as outlined tiles. Static:
+              it doesn't follow the page as you scroll (owner's call). */}
+          <PagePane labelledBy="results" className="lg:col-span-4">
             <SectionHead
               id="results"
               label={meta.demo ? "Status" : "Results"}

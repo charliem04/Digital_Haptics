@@ -11,7 +11,7 @@ import {
 import { cn } from "@/lib/cn";
 import type { CaseStudy, Service } from "@/content/types";
 import { PageHero } from "@/components/page/PageHero";
-import { PageGlow } from "@/components/page/MoltenArt";
+import { PageLiquid } from "@/components/page/PageLiquid";
 import { PagePane, PaneStack } from "@/components/page/PagePane";
 import { SectionHead } from "@/components/page/SectionHead";
 import { StepsStrip } from "@/components/page/StepsStrip";
@@ -71,8 +71,26 @@ function WorkThumb({ c }: { c: CaseStudy }) {
   );
 }
 
-function ServicePane({ s, index }: { s: Service; index: number }) {
-  const work = getCasesFor(s).slice(0, 2);
+/**
+ * Up to two projects per service, spread so the same site doesn't show
+ * under every service. Services with the fewest matching projects pick
+ * first; each prefers projects no other service has shown yet.
+ */
+function pickWork(services: Service[]): Map<string, CaseStudy[]> {
+  const options = services.map((s) => ({ s, cases: getCasesFor(s) }));
+  const used = new Set<string>();
+  const picks = new Map<string, CaseStudy[]>();
+  for (const { s, cases } of [...options].sort((a, b) => a.cases.length - b.cases.length)) {
+    const fresh = cases.filter((c) => !used.has(c.slug));
+    const seen = cases.filter((c) => used.has(c.slug));
+    const pick = [...fresh, ...seen].slice(0, 2);
+    pick.forEach((c) => used.add(c.slug));
+    picks.set(s.slug, pick);
+  }
+  return picks;
+}
+
+function ServicePane({ s, index, work }: { s: Service; index: number; work: CaseStudy[] }) {
   const headingId = `svc-${s.slug}`;
   const flip = index % 2 === 1;
 
@@ -142,6 +160,7 @@ function ServicePane({ s, index }: { s: Service; index: number }) {
 
 export default function ServicesPage() {
   const services = getServices();
+  const work = pickWork(services);
 
   return (
     <>
@@ -162,10 +181,10 @@ export default function ServicesPage() {
           </ul>
         </nav>
       </PageHero>
-      <PageGlow />
+      <PageLiquid />
       <PaneStack>
         {services.map((s, i) => (
-          <ServicePane key={s.slug} s={s} index={i} />
+          <ServicePane key={s.slug} s={s} index={i} work={work.get(s.slug) ?? []} />
         ))}
 
         <div className="grid gap-6 lg:grid-cols-12 lg:gap-8">

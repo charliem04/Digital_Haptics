@@ -8,7 +8,7 @@ import { CaseGrid } from "@/components/page/CaseGrid";
 import { ServiceCard } from "@/components/page/ServiceCard";
 import { CtaBand } from "@/components/page/CtaBand";
 import { FaqList } from "@/components/FaqList";
-import { PageGlow } from "@/components/page/MoltenArt";
+import { PageLiquid } from "@/components/page/PageLiquid";
 import { PagePane, PaneStack } from "@/components/page/PagePane";
 
 /**
@@ -45,7 +45,7 @@ export default function TradePage({ params }: { params: { slug: string } }) {
         lead={t.lead}
       />
 
-      <PageGlow />
+      <PageLiquid />
       <PaneStack>
         <PagePane labelledBy="needs">
           <SectionHead id="needs" label={t.name} title={t.needsTitle} />

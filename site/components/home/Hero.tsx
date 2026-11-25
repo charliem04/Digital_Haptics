@@ -14,11 +14,12 @@ import { LiquidBackdrop } from "./liquid/LiquidBackdrop";
  *
  *  The hero is an opening onto the page's fixed liquid layer. It pulls
  *  up under the transparent header, so the liquid runs to the top.
- *  On phones the liquid shows as a band at the top and the copy starts
- *  where it has faded to solid `room`; the solid area fades out again
- *  below the buttons, so there is no hard line.
- *  From 1024px the copy holds the left column directly on the liquid,
- *  with no shade behind it (owner's call, 2026-11-25). KNOWN TRADE-OFF:
+ *  On phones (below 768px) the liquid shows as a band at the top and
+ *  the copy starts where it has faded to solid `room`; the solid area
+ *  fades out again below the buttons, so there is no hard line.
+ *  From 768px (tablets) the copy sits directly on the liquid, with no
+ *  shade behind it, and from 1024px it holds the left column (owner's
+ *  calls, 2026-11-25). KNOWN TRADE-OFF:
  *  when the bright amber passes behind the copy it drops below WCAG AA
  *  (muted label about 1.2:1, headline about 1.9:1 at worst). The owner
  *  was told and chose the bare look. See VISUAL_GUIDE §6.
@@ -53,7 +54,7 @@ export function Hero({ backdrop = <LiquidBackdrop /> }: { backdrop?: ReactNode }
       {backdrop}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,transparent_0,transparent_32svh,rgb(var(--room))_45svh,rgb(var(--room))_calc(100%-72px),transparent_100%)] lg:bg-none"
+        className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,transparent_0,transparent_32svh,rgb(var(--room))_45svh,rgb(var(--room))_calc(100%-72px),transparent_100%)] md:bg-none"
       />
 
       <div className="page-x relative flex flex-col pb-14 pt-[45svh] lg:min-h-[100svh] lg:justify-center lg:pb-16 lg:pt-36">

@@ -534,26 +534,21 @@ html[data-motion-widget="tilt"] [data-w-state="in"] {
   }
 }
 
-/* The text inside waits for the card. A whole section pane
-   (data-widget="pane") only fades: its heading has its own text motion. */
-[data-w-state="armed"]:not([data-widget="pane"])
-  :is(h2, h3, p, dl, ul):not([data-w-state] :is(dl, ul) *),
-[data-w-state="in"]:not([data-widget="pane"])
-  :is(h2, h3, p, dl, ul):not([data-w-state] :is(dl, ul) *) {
-  --w-text: calc(var(--w-delay, 0ms) + 380ms);
+/* The text inside waits for the card. MotionRuntime marks each card's
+   own text (data-wt, with its own --w-text delay) when the card plays,
+   and clears it when the card settles. Text never depends on a pane or
+   card around it, so it plays once and can't restart when an outer
+   widget settles. A section pane (data-widget="pane") only fades; its
+   heading has its own text motion. */
+[data-wt="in"] {
+  animation: motion-word 560ms var(--w-text, 380ms) var(--motion-ease) both;
 }
-[data-w-state="in"]:not([data-widget="pane"])
-  :is(h2, h3, p, dl, ul):not([data-w-state] :is(dl, ul) *) {
-  animation: motion-word 560ms var(--w-text) var(--motion-ease) both;
-}
-html[data-motion-text="sweep"]
-  [data-w-state="in"]:not([data-widget="pane"])
-  :is(h2, h3, p, dl, ul):not([data-w-state] :is(dl, ul) *) {
+html[data-motion-text="sweep"] [data-wt="in"] {
   -webkit-mask-image: linear-gradient(90deg, #000 42%, transparent 58%);
   mask-image: linear-gradient(90deg, #000 42%, transparent 58%);
   -webkit-mask-size: 260% 100%;
   mask-size: 260% 100%;
-  animation: motion-sweep 820ms var(--w-text) var(--motion-ease) both;
+  animation: motion-sweep 820ms var(--w-text, 380ms) var(--motion-ease) both;
 }
 
 /* ── Widget hover: add `hover` to a Panel, or data-hover to anything ── */
@@ -690,7 +685,8 @@ html:is([data-motion-hover="glow"], [data-motion-hover="ring"]) [data-hover]:foc
     opacity: 1 !important;
   }
 
-  [data-w-state] * {
+  [data-w-state] *,
+  [data-wt] {
     -webkit-mask: none !important;
     mask: none !important;
   }
@@ -738,5 +734,139 @@ html:is([data-motion-hover="glow"], [data-motion-hover="ring"]) [data-hover]:foc
     opacity: 1 !important;
     -webkit-mask: none !important;
     mask: none !important;
+  }
+}
+
+/* ── Mobile menu: a glass sheet that drops in, rows cascading after ── */
+.menu-dialog::backdrop {
+  background: rgb(var(--room) / 0.45);
+  backdrop-filter: blur(10px) saturate(1.2);
+}
+.menu-sheet {
+  background-color: rgb(var(--room) / 0.78);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.1),
+    0 24px 60px -20px rgb(0 0 0 / 0.7);
+  backdrop-filter: blur(24px) saturate(1.4);
+}
+.menu-dialog[open] .menu-sheet {
+  animation: menu-sheet-in 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  transform-origin: top right;
+}
+.menu-dialog[open] .menu-item {
+  animation: menu-item-in 480ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(90ms + var(--i, 0) * 45ms);
+}
+@keyframes menu-sheet-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.97);
+  }
+}
+@keyframes menu-item-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .menu-dialog[open] .menu-sheet,
+  .menu-dialog[open] .menu-item {
+    animation: none;
+  }
+}
+
+/* ── Case reel: an endless drift of case cards you can drag (CaseReel,
+   ReelViewport moves the track) ──────────────────────────────────── */
+.case-reel {
+  /* Bleed to the pane's edges, then fade the cards in and out there. */
+  margin-inline: -24px;
+  overflow: hidden;
+  cursor: grab;
+  /* Vertical swipes still scroll the page; sideways ones move the reel. */
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
+}
+.case-reel[data-dragging] {
+  cursor: grabbing;
+}
+@media (min-width: 1024px) {
+  .case-reel {
+    margin-inline: -40px;
+  }
+}
+.case-reel-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+}
+.case-reel-list {
+  display: flex;
+  flex: none;
+}
+/* Gap as right padding, so both halves of the track are the same width
+   and the loop wraps exactly at the halfway point. */
+.case-reel-list > li {
+  flex: none;
+  width: clamp(272px, 78vw, 400px);
+  padding-right: 24px;
+}
+.case-reel img {
+  -webkit-user-drag: none;
+  pointer-events: none;
+}
+.case-reel[data-dragging] a {
+  pointer-events: none;
+}
+
+/* ── Case study showcase: the desktop + phone screenshot pair ───────────
+   The desktop shot rises into place, then the phone slides in from the
+   lower right and settles out of a slight tilt, then floats. Hovering
+   the pair lifts the phone. The desktop shot is often the page's LCP
+   element, so it only moves (transform), it never fades. */
+@media (prefers-reduced-motion: no-preference) {
+  .device-desk {
+    animation: device-desk-in 900ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .device-phone {
+    animation:
+      device-phone-in 1000ms 260ms cubic-bezier(0.22, 1, 0.36, 1) both,
+      device-float 6s 1.4s ease-in-out infinite alternate;
+    transition:
+      translate 420ms cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 420ms ease;
+  }
+  /* Waiting below the screen (MotionRuntime): held at its first frame,
+     then rewound and played once scrolled into view. Pausing, not
+     removing the animation, so nothing jumps (no layout shift). */
+  .device-pair[data-wait] .device-desk,
+  .device-pair[data-wait] .device-phone {
+    animation-play-state: paused;
+  }
+  .device-pair:hover .device-phone {
+    translate: 0 -10px;
+    box-shadow: 0 36px 80px -20px rgb(0 0 0 / 0.9);
+  }
+}
+@keyframes device-desk-in {
+  from {
+    transform: translateY(28px) scale(0.985);
+  }
+}
+@keyframes device-phone-in {
+  from {
+    opacity: 0;
+    transform: translate(28px, 48px) rotate(5deg);
+  }
+}
+@keyframes device-float {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-8px);
   }
 }

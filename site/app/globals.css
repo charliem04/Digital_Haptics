@@ -54,6 +54,9 @@ html {
   color-scheme: dark;
   scroll-behavior: smooth;
   scroll-padding-top: 88px;
+  /* Keep the scrollbar's space even while scrolling is locked (menu,
+     zoomed screenshot), so the page never shifts sideways. */
+  scrollbar-gutter: stable;
   scrollbar-color: rgb(var(--muted)) rgb(var(--surface));
 }
 

@@ -11,7 +11,7 @@ import { SectionHead } from "@/components/page/SectionHead";
 import { ServiceCard } from "@/components/page/ServiceCard";
 import { CtaBand } from "@/components/page/CtaBand";
 import { Chip } from "@/components/ui/Chip";
-import { PageGlow } from "@/components/page/MoltenArt";
+import { PageLiquid } from "@/components/page/PageLiquid";
 import { PagePane, PaneStack } from "@/components/page/PagePane";
 
 /**
@@ -69,7 +69,7 @@ export default function CityPage({ params }: { params: { city: string } }) {
         )}
       </PageHero>
 
-      <PageGlow />
+      <PageLiquid />
       <PaneStack>
         <PagePane labelledBy="market">
           <div className="grid gap-10 lg:grid-cols-2 lg:gap-16">

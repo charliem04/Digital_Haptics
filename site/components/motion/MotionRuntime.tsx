@@ -70,9 +70,22 @@ export function MotionRuntime() {
     });
 
     // Widgets: the card arrives, then its text plays (app/motion.css).
+    // A card's own text: its headings, paragraphs and lists, but not
+    // those inside a nested card, and not the items inside its lists.
+    const ownText = (el: HTMLElement) =>
+      el.dataset.widget === "pane"
+        ? []
+        : Array.from(el.querySelectorAll<HTMLElement>("h2, h3, p, dl, ul")).filter((t) => {
+            const list = t.parentElement?.closest("dl, ul");
+            return t.closest("[data-widget]") === el && !(list && el.contains(list));
+          });
     const settleWidget = (el: HTMLElement) => {
       delete el.dataset.wState;
       el.style.removeProperty("--w-delay");
+      ownText(el).forEach((t) => {
+        delete t.dataset.wt;
+        t.style.removeProperty("--w-text");
+      });
       armedWidgets.delete(el);
     };
     const armedWidgets = new Set<HTMLElement>();
@@ -96,8 +109,13 @@ export function MotionRuntime() {
           widgetObserver.unobserve(el);
           const delay = Math.min(Math.max(nextSlot - now, 0), CASCADE_MAX_MS);
           nextSlot = now + delay + CASCADE_STEP_MS;
-          el.style.setProperty("--w-delay", `${Math.round(delay) + offset}ms`);
+          const start = Math.round(delay) + offset;
+          el.style.setProperty("--w-delay", `${start}ms`);
           el.dataset.wState = "in";
+          ownText(el).forEach((t) => {
+            t.style.setProperty("--w-text", `${start + 380}ms`);
+            t.dataset.wt = "in";
+          });
           const settleAfter = el.dataset.widget === "pane" ? PANE_SETTLE_MS : WIDGET_SETTLE_MS;
           const timer = window.setTimeout(
             () => {
@@ -116,6 +134,31 @@ export function MotionRuntime() {
       el.dataset.wState = "armed";
       armedWidgets.add(el);
       widgetObserver.observe(el);
+    });
+
+    // Case study showcase (.device-pair): if it starts below the screen,
+    // hold it at its first frame (data-wait, CSS) and play it from the
+    // start once it's in view.
+    const pairObserver = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          const el = entry.target as HTMLElement;
+          pairObserver.unobserve(el);
+          // Rewind to the first frame, then let it run.
+          el.querySelectorAll<HTMLElement>(".device-desk, .device-phone").forEach((part) =>
+            part.getAnimations().forEach((a) => (a.currentTime = 0))
+          );
+          delete el.dataset.wait;
+        }
+      },
+      { rootMargin: "0px 0px -12% 0px" }
+    );
+    const pairs = Array.from(document.querySelectorAll<HTMLElement>(".device-pair"));
+    pairs.forEach((el) => {
+      if (el.getBoundingClientRect().top < window.innerHeight * 0.88) return;
+      el.dataset.wait = "";
+      pairObserver.observe(el);
     });
 
     // Watch each section, since a 1px divider is a poor intersection target.
@@ -137,6 +180,8 @@ export function MotionRuntime() {
       textObserver.disconnect();
       widgetObserver.disconnect();
       liveObserver.disconnect();
+      pairObserver.disconnect();
+      pairs.forEach((el) => delete el.dataset.wait);
       timers.forEach((timer) => window.clearTimeout(timer));
       armed.forEach(settle);
       armedWidgets.forEach(settleWidget);

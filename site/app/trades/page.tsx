@@ -5,7 +5,7 @@ import { PageHero } from "@/components/page/PageHero";
 import { CtaBand } from "@/components/page/CtaBand";
 import { Panel } from "@/components/ui/Panel";
 import { Arrow } from "@/components/ui/Arrow";
-import { PageGlow } from "@/components/page/MoltenArt";
+import { PageLiquid } from "@/components/page/PageLiquid";
 import { PagePane, PaneStack } from "@/components/page/PagePane";
 
 /** Trades hub: one card per trade page (data/trades.ts). */
@@ -25,7 +25,7 @@ export default function TradesPage() {
         title="Websites by trade"
         lead="A roofer after a storm and a plumber with an emergency call need different things from a website. Here's how we build for each."
       />
-      <PageGlow />
+      <PageLiquid />
       <PaneStack>
         <PagePane label="Trades">
           <ul className="grid gap-4 md:grid-cols-3 lg:gap-6">

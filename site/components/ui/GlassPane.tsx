@@ -10,9 +10,13 @@ import { cn } from "@/lib/cn";
  *  Settings are the owner's picks from /lab/liquid-glass (2026-11-24):
  *  bend 0.1, colour split 0.3, rim 15, frost 6.5, no amber.
  *
- *  - Chrome and Edge: an SVG backdrop filter bends the liquid across a
- *    curved rim and splits it into colour, like the edge of real glass.
- *  - Safari and Firefox: the same frost and tint, without the bend.
+ *  Dark frosted glass everywhere (owner's pick, 2026-11-25): a blur and
+ *  the room tint, the same on every page, screen size and browser.
+ *
+ *  `refract` (off by default) adds the bending rim on desktop Chrome and
+ *  Edge: an SVG backdrop filter that bends the liquid across a curved rim
+ *  and splits it into colour. It reads lighter than the frost, which is
+ *  why it is opt-in. Phones and other browsers never get it.
  *  - The dark tint is 70% so text passes WCAG AA even over the brightest
  *    amber of the liquid (muted text 4.75:1, body text 9:1 at worst).
  *
@@ -92,10 +96,13 @@ export function GlassPane({
   className,
   innerClassName,
   widget = false,
+  refract = false,
   children,
 }: {
   className?: string;
   innerClassName?: string;
+  /** The lighter, light-bending rim on desktop Chrome and Edge. */
+  refract?: boolean;
   /** Fade in with the site's widget cascade (on the pane itself, since a
    *  fading parent would cut the glass off from the liquid behind it). */
   widget?: boolean;
@@ -109,7 +116,10 @@ export function GlassPane({
     const el = ref.current;
     const ua = navigator.userAgent;
     const chromium = /Chrome|Chromium|Edg\//.test(ua) && !/Firefox|FxiOS|CriOS|EdgiOS/.test(ua);
-    if (!el || !chromium) return;
+    // Desktop only: on a phone the bent rim is a few pixels wide and the
+    // map costs main-thread time (Lighthouse TBT), so phones keep the frost.
+    const wide = window.matchMedia("(min-width: 1024px)").matches;
+    if (!refract || !el || !chromium || !wide) return;
 
     let idle = 0;
     const draw = () => {
@@ -140,7 +150,7 @@ export function GlassPane({
       if (typeof window.cancelIdleCallback === "function") window.cancelIdleCallback(idle);
       window.clearTimeout(idle);
     };
-  }, []);
+  }, [refract]);
 
   return (
     <div

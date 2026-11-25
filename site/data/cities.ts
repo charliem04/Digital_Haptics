@@ -58,7 +58,8 @@ export const cities: City[] = [
       "Lafayette is the center of Acadiana, so a trade here is competing with every company that serves the area. A lot of good businesses still rely on word of mouth, a Facebook page or a site from years ago. When a customer searches instead of asking a neighbor, the company that shows up clearly gets the call.",
     // Named with Matt's OK, confirmed by Charles 2026-11-23.
     work: "We built the website for Matt Guidry Video & Animation, a Louisiana video producer whose work covers logo animation, documentary and motion graphics.",
-    workLink: { label: "See Matt's site", href: "https://mattjyguidry.tv/" },
+    workLink: { label: "Read the case study", href: "/work/matt-guidry-video/" },
+    caseSlug: "matt-guidry-video",
     trades: ["Roofing", "Plumbing", "HVAC", "General contracting", "Dirt work"],
   },
   {

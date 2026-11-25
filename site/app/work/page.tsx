@@ -4,7 +4,7 @@ import { getCases } from "@/lib/content";
 import { PageHero } from "@/components/page/PageHero";
 import { CaseGrid } from "@/components/page/CaseGrid";
 import { CtaBand } from "@/components/page/CtaBand";
-import { PageGlow } from "@/components/page/MoltenArt";
+import { PageLiquid } from "@/components/page/PageLiquid";
 import { PagePane, PaneStack } from "@/components/page/PagePane";
 
 /**
@@ -37,7 +37,7 @@ export default function WorkPage() {
         title="Case studies"
         lead="Sites and systems built for trades businesses: what wasn't working, what we built, and what changed."
       />
-      <PageGlow />
+      <PageLiquid />
       <PaneStack>
         <PagePane label="Case studies">
           {drafts && (

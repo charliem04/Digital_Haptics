@@ -9,7 +9,7 @@ import { CtaBand } from "@/components/page/CtaBand";
 import { SmallLabel } from "@/components/ui/SmallLabel";
 import { Chip } from "@/components/ui/Chip";
 import { pad2 } from "@/lib/cn";
-import { PageGlow } from "@/components/page/MoltenArt";
+import { PageLiquid } from "@/components/page/PageLiquid";
 import { PagePane, PaneStack } from "@/components/page/PagePane";
 
 /**
@@ -40,7 +40,7 @@ export default function AboutPage() {
         lead={about.lead}
       />
 
-      <PageGlow />
+      <PageLiquid />
       <PaneStack>
         <PagePane labelledBy="story">
           <div className="grid gap-10 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:gap-16">

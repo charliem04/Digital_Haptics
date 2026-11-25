@@ -10,7 +10,7 @@ import { Panel } from "@/components/ui/Panel";
 import { Button } from "@/components/ui/Button";
 import { Arrow } from "@/components/ui/Arrow";
 import { cn, pad2 } from "@/lib/cn";
-import { PageGlow } from "@/components/page/MoltenArt";
+import { PageLiquid } from "@/components/page/PageLiquid";
 import { PagePane, PaneStack } from "@/components/page/PagePane";
 
 /**
@@ -67,7 +67,7 @@ export default function PricingPage() {
         lead={`No packages to decode. Here's where each service starts. ${statement}`}
       />
 
-      <PageGlow />
+      <PageLiquid />
       <PaneStack>
         <PagePane label="Starting prices">
           <ul

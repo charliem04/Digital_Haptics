@@ -10,7 +10,7 @@ import { CtaBand } from "@/components/page/CtaBand";
 import { FaqList } from "@/components/FaqList";
 import { MoreLink } from "@/components/MoreLink";
 import { AutomationsSections } from "@/components/automations/AutomationsSections";
-import { PageGlow } from "@/components/page/MoltenArt";
+import { PageLiquid } from "@/components/page/PageLiquid";
 import { PagePane, PaneStack } from "@/components/page/PagePane";
 
 /**
@@ -54,7 +54,7 @@ export default function ServicePage({ params }: { params: { slug: string } }) {
         lead={s.lead}
       />
 
-      <PageGlow />
+      <PageLiquid />
       <PaneStack>
         <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
           <PagePane labelledBy="included">
