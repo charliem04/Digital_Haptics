@@ -16,7 +16,12 @@ const nextConfig = {
   // Static export: `npm run build` emits ./out, served by the Worker.
   // The intake endpoint joins that Worker in Phase 4 (decision D1),
   // so no page needs a server runtime.
-  output: "export",
+  //
+  // Builds only. Under `next dev` (14.2), "export" plus
+  // `dynamicParams = false` makes every [slug] page throw "missing
+  // generateStaticParams()" even though it has one. Dev without it
+  // serves the same pages, and still 404s an unknown slug.
+  output: process.env.NODE_ENV === "development" ? undefined : "export",
   images: {
     // Required for static export.
     unoptimized: true,

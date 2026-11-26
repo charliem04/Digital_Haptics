@@ -16,6 +16,8 @@ const ASIDE = { move: { translate: "24% 3%" }, turn: { rotate: "5deg", scale: "0
 const HOME = { move: { translate: "0px 0px" }, turn: { rotate: "0deg", scale: "1" } };
 const SHUFFLE_OUT = { duration: 420, easing: "cubic-bezier(0.22, 1, 0.36, 1)" };
 const SHUFFLE_IN = { duration: 460, easing: "cubic-bezier(0.22, 1, 0.36, 1)" };
+/** The copy fading off the screenshot once it has landed. */
+const HAND_OFF = { duration: 140, easing: "linear", fill: "forwards" as const };
 /** Keys that would scroll the page behind an open zoom. */
 const SCROLL_KEYS = new Set(["ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End", " "]);
 
@@ -165,20 +167,35 @@ export function ZoomShot({
         front.animate([HOME.turn, ASIDE.turn], { ...SHUFFLE_OUT, fill: "forwards" });
       }
       shade.current?.animate([{ opacity: 1 }, { opacity: 0 }], { ...ZOOM, fill: "forwards" });
+      // Land looking exactly like the screenshot: its border and shadow,
+      // in the copy's own units (divided by the landing scale), so the
+      // hand-off shows no thinner border or shadow popping off.
+      const home = laidOut(box);
+      const s = to.width / home.width || 1;
+      const unscale = (v: string) => v.replace(/(-?[\d.]+)px/g, (_, n) => `${Number(n) / s}px`);
+      const look = getComputedStyle(btn);
+      const now = getComputedStyle(box);
+      const shadowTo =
+        look.boxShadow === "none" ? now.boxShadow.replace(/rgba?\([^)]*\)/g, "rgb(0 0 0 / 0)") : unscale(look.boxShadow);
       await box
-        .animate([{ transform: "none" }, { transform: onto(to, laidOut(box)) }], {
-          ...ZOOM,
-          fill: "forwards",
-        })
+        .animate(
+          [
+            { transform: "none", borderWidth: now.borderTopWidth, boxShadow: now.boxShadow },
+            { transform: onto(to, home), borderWidth: unscale(look.borderTopWidth), boxShadow: shadowTo },
+          ],
+          { ...ZOOM, fill: "forwards" }
+        )
         .finished.catch(() => undefined);
     }
-    // Swap in one frame: the screenshot appears as the copy goes.
+    // Hand off: the screenshot appears under the copy, which then fades
+    // off it, so any last sub-pixel difference dissolves instead of
+    // cutting.
     btn.style.visibility = "";
-    dlg.close();
-    box.getAnimations().forEach((a) => a.cancel());
-    shade.current?.getAnimations().forEach((a) => a.cancel());
     held.current.forEach((a) => a.play());
     held.current = [];
+    const handOff = reduce()
+      ? Promise.resolve()
+      : box.animate([{ opacity: 1 }, { opacity: 0 }], HAND_OFF).finished.catch(() => undefined);
     // The shot in front shuffles back over this one, now it's home.
     let settled: Promise<unknown> = Promise.resolve();
     if (shuffle && front) {
@@ -187,6 +204,10 @@ export function ZoomShot({
       front.animate([ASIDE.turn, HOME.turn], SHUFFLE_IN);
       aside.forEach((a) => a.cancel());
     }
+    await handOff;
+    dlg.close();
+    box.getAnimations().forEach((a) => a.cancel());
+    shade.current?.getAnimations().forEach((a) => a.cancel());
     busy.current = false;
     // Hover lift back once everything has landed (unless it reopened).
     // Two frames later: in the frame the shuffle ends, Chrome would skip
