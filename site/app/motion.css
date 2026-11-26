@@ -901,3 +901,111 @@ html:is([data-motion-hover="glow"], [data-motion-hover="ring"]) [data-hover]:foc
       visibility 0s 320ms;
   }
 }
+
+/* ── Page transitions: glide, veil, ripple ─────────────────────────────
+   Chosen in motion.config.ts (page), switchable live under `npm run dev`.
+
+   GLIDE: a View Transition (PageTransition). The header, the sticky bar
+   and the grain keep their place; the visible page eases up and out,
+   then the new one rises in. Browsers without View Transitions get the
+   soft fade below through the overlay. */
+@media (prefers-reduced-motion: no-preference) {
+  html[data-motion-page="glide"] .site-header {
+    view-transition-name: site-header;
+  }
+  html[data-motion-page="glide"] .sticky-cta {
+    view-transition-name: sticky-cta;
+  }
+  html[data-motion-page="glide"] .room-grain {
+    view-transition-name: room-grain;
+  }
+  html[data-motion-page="glide"]::view-transition-old(root) {
+    animation: vt-glide-out 200ms cubic-bezier(0.4, 0, 1, 1) both;
+  }
+  html[data-motion-page="glide"]::view-transition-new(root) {
+    animation: vt-glide-in 460ms 70ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  html[data-motion-page="glide"]::view-transition-group(*) {
+    animation-duration: 420ms;
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+}
+@keyframes vt-glide-out {
+  to {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+@keyframes vt-glide-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+html[data-motion-page="glide"] .motion-page[data-phase="cover"] {
+  animation: motion-fade-cover 180ms ease-in both;
+}
+html[data-motion-page="glide"] .motion-page[data-phase="reveal"] {
+  animation: motion-fade-reveal 320ms ease-out both;
+}
+
+/* VEIL: a dark frosted pane, lit amber along its leading edge, rises
+   over the page with the liquid glowing through it, then lifts off. */
+html[data-motion-page="veil"] .motion-page {
+  background:
+    linear-gradient(to bottom, rgb(245 162 84 / 0.22), rgb(245 162 84 / 0) 22%),
+    rgb(var(--room) / 0.62);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.22);
+  -webkit-backdrop-filter: blur(22px) saturate(1.3);
+  backdrop-filter: blur(22px) saturate(1.3);
+}
+html[data-motion-page="veil"] .motion-page[data-phase="cover"] {
+  animation: motion-veil-cover 320ms cubic-bezier(0.65, 0, 0.35, 1) both;
+}
+html[data-motion-page="veil"] .motion-page[data-phase="reveal"] {
+  animation: motion-veil-reveal 380ms cubic-bezier(0.65, 0, 0.35, 1) both;
+}
+@keyframes motion-veil-cover {
+  from {
+    transform: translateY(100%);
+  }
+}
+@keyframes motion-veil-reveal {
+  to {
+    transform: translateY(-100%);
+  }
+}
+
+/* RIPPLE: an amber circle grows from where you clicked (--tx, --ty, set
+   by PageTransition), fills the screen, then draws back into that point
+   over the new page. */
+html[data-motion-page="ripple"] .motion-page {
+  background: radial-gradient(
+    circle at var(--tx, 50%) var(--ty, 50%),
+    #f5a254,
+    #f56c36 55%,
+    #e22e20
+  );
+}
+html[data-motion-page="ripple"] .motion-page[data-phase="cover"] {
+  animation: motion-ripple-cover 380ms cubic-bezier(0.55, 0, 0.45, 1) both;
+}
+html[data-motion-page="ripple"] .motion-page[data-phase="reveal"] {
+  animation: motion-ripple-reveal 360ms cubic-bezier(0.55, 0, 0.45, 1) both;
+}
+@keyframes motion-ripple-cover {
+  from {
+    clip-path: circle(0 at var(--tx, 50%) var(--ty, 50%));
+  }
+  to {
+    clip-path: circle(150vmax at var(--tx, 50%) var(--ty, 50%));
+  }
+}
+@keyframes motion-ripple-reveal {
+  from {
+    clip-path: circle(150vmax at var(--tx, 50%) var(--ty, 50%));
+  }
+  to {
+    clip-path: circle(0 at var(--tx, 50%) var(--ty, 50%));
+  }
+}
