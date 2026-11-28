@@ -38,7 +38,7 @@ The liquid keeps its own 11-stop ramp (§6.1). Those colours are not UI tokens.
 
 ### 2.2 Measured contrast (WCAG)
 
-Each cell shows the flat ratio, then the worst case under the grain layer, where its strongest speck (11% grey) covers both the text and its surface. AA for body text is 4.5:1.
+Each cell shows the flat ratio, then the worst case under the old grain layer (removed 2026-11-28, §5), where its strongest speck (11% grey) covered both the text and its surface. AA for body text is 4.5:1.
 
 | Text | on `room` | on `surface` | on `raised` |
 |---|---|---|---|
@@ -100,15 +100,14 @@ Numbers stay only where the content is a real sequence, such as process steps.
 
 ## 5. Grain
 
-Static surfaces carry the film grain, so the identity continues where the liquid does not.
+**Removed from the page, 2026-11-28 (owner's pick, perf Phase 2).** The liquid draws its own grain (6.5/255), so the identity carries wherever the liquid shows, which is Home and every main inner page. Flat surfaces it doesn't reach (the footer, solid bands, `/start`, the blog and the legal pages) are now clean.
 
-- **Method:** one inline SVG `feTurbulence` tile, 128×128, used as the CSS **mask** of a single fixed, `aria-hidden`, `pointer-events: none` layer (`.room-grain`). It is about 460 bytes and decoded and rasterised in about 3 ms on the development machine.
-- **Why a mask:** R2–R4 painted the tile as each surface's background image. In R5 Lighthouse then treated a textured card as Pricing's main content and reported a 2.0s LCP. A mask on a solid fill is not a content image, and the same page returned to about 770 ms.
-- **Rejected:** a pre-rendered noise image. Random noise barely compresses: 26 KB as WebP and 29 KB as PNG at the same size.
-- **Strength on content surfaces:** `0.08`, built into the tile's alpha channel, normal blending. Measured standard deviation 2.55/255, brightest speck +12 levels. The contrast table above includes that speck.
-- **Around the liquid:** the canvas draws its own grain (6.5/255). The page layer also passes over it, adding about 0.5/255 in combination, which is not visible.
-- **Do not** use `overlay` blending on these dark surfaces. It measured 0.15/255 at the same opacity, which is invisible.
-- The layer does not animate. Check scroll performance on a real phone in R1, and drop it from phones if it costs frames.
+The page-wide layer (`.room-grain`, a fixed 128px `feTurbulence` tile at 0.08 over everything) cost a full-screen draw on every frame, because the page scrolls under it over a moving liquid. On an Iris Xe laptop at 3823×2104 device pixels, /services scrolled at about 50 fps with it and 60 without (docs/perf/PHASE2.md).
+
+If grain comes back on flat surfaces:
+- Never as a fixed full-screen layer.
+- Never as a card's background image: in R5 Lighthouse took a textured card as Pricing's main content and reported a 2.0s LCP.
+- Do not use `overlay` blending on these dark surfaces. It measured 0.15/255 at the same opacity, which is invisible.
 
 ## 6. The liquid
 

@@ -905,8 +905,8 @@ html:is([data-motion-hover="glow"], [data-motion-hover="ring"]) [data-hover]:foc
 /* ── Page transitions: glide, veil, ripple ─────────────────────────────
    Chosen in motion.config.ts (page), switchable live under `npm run dev`.
 
-   GLIDE: a View Transition (PageTransition). The header, the sticky bar
-   and the grain keep their place; the visible page eases up and out,
+   GLIDE: a View Transition (PageTransition). The header and the sticky
+   bar keep their place; the visible page eases up and out,
    then the new one rises in. Browsers without View Transitions get the
    soft fade below through the overlay. */
 @media (prefers-reduced-motion: no-preference) {
@@ -915,9 +915,6 @@ html:is([data-motion-hover="glow"], [data-motion-hover="ring"]) [data-hover]:foc
   }
   html[data-motion-page="glide"] .sticky-cta {
     view-transition-name: sticky-cta;
-  }
-  html[data-motion-page="glide"] .room-grain {
-    view-transition-name: room-grain;
   }
   html[data-motion-page="glide"]::view-transition-old(root) {
     animation: vt-glide-out 200ms cubic-bezier(0.4, 0, 1, 1) both;

@@ -66,3 +66,14 @@ The owner's sweep after both changes, same laptop and browser:
   pill. They alternate with fast rows through the run, which looks like
   the laptop throttling between runs rather than a real cost. Treat
   single rows with care; the pattern across rows is what holds.
+
+## Change 3: no grain overlay (owner's pick)
+
+The rows without the overlay ran at 57–60 fps, against ~50 with it. The
+liquid already draws its own grain, and §5 of the visual guide measured
+the overlay adding only ~0.5/255 over it. The owner compared `?perf&off=grain`
+on `/start` and the footer and chose to remove it. Flat surfaces the
+liquid doesn't reach are now clean. The `grain` perf switch and its sweep
+rows are gone with it.
+
+Results: pending the owner's next sweep.

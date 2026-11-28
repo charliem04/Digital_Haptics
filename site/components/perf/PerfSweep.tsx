@@ -22,13 +22,12 @@ import { LIQUID_STATE_EVENT, LIQUID_STATS_EVENT, type LiquidStats } from "@/lib/
 
 const VARIANTS: { label: string; query: string }[] = [
   { label: "as shipped", query: "" },
-  { label: "no glass blur", query: "off=blur" },
-  { label: "no grain overlay", query: "off=grain" },
-  { label: "no blur + grain", query: "off=blur,grain" },
-  { label: "liquid only", query: "off=blur,grain,motion,trim,glow" },
+  { label: "no header blur", query: "off=blur" },
+  { label: "no motion extras", query: "off=motion,trim,glow" },
+  { label: "liquid only", query: "off=blur,motion,trim,glow" },
   { label: "no liquid", query: "off=liquid" },
   { label: "liquid at 1x", query: "dpr=1" },
-  { label: "everything off", query: "off=liquid,blur,grain,motion,trim,glow" },
+  { label: "everything off", query: "off=liquid,blur,motion,trim,glow" },
 ];
 
 const KEY = "perf-sweep";

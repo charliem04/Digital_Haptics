@@ -124,7 +124,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         </main>
         <Footer />
         <StickyCta cta={ctaLink()} />
-        <div aria-hidden className="room-grain" />
         <InteractionTracking ctaHref={CTA_HREF} />
         <PageTransition />
         {/* Dev only: try the page transitions live. Never in a build. */}

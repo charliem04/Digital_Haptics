@@ -4,10 +4,9 @@
  *  `?perf`. Nothing else on the page changes without it.
  *
  *    ?perf                       the HUD: page fps, long tasks, liquid
- *    ?perf&off=liquid,grain,motion,trim,glow,blur
+ *    ?perf&off=liquid,motion,trim,glow,blur
  *                                switch layers off to see what each costs:
  *                                liquid  the WebGL hero (poster instead)
- *                                grain   the fixed film-grain overlay
  *                                motion  embers, dividers, page transition
  *                                trim    the spinning case-card trims
  *                                glow    inner pages' fixed drifting glow
@@ -19,7 +18,7 @@
  * ════════════════════════════════════════════════════════════════════
  */
 
-export const PERF_LAYERS = ["liquid", "grain", "motion", "trim", "glow", "blur"] as const;
+export const PERF_LAYERS = ["liquid", "motion", "trim", "glow", "blur"] as const;
 export type PerfLayer = (typeof PERF_LAYERS)[number];
 
 /** Per-visit overrides for the liquid renderer. Unset keeps the default. */
