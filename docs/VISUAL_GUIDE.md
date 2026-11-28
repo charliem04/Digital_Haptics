@@ -158,7 +158,7 @@ The Stage 1 demo also opened the CTA on Pricing and the case study. This guide n
 | Button colour and press (1px) | 160ms | Instant |
 | Arrow nudge on hover | 160ms | None |
 | Accordion and menu | Opens in response to the visitor, 250ms at most | Instant |
-| Page transition: molten wipe | 240ms cover, 300ms uncover | None |
+| Page transition: glide (View Transition; header, sticky bar and grain stay put, the page eases up and out and the new one rises in) | 200ms out, 460ms in; a soft fade where View Transitions are missing | None |
 | Section headings and ledes: light sweep | 950ms, once, on entering view | Static |
 | Toned sections: rising embers, at the outer edges | Continuous, only while on screen | None |
 | Section dividers: heat seam | 4.2s loop, only while on screen | Static line |

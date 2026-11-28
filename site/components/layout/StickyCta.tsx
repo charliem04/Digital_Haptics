@@ -43,7 +43,11 @@ export function StickyCta({ cta }: { cta: { href: string; label: string } | null
         aria-hidden
         className="h-[calc(57px+env(safe-area-inset-bottom))] lg:hidden relative z-10 bg-surface"
       />
-      <StickyBar cta={cta} hidden={heroCtaVisible} className="fixed inset-x-0 bottom-0 z-40" />
+      <StickyBar
+        cta={cta}
+        hidden={heroCtaVisible}
+        className="sticky-cta fixed inset-x-0 bottom-0 z-40"
+      />
     </>
   );
 }

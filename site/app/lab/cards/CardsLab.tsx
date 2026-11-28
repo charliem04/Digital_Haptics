@@ -138,7 +138,7 @@ function Card({ v, c }: { v: Variant; c: LabCase }) {
       return (
         <a href="#" className={`${link} relative overflow-hidden rounded-panel`}>
           <Shot c={c} rounded="rounded-none" className="!aspect-[4/3.6]" />
-          <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 bg-gradient-to-t from-room from-50% via-room/85 to-transparent p-5 pt-20">
+          <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 bg-gradient-to-t from-room from-50% via-room/85 to-transparent px-5 pb-5 pt-20">
             <Text c={c} />
             <Round className="bg-room/60" />
           </div>

@@ -13,17 +13,17 @@
     "depthOfField": 0.7,
     "fogAmount": 0.6,
     "cameraDrift": 1,
-    "grainAmount": 0.79,
-    "grainSize": 0.95,
+    "grainAmount": 0.35,
+    "grainSize": 0.5,
     "grainFps": 15
   },
   "desktop": {
     "blobCount": 12,
-    "renderScale": 0.3
+    "renderScale": 0.9
   },
   "phone": {
     "blobCount": 6,
-    "renderScale": 0.24
+    "renderScale": 0.9
   },
   "ramp": [
     {

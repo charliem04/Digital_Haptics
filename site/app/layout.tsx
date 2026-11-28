@@ -15,6 +15,7 @@ import { StickyCta } from "@/components/layout/StickyCta";
 import { ctaLink } from "@/lib/nav";
 import { CTA_HREF } from "@/lib/routes";
 import { InteractionTracking } from "@/components/InteractionTracking";
+import { DevTransitionPicker } from "@/lib/dev";
 
 /*
  * Fonts (docs/VISUAL_GUIDE.md §3), committed in app/fonts/ and loaded
@@ -101,15 +102,23 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <noscript>
           <style
             dangerouslySetInnerHTML={{
-              __html: `[style*="opacity:0"]{opacity:1!important;transform:none!important}[data-sticky-waiting]{visibility:visible!important}[data-menu-button]{display:none!important}`,
+              __html: `[style*="opacity:0"]{opacity:1!important;transform:none!important}[data-sticky-waiting]{visibility:visible!important;transform:none!important}[data-menu-button]{display:none!important}`,
             }}
           />
         </noscript>
         <SkipLink />
         <Header />
         {/* tabIndex -1: the skip link's target must take focus. No ring: it's
-            the whole page, focused only by the skip link. deliberate-ignore outline-none */}
-        <main id="main" tabIndex={-1} className="flex-1 focus:shadow-none focus:outline-none">
+            the whole page, focused only by the skip link. deliberate-ignore outline-none
+            overflow-x clip: nothing that slides in from the side (the case
+            study phone shot) can widen the page on a phone. Clip, not
+            hidden, so it stays no scroll container and sticky still works. */}
+        <main
+          id="main"
+          tabIndex={-1}
+          // deliberate-ignore outline-none
+          className="flex-1 [overflow-x:clip] focus:shadow-none focus:outline-none"
+        >
           {children}
         </main>
         <Footer />
@@ -117,6 +126,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <div aria-hidden className="room-grain" />
         <InteractionTracking ctaHref={CTA_HREF} />
         <PageTransition />
+        {/* Dev only: try the page transitions live. Never in a build. */}
+        {DevTransitionPicker && <DevTransitionPicker />}
         <MotionRuntime />
         <JsonLd />
       </body>
