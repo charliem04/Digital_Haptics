@@ -116,6 +116,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <main
           id="main"
           tabIndex={-1}
+          // deliberate-ignore outline-none
           className="flex-1 [overflow-x:clip] focus:shadow-none focus:outline-none"
         >
           {children}
