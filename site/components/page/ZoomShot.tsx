@@ -163,7 +163,11 @@ export function ZoomShot({
       // The shot in front steps aside. The move is added to wherever it
       // already is (a hover lift, say), so nothing snaps when it's done.
       if (shuffle && front) {
-        front.animate([HOME.move, ASIDE.move], { ...SHUFFLE_OUT, fill: "forwards", composite: "add" });
+        front.animate([HOME.move, ASIDE.move], {
+          ...SHUFFLE_OUT,
+          fill: "forwards",
+          composite: "add",
+        });
         front.animate([HOME.turn, ASIDE.turn], { ...SHUFFLE_OUT, fill: "forwards" });
       }
       shade.current?.animate([{ opacity: 1 }, { opacity: 0 }], { ...ZOOM, fill: "forwards" });
@@ -176,12 +180,18 @@ export function ZoomShot({
       const look = getComputedStyle(btn);
       const now = getComputedStyle(box);
       const shadowTo =
-        look.boxShadow === "none" ? now.boxShadow.replace(/rgba?\([^)]*\)/g, "rgb(0 0 0 / 0)") : unscale(look.boxShadow);
+        look.boxShadow === "none"
+          ? now.boxShadow.replace(/rgba?\([^)]*\)/g, "rgb(0 0 0 / 0)")
+          : unscale(look.boxShadow);
       await box
         .animate(
           [
             { transform: "none", borderWidth: now.borderTopWidth, boxShadow: now.boxShadow },
-            { transform: onto(to, home), borderWidth: unscale(look.borderTopWidth), boxShadow: shadowTo },
+            {
+              transform: onto(to, home),
+              borderWidth: unscale(look.borderTopWidth),
+              boxShadow: shadowTo,
+            },
           ],
           { ...ZOOM, fill: "forwards" }
         )
@@ -200,7 +210,10 @@ export function ZoomShot({
     let settled: Promise<unknown> = Promise.resolve();
     if (shuffle && front) {
       const aside = front.getAnimations().filter((a) => !(a instanceof CSSAnimation));
-      settled = front.animate([ASIDE.move, HOME.move], { ...SHUFFLE_IN, composite: "add" }).finished;
+      settled = front.animate([ASIDE.move, HOME.move], {
+        ...SHUFFLE_IN,
+        composite: "add",
+      }).finished;
       front.animate([ASIDE.turn, HOME.turn], SHUFFLE_IN);
       aside.forEach((a) => a.cancel());
     }
