@@ -44,7 +44,25 @@ should beat "no blur + grain"), so small gaps are noise.
 
 ## Results
 
-Pending the owner's sweep on the laptop after these changes. Expected
-from the table above: roughly the "no blur" row for change 1. Change 2
-should come close to "no blur + grain" if the mask was the grain's cost;
-if not, the next step is making the grain scroll with the page.
+The owner's sweep after both changes, same laptop and browser:
+
+| Variant | Page fps | Late frames | Before Phase 2 |
+|---|---|---|---|
+| **As shipped** | **49.6** | **20%** | 28.1 / 85% |
+| No glass blur (header pill only now) | 44.1 | 34% | 42.8 / 38% |
+| No grain overlay | 59.5 | 0% | 32.0 / 74% |
+| No blur and no grain | 43.4 | 37% | 56.1 / 7% |
+| Liquid only | 59.6 | 0% | 44.0 / 36% |
+| No liquid | 57.4 | 4% | 31.3 / 80% |
+| Liquid at 1× | 54.5 | 10% | 29.3 / 84% |
+| Everything off | 59.5 | 1% | 59.5 / 1% |
+
+- Scrolling /services as shipped went from 28 to about 50 fps, and late
+  frames from 85% to 20%.
+- The grain overlay is still the largest remaining cost: rows without it
+  run at 57–60 fps.
+- The two rows at ~44 fps should not be slower than "no grain overlay";
+  with the blur gone, their only extra switch affects the small header
+  pill. They alternate with fast rows through the run, which looks like
+  the laptop throttling between runs rather than a real cost. Treat
+  single rows with care; the pattern across rows is what holds.
