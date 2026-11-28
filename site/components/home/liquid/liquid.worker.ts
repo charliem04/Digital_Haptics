@@ -1,6 +1,7 @@
 import { LiquidEngine } from "./engine";
 import { createLoop, type LiquidLoop } from "./liquidLoop";
-import { DESKTOP, PHONE } from "./params";
+import { pickSettings } from "./params";
+import type { LiquidOverrides, LiquidStats } from "@/lib/perf";
 
 /**
  * The liquid's own thread. Shader compilation, the first draw and every
@@ -11,11 +12,20 @@ import { DESKTOP, PHONE } from "./params";
 export type LiquidSize = { width: number; height: number; dpr: number };
 
 export type LiquidCommand =
-  | ({ type: "init"; canvas: OffscreenCanvas; phone: boolean; wanted: boolean } & LiquidSize)
+  | ({
+      type: "init";
+      canvas: OffscreenCanvas;
+      phone: boolean;
+      wanted: boolean;
+      /** Perf probe only (lib/perf.ts). */
+      overrides?: LiquidOverrides;
+    } & LiquidSize)
   | ({ type: "resize" } & LiquidSize)
   | { type: "wanted"; wanted: boolean };
 
-export type LiquidReport = { type: "ready" | "lost" | "failed" };
+export type LiquidReport =
+  | { type: "ready" | "lost" | "failed" }
+  | { type: "stats"; stats: LiquidStats };
 
 const scope = self as unknown as {
   postMessage: (report: LiquidReport) => void;
@@ -35,7 +45,8 @@ const draw = () => {
 async function init(command: Extract<LiquidCommand, { type: "init" }>) {
   size = command;
   wanted = command.wanted;
-  const settings = command.phone ? PHONE : DESKTOP;
+  const overrides = command.overrides ?? {};
+  const settings = pickSettings(command.phone, overrides);
   try {
     command.canvas.addEventListener("webglcontextlost", (event) => {
       event.preventDefault();
@@ -45,7 +56,19 @@ async function init(command: Extract<LiquidCommand, { type: "init" }>) {
     engine = await LiquidEngine.create(command.canvas, settings);
     // Uses the latest size, in case the page resized during compilation.
     draw();
-    loop = createLoop(engine, settings);
+    const live = engine;
+    if (overrides.stats) live.enableGpuTimer();
+    loop = createLoop(live, settings, {
+      fps: overrides.fps,
+      governor: overrides.governor,
+      onStats: overrides.stats
+        ? (stats) =>
+            scope.postMessage({
+              type: "stats",
+              stats: { ...stats, renderer: live.renderer, thread: "worker" },
+            })
+        : undefined,
+    });
     loop.setWanted(wanted);
     scope.postMessage({ type: "ready" });
   } catch {

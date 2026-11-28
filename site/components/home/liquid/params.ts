@@ -28,6 +28,21 @@ export const PHONE_MAX_DPR = 1.5;
 export const DESKTOP: LiquidSettings = { ...tuning.desktop, maxDpr: DESKTOP_MAX_DPR };
 export const PHONE: LiquidSettings = { ...tuning.phone, maxDpr: PHONE_MAX_DPR };
 
+/** Perf probe (lib/perf.ts): the base settings with any URL overrides. */
+export function pickSettings(
+  phone: boolean,
+  overrides: Partial<Pick<LiquidSettings, "renderScale" | "blobCount" | "maxDpr">> & {
+    tier?: "phone" | "desktop";
+  } = {}
+): LiquidSettings {
+  const base = (overrides.tier ? overrides.tier === "phone" : phone) ? PHONE : DESKTOP;
+  return {
+    blobCount: Math.round(overrides.blobCount ?? base.blobCount),
+    renderScale: overrides.renderScale ?? base.renderScale,
+    maxDpr: overrides.maxDpr ?? base.maxDpr,
+  };
+}
+
 /** The runtime step-down when a device is struggling (VISUAL_GUIDE §10.3). */
 export const STEP_DOWN_SCALE = 0.2;
 

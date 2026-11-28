@@ -339,3 +339,21 @@ a {
     corner-shape: squircle;
   }
 }
+
+/* ── PERF PROBE (lib/perf.ts): ?perf&off=… switches layers off ──────── */
+html[data-perf-off~="grain"] .room-grain,
+html[data-perf-off~="motion"] .motion-ambient,
+html[data-perf-off~="motion"] .motion-page,
+html[data-perf-off~="trim"] .motion-trim,
+html[data-perf-off~="glow"] .page-glow,
+html[data-perf-off~="glow"] .molten-art > span {
+  display: none !important;
+}
+html[data-perf-off~="motion"] .motion-divider * {
+  animation: none !important;
+}
+html[data-perf-off~="blur"] *,
+html[data-perf-off~="blur"] *::backdrop {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}

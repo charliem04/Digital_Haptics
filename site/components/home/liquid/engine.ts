@@ -121,14 +121,20 @@ export class LiquidEngine {
   private clock = 0;
   private look: LiquidLook = { ...LOOK };
   private ramp: readonly RampStop[] = RAMP;
+  /** Perf probe only (lib/perf.ts): GPU timer queries in flight. */
+  private timer: { ext: { TIME_ELAPSED_EXT: number; GPU_DISJOINT_EXT: number }; pending: WebGLQuery[]; lastMs: number | null } | null = null;
+  /** The GPU's name, for the perf probe. */
+  readonly renderer: string;
 
   private constructor(
     private readonly canvas: HTMLCanvasElement | OffscreenCanvas,
     private readonly gl: WebGL2RenderingContext,
     private readonly march: Program,
     private readonly present: Program,
-    private settings: LiquidSettings
+    private settings: LiquidSettings,
+    renderer: string
   ) {
+    this.renderer = renderer;
     this.scale = settings.renderScale;
     this.cfg = {
       count: settings.blobCount,
@@ -201,7 +207,14 @@ export class LiquidEngine {
     await yieldToPage();
     await whenLinked(gl, [marchProgram, presentProgram]);
     await yieldToPage();
-    return new LiquidEngine(canvas, gl, wrap(gl, marchProgram), wrap(gl, presentProgram), settings);
+    return new LiquidEngine(
+      canvas,
+      gl,
+      wrap(gl, marchProgram),
+      wrap(gl, presentProgram),
+      settings,
+      renderer
+    );
   }
 
   resize(width: number, height: number, pixelRatio = globalThis.devicePixelRatio || 1): void {
@@ -261,6 +274,46 @@ export class LiquidEngine {
     this.draw();
   }
 
+  /**
+   * Perf probe: time each frame on the GPU, where the browser exposes
+   * EXT_disjoint_timer_query_webgl2. Returns false where it does not.
+   */
+  enableGpuTimer(): boolean {
+    const ext = this.gl.getExtension("EXT_disjoint_timer_query_webgl2");
+    if (!ext) return false;
+    this.timer = { ext, pending: [], lastMs: null };
+    return true;
+  }
+
+  /** Perf probe: the most recent GPU frame time, ms, or null. */
+  gpuMs(): number | null {
+    const timer = this.timer;
+    if (!timer) return null;
+    const gl = this.gl;
+    while (timer.pending.length > 0) {
+      const query = timer.pending[0];
+      if (!gl.getQueryParameter(query, gl.QUERY_RESULT_AVAILABLE)) break;
+      timer.pending.shift();
+      if (!gl.getParameter(timer.ext.GPU_DISJOINT_EXT)) {
+        timer.lastMs = gl.getQueryParameter(query, gl.QUERY_RESULT) / 1e6;
+      }
+      gl.deleteQuery(query);
+    }
+    return timer.lastMs;
+  }
+
+  /** Perf probe: buffer sizes and the live settings. */
+  info() {
+    return {
+      sceneW: this.sceneW,
+      sceneH: this.sceneH,
+      canvasW: this.canvas.width,
+      canvasH: this.canvas.height,
+      renderScale: this.scale,
+      blobCount: this.settings.blobCount,
+    };
+  }
+
   dispose(): void {
     const gl = this.gl;
     gl.deleteProgram(this.march.program);
@@ -296,6 +349,12 @@ export class LiquidEngine {
 
   private draw(): void {
     const gl = this.gl;
+    const timer = this.timer;
+    let query: WebGLQuery | null = null;
+    if (timer && timer.pending.length < 4) {
+      query = gl.createQuery();
+      if (query) gl.beginQuery(timer.ext.TIME_ELAPSED_EXT, query);
+    }
     gl.bindVertexArray(this.vao);
 
     gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer);
@@ -335,6 +394,10 @@ export class LiquidEngine {
     gl.uniform1f(g("uGrainSize"), this.look.grainSize);
     gl.uniform1f(g("uGrainSeed"), (Math.floor(this.clock * this.look.grainFps) % 4096) + 1);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
+    if (timer && query) {
+      gl.endQuery(timer.ext.TIME_ELAPSED_EXT);
+      timer.pending.push(query);
+    }
   }
 
   private layoutScene(): void {

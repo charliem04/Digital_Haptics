@@ -1,6 +1,7 @@
 import { LiquidEngine, yieldToPage } from "./engine";
 import { createLoop } from "./liquidLoop";
-import { DESKTOP, PHONE } from "./params";
+import { pickSettings } from "./params";
+import { LIQUID_STATS_EVENT, perfFlags } from "@/lib/perf";
 
 /**
  * Main-thread fallback, for browsers without OffscreenCanvas. Everyone
@@ -23,9 +24,22 @@ export async function runLiquid(
   events: LiquidEvents
 ): Promise<() => void> {
   const phone = window.matchMedia("(max-width: 640px)").matches;
-  const settings = phone ? PHONE : DESKTOP;
+  const overrides = perfFlags()?.liquid ?? {};
+  const settings = pickSettings(phone, overrides);
   const engine = await LiquidEngine.create(canvas, settings);
-  const loop = createLoop(engine, settings);
+  if (overrides.stats) engine.enableGpuTimer();
+  const loop = createLoop(engine, settings, {
+    fps: overrides.fps,
+    governor: overrides.governor,
+    onStats: overrides.stats
+      ? (stats) =>
+          window.dispatchEvent(
+            new CustomEvent(LIQUID_STATS_EVENT, {
+              detail: { ...stats, renderer: engine.renderer, thread: "main" },
+            })
+          )
+      : undefined,
+  });
 
   let onscreen = true;
   let stopped = false;

@@ -1,5 +1,6 @@
 import type { LiquidEvents } from "./runLiquid";
 import type { LiquidCommand, LiquidReport } from "./liquid.worker";
+import { LIQUID_STATS_EVENT, perfFlags } from "@/lib/perf";
 
 /**
  * Main-thread side of the liquid worker: hands over the canvas, then
@@ -56,13 +57,23 @@ export async function runLiquidWorker(
   worker.onerror = fail;
   worker.onmessage = ({ data }: MessageEvent<LiquidReport>) => {
     if (data.type === "ready") events.onReady();
+    else if (data.type === "stats")
+      window.dispatchEvent(new CustomEvent(LIQUID_STATS_EVENT, { detail: data.stats }));
     else fail();
   };
 
   document.addEventListener("visibilitychange", sync);
-  send({ type: "init", canvas: offscreen, phone: isPhone(), wanted: isWanted(), ...measure() }, [
-    offscreen,
-  ]);
+  send(
+    {
+      type: "init",
+      canvas: offscreen,
+      phone: isPhone(),
+      wanted: isWanted(),
+      overrides: perfFlags()?.liquid,
+      ...measure(),
+    },
+    [offscreen]
+  );
   resizer.observe(root);
   openings.forEach((opening) => viewer.observe(opening));
 

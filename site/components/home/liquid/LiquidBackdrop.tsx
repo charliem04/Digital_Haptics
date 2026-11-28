@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/cn";
 import { RAMP } from "./params";
 import { posterBackground } from "./poster";
+import { LIQUID_STATE_EVENT, perfFlags } from "@/lib/perf";
 
 /**
  * ════════════════════════════════════════════════════════════════════
@@ -22,21 +23,27 @@ import { posterBackground } from "./poster";
 type NetworkInfo = { saveData?: boolean };
 type DeviceInfo = Navigator & { connection?: NetworkInfo; deviceMemory?: number };
 
-function shouldAnimate(): boolean {
-  if (typeof WebGL2RenderingContext === "undefined") return false;
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return false;
-  if (window.matchMedia("(prefers-reduced-data: reduce)").matches) return false;
+/** Why the liquid should stay a poster, or null when it should run. */
+function posterReason(): string | null {
+  if (typeof WebGL2RenderingContext === "undefined") return "no WebGL2";
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return "reduced motion";
+  if (window.matchMedia("(prefers-reduced-data: reduce)").matches) return "reduced data";
   const device = navigator as DeviceInfo;
-  if (device.connection?.saveData) return false;
-  if (device.deviceMemory !== undefined && device.deviceMemory < 4) return false;
+  if (device.connection?.saveData) return "save-data";
+  if (device.deviceMemory !== undefined && device.deviceMemory < 4) return "deviceMemory < 4";
   // Safari deliberately under-reports cores, so a capable iPhone can look
   // like a budget phone. It's exempt, and the frame governor protects it.
   const safari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
   if (!safari && navigator.hardwareConcurrency > 0 && navigator.hardwareConcurrency <= 4) {
-    return false;
+    return "hardwareConcurrency <= 4";
   }
-  return true;
+  return null;
 }
+
+/** Perf probe: tell the HUD what the liquid is doing. */
+const announce = (state: string) => {
+  if (perfFlags()) window.dispatchEvent(new CustomEvent(LIQUID_STATE_EVENT, { detail: state }));
+};
 
 /**
  * Can a worker draw WebGL2 here? Some Safari versions have OffscreenCanvas
@@ -83,7 +90,13 @@ export function LiquidBackdrop() {
   useEffect(() => {
     const root = rootRef.current;
     const canvas = canvasRef.current;
-    if (!root || !canvas || !shouldAnimate()) return;
+    if (!root || !canvas) return;
+    const reason = perfFlags()?.off.has("liquid") ? "off by ?perf" : posterReason();
+    if (reason) {
+      announce(`poster (${reason})`);
+      return;
+    }
+    announce("waiting for load + idle");
 
     let dead = false;
     let stop: (() => void) | undefined;
@@ -98,8 +111,12 @@ export function LiquidBackdrop() {
         if (dead) return;
         const openings = Array.from(document.querySelectorAll("[data-liquid-opening]"));
         const dispose = await run(canvas, root, openings, {
-          onReady: () => setLive(true),
+          onReady: () => {
+            announce(`live (${useWorker ? "worker" : "main thread"})`);
+            setLive(true);
+          },
           onLost: () => {
+            announce("poster (context lost or worker failed)");
             setLive(false);
             // A failed worker gets one retry on the main thread, on a
             // fresh canvas because the first now belongs to the worker.
@@ -110,6 +127,7 @@ export function LiquidBackdrop() {
         else stop = dispose;
       } catch {
         // No WebGL2 or a shader failure: the poster stays.
+        announce("poster (no hardware GPU, or shader failed)");
         setLive(false);
       }
     });

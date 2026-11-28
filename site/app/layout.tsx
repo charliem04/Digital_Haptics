@@ -16,6 +16,7 @@ import { ctaLink } from "@/lib/nav";
 import { CTA_HREF } from "@/lib/routes";
 import { InteractionTracking } from "@/components/InteractionTracking";
 import { DevTransitionPicker } from "@/lib/dev";
+import { PerfProbe } from "@/components/perf/PerfProbe";
 
 /*
  * Fonts (docs/VISUAL_GUIDE.md §3), committed in app/fonts/ and loaded
@@ -129,6 +130,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         {/* Dev only: try the page transitions live. Never in a build. */}
         {DevTransitionPicker && <DevTransitionPicker />}
         <MotionRuntime />
+        {/* Perf branch: does nothing without ?perf in the URL (lib/perf.ts). */}
+        <PerfProbe />
         <JsonLd />
       </body>
     </html>
