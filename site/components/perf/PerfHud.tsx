@@ -1,12 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import {
-  LIQUID_STATE_EVENT,
-  LIQUID_STATS_EVENT,
-  perfFlags,
-  type LiquidStats,
-} from "@/lib/perf";
+import { LIQUID_STATE_EVENT, LIQUID_STATS_EVENT, perfFlags, type LiquidStats } from "@/lib/perf";
 
 /**
  * ════════════════════════════════════════════════════════════════════

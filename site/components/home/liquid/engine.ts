@@ -124,7 +124,11 @@ export class LiquidEngine {
   private look: LiquidLook = { ...LOOK };
   private ramp: readonly RampStop[] = RAMP;
   /** Perf probe only (lib/perf.ts): GPU timer queries in flight. */
-  private timer: { ext: { TIME_ELAPSED_EXT: number; GPU_DISJOINT_EXT: number }; pending: WebGLQuery[]; lastMs: number | null } | null = null;
+  private timer: {
+    ext: { TIME_ELAPSED_EXT: number; GPU_DISJOINT_EXT: number };
+    pending: WebGLQuery[];
+    lastMs: number | null;
+  } | null = null;
   /** The GPU's name, for the perf probe. */
   readonly renderer: string;
 

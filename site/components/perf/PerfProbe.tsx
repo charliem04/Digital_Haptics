@@ -16,8 +16,9 @@ export function PerfProbe() {
     if (!flags) return;
     document.documentElement.dataset.perfOff = Array.from(flags.off).join(" ");
     let dead = false;
-    void import("./PerfHud").then((mod) => {
-      if (!dead) setHud(() => mod.PerfHud);
+    const sweep = new URLSearchParams(window.location.search).has("sweep");
+    void (sweep ? import("./PerfSweep") : import("./PerfHud")).then((mod) => {
+      if (!dead) setHud(() => ("PerfSweep" in mod ? mod.PerfSweep : mod.PerfHud));
     });
     return () => {
       dead = true;
