@@ -100,17 +100,23 @@ a {
 }
 
 /* ── FILM GRAIN ──────────────────────────────────────────────────────
-   One decorative layer over the page. A mask on a solid fill, not a
-   background image: browsers count a textured background on a card as
-   the page's main content, and LCP would then measure the grain. */
+   One decorative layer over the page: the grain tile as a background
+   image. Its pixels are already mid grey with the grain in the alpha,
+   so it draws exactly what the old mask on a grey fill drew.
+
+   Not a mask (perf Phase 2, docs/perf/PHASE2.md): a mask is its own
+   full-screen pass on every frame, because the page scrolls under it
+   over a moving liquid. A plain image is one textured draw.
+
+   LCP: the tile is a few hundred bytes stretched over the viewport, far
+   under Chrome's 0.05 bits-per-pixel floor, so it is never a candidate.
+   Checked: the headline stays the LCP element. */
 .room-grain {
   position: fixed;
   inset: 0;
   z-index: 60;
   pointer-events: none;
-  background-color: rgb(128 128 128);
-  -webkit-mask-image: var(--grain);
-  mask-image: var(--grain);
+  background-image: var(--grain);
 }
 
 @media print {

@@ -10,8 +10,14 @@ import { cn } from "@/lib/cn";
  *  Settings are the owner's picks from /lab/liquid-glass (2026-11-24):
  *  bend 0.1, colour split 0.3, rim 15, frost 6.5, no amber.
  *
- *  Dark frosted glass everywhere (owner's pick, 2026-11-25): a blur and
- *  the room tint, the same on every page, screen size and browser.
+ *  Dark frosted glass everywhere (owner's pick, 2026-11-25): the room
+ *  tint over the liquid, the same on every page, screen size and browser.
+ *
+ *  No live blur (perf Phase 2, 2026-11-28, owner's pick): the panes
+ *  scroll over a fixed, moving background, so a backdrop blur is redone
+ *  on every frame over most of the screen. On an Iris Xe laptop it was
+ *  the largest single cost (28 → 43 fps scrolling, docs/perf/PHASE2.md),
+ *  and under a 70% tint over an already soft liquid it was not visible.
  *
  *  `refract` (off by default) adds the bending rim on desktop Chrome and
  *  Edge: an SVG backdrop filter that bends the liquid across a curved rim
@@ -39,7 +45,6 @@ const CHANNELS = [
   "0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0",
 ];
 const SPREADS = [1, 1 + SPLIT * 0.2, 1 + SPLIT * 0.4];
-const FALLBACK = `blur(${FROST}px) saturate(1.25)`;
 
 /** Neutral everywhere except a curved rim that pushes outward. */
 function buildMap(width: number, height: number, radius: number, squircle: boolean): string {
@@ -162,10 +167,7 @@ export function GlassPane({
         "relative overflow-hidden rounded-[var(--r-glass)] border border-[rgb(255_255_255/0.16)] border-t-[rgb(255_255_255/0.4)] shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_16px_40px_-16px_rgba(0,0,0,0.5)]",
         className
       )}
-      style={{
-        backdropFilter: map ? `url(#${id}) saturate(1.2)` : FALLBACK,
-        WebkitBackdropFilter: FALLBACK,
-      }}
+      style={map ? { backdropFilter: `url(#${id}) saturate(1.2)` } : undefined}
     >
       {map && (
         <svg aria-hidden width="0" height="0" className="absolute">
