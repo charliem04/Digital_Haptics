@@ -1,5 +1,5 @@
 import type { LiquidEngine } from "./engine";
-import { STEP_DOWN_SCALE, type LiquidSettings } from "./params";
+import { STEP_DOWN_DPR, STEP_DOWN_SCALE, type LiquidSettings } from "./params";
 import type { LiquidStats } from "@/lib/perf";
 
 /**
@@ -8,9 +8,14 @@ import type { LiquidStats } from "@/lib/perf";
  * without OffscreenCanvas, on the main thread.
  */
 
+/** Frames per verdict: three seconds at 30 fps. */
 const WINDOW = 90;
-/** Average frame interval that triggers the step down. */
-const SLOW_MS = 24;
+/**
+ * How far past the target interval the average may run before the step
+ * down. Against 30 fps (33 ms) that is about 24 fps; uncapped against
+ * 60 fps it is about 40 fps.
+ */
+const SLOW_MARGIN_MS = 8;
 /**
  * After the step down, only freeze below about 11 fps. iPhones in Low
  * Power Mode cap animation at 30 fps and dip below it, and slow liquid
@@ -36,8 +41,6 @@ export type LiquidLoop = {
 
 /** Perf probe options (lib/perf.ts). All off by default. */
 export type LoopOptions = {
-  /** Frame-rate cap; unset draws on every display frame. */
-  fps?: number;
   /** false: never step down or freeze. */
   governor?: boolean;
   /** Called about twice a second with frame stats. */
@@ -52,7 +55,11 @@ export function createLoop(
   options: LoopOptions = {}
 ): LiquidLoop {
   const governed = options.governor !== false;
-  const minInterval = options.fps ? 1000 / options.fps - 2 : 0;
+  const target = 1000 / settings.fps;
+  // A little under the target, so a 30 fps cap lands on every second
+  // frame of a 60 Hz display rather than drifting to every third.
+  const minInterval = target - 2;
+  const slowMs = Math.max(target, 1000 / 60) + SLOW_MARGIN_MS;
   const onStats = options.onStats;
   let drawn = 0;
   let statsAt = 0;
@@ -91,8 +98,8 @@ export function createLoop(
 
   const tick = (now: number) => {
     handle = request(tick);
-    // A capped rate skips display frames until enough time has passed.
-    if (minInterval > 0 && drawn !== 0 && now - drawn < minInterval) return;
+    // The cap skips display frames until enough time has passed.
+    if (drawn !== 0 && now - drawn < minInterval) return;
     drawn = now;
     const interval = last === 0 ? 1000 / 60 : now - last;
     last = now;
@@ -113,9 +120,9 @@ export function createLoop(
       const average = sum / count;
       sum = 0;
       count = 0;
-      if (!steppedDown && average > SLOW_MS) {
+      if (!steppedDown && average > slowMs) {
         steppedDown = true;
-        engine.setRenderScale(Math.min(STEP_DOWN_SCALE, settings.renderScale));
+        engine.stepDown(STEP_DOWN_SCALE, STEP_DOWN_DPR);
       } else if (steppedDown && average > FREEZE_MS) {
         frozen = true;
         sync();

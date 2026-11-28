@@ -2,11 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { LiquidEngine } from "@/components/home/liquid/engine";
-import {
-  DESKTOP_MAX_DPR,
-  PHONE_MAX_DPR,
-  type LiquidSettings,
-} from "@/components/home/liquid/params";
+import { DESKTOP, PHONE, type LiquidSettings } from "@/components/home/liquid/params";
 import type { Tuning } from "./schema";
 import css from "./tuner.module.css";
 
@@ -36,9 +32,13 @@ const MAX_DT = 1 / 20;
 
 function settingsFor(command: StageCommand): LiquidSettings {
   const phone = command.device === "phone";
+  // The live site's pixel caps, so what is tuned is what ships.
+  const live = phone ? PHONE : DESKTOP;
   return {
     ...command.tuning[command.device],
-    maxDpr: phone ? PHONE_MAX_DPR : DESKTOP_MAX_DPR,
+    maxDpr: live.maxDpr,
+    maxCanvasPixels: live.maxCanvasPixels,
+    fps: live.fps,
   };
 }
 

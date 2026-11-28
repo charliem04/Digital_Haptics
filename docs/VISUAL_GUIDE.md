@@ -249,9 +249,12 @@ The canvas has fixed, reserved dimensions, so it cannot cause layout shift. The 
 | No hardware GPU | Renderer reports SwiftShader, llvmpipe or similar | Poster stays. Software rendering cost 638 ms of blocking time in Lighthouse |
 | Data saver | `navigator.connection.saveData` or `prefers-reduced-data` | Poster, renderer not downloaded |
 | Low-power device | `deviceMemory` below 4 or `hardwareConcurrency` of 4 or fewer | Poster, renderer not downloaded |
-| Struggling at runtime | Average frame interval over 24ms across 90 frames | Drop to scale 0.20. Freeze on a still only if it then averages over 40ms, so a steady 30 fps low-power mode keeps moving |
+| Large or dense screen | Canvas would exceed 3M device pixels (1M on phones) | Canvas pixel ratio lowered to fit, never below 1 (docs/perf/PHASE0.md) |
+| Struggling at runtime | Average frame interval over the 30 fps target + 8ms (about 24 fps) across 90 frames | Canvas to 1x, half the pixel budget, scene scale 0.20. Freeze on a still only below about 11 fps |
 | Context lost | `webglcontextlost` | Fade back to poster, stop the loop |
 | Offscreen or hidden tab | IntersectionObserver, `visibilitychange` | Loop stops |
+
+**Frame rate (perf Phase 1, 2026-11-27):** the liquid draws at 30 fps on every device. It moves slowly enough that 30 reads the same as 60, and it halves the GPU work. Page scrolling and the rest of the page still run at the display's own rate.
 
 ### 10.4 Phone settings
 
@@ -265,6 +268,8 @@ Tested on the laptop at phone viewport sizes with the renderer below. This is **
 | 1.5x, scale 0.20, 6 masses (runtime step-down) | 3.9 ms | 8.2 ms |
 
 The laptop GPU cannot separate these settings, so they are chosen for fill-rate on phones rather than from a measured phone win.
+
+**Update (perf Phase 1, 2026-11-27):** the phone scale had been tuned up to 0.9. It is now 0.5: side by side at 375×812 it looks the same as 0.9 after the bicubic upscale, and it halves the liquid's GPU time (4.3 → 2.3 ms on Iris Xe). See docs/perf/PHASE1.md.
 
 ### 10.5 CSP
 

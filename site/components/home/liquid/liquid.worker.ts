@@ -59,7 +59,6 @@ async function init(command: Extract<LiquidCommand, { type: "init" }>) {
     const live = engine;
     if (overrides.stats) live.enableGpuTimer();
     loop = createLoop(live, settings, {
-      fps: overrides.fps,
       governor: overrides.governor,
       onStats: overrides.stats
         ? (stats) =>

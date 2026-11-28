@@ -114,6 +114,8 @@ export class LiquidEngine {
   private width = 0;
   private height = 0;
   private dpr = 1;
+  /** The device's own pixel ratio, kept for a later step-down. */
+  private deviceRatio = 1;
   private sceneW = 0;
   private sceneH = 0;
   private scale: number;
@@ -221,7 +223,8 @@ export class LiquidEngine {
     if (width === 0 || height === 0) return;
     this.width = width;
     this.height = height;
-    this.dpr = Math.min(pixelRatio, this.settings.maxDpr);
+    this.deviceRatio = pixelRatio;
+    this.dpr = this.canvasRatio(width, height, pixelRatio);
     this.canvas.width = Math.round(width * this.dpr);
     this.canvas.height = Math.round(height * this.dpr);
     this.cfg.aspect = width / height;
@@ -230,6 +233,30 @@ export class LiquidEngine {
       this.started = true;
       this.sim.reset(this.look.seed, this.cfg);
     }
+  }
+
+  /**
+   * The canvas pixel ratio: the device's, capped by maxDpr, then lowered
+   * to fit maxCanvasPixels, but never below 1 (or the device's own ratio,
+   * if that is lower). docs/perf/PHASE0.md: past ~3M device pixels the
+   * final pass alone saturates an integrated GPU.
+   */
+  private canvasRatio(width: number, height: number, pixelRatio: number): number {
+    const capped = Math.min(pixelRatio, this.settings.maxDpr);
+    const fit = Math.sqrt(this.settings.maxCanvasPixels / (width * height));
+    return Math.max(Math.min(capped, fit), Math.min(pixelRatio, 1));
+  }
+
+  /** The runtime step-down (liquidLoop): fewer pixels in both passes. */
+  stepDown(scale: number, maxDpr: number): void {
+    this.settings = {
+      ...this.settings,
+      maxDpr: Math.min(this.settings.maxDpr, maxDpr),
+      maxCanvasPixels: this.settings.maxCanvasPixels / 2,
+    };
+    this.scale = Math.min(this.scale, scale);
+    if (this.width > 0) this.resize(this.width, this.height, this.deviceRatio);
+    else this.layoutScene();
   }
 
   setRenderScale(scale: number): void {

@@ -12,7 +12,7 @@
  *                                trim    the spinning case-card trims
  *                                glow    inner pages' fixed drifting glow
  *                                blur    every backdrop-filter
- *    ?perf&scale=0.2&blobs=6&dpr=1&fps=30&gov=off&tier=phone
+ *    ?perf&scale=0.2&blobs=6&dpr=1&px=3000000&fps=60&gov=off&tier=phone
  *                                try liquid settings without rebuilding
  *
  *  Read once per page load. Safe on the server: returns null there.
@@ -27,7 +27,9 @@ export type LiquidOverrides = {
   renderScale?: number;
   blobCount?: number;
   maxDpr?: number;
-  /** Frame-rate cap. */
+  /** Canvas pixel budget. */
+  maxCanvasPixels?: number;
+  /** Frame-rate cap (240 is effectively uncapped). */
   fps?: number;
   /** false switches off the runtime step-down and freeze. */
   governor?: boolean;
@@ -68,6 +70,7 @@ export function perfFlags(): PerfFlags | null {
       renderScale: num(params.get("scale"), 0.05, 1),
       blobCount: num(params.get("blobs"), 1, 16),
       maxDpr: num(params.get("dpr"), 0.5, 3),
+      maxCanvasPixels: num(params.get("px"), 100_000, 50_000_000),
       fps: num(params.get("fps"), 5, 240),
       governor: params.get("gov") === "off" ? false : undefined,
       tier: tier === "phone" || tier === "desktop" ? tier : undefined,

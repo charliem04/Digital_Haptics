@@ -29,7 +29,6 @@ export async function runLiquid(
   const engine = await LiquidEngine.create(canvas, settings);
   if (overrides.stats) engine.enableGpuTimer();
   const loop = createLoop(engine, settings, {
-    fps: overrides.fps,
     governor: overrides.governor,
     onStats: overrides.stats
       ? (stats) =>
